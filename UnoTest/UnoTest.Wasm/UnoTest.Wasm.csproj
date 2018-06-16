@@ -1,0 +1,61 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<WasmHead>true</WasmHead>
+		<DefineConstants>$(DefineConstants);__WASM__</DefineConstants>
+		<NoWarn>NU1701</NoWarn>
+		<RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Content Include="..\UnoTest.UWP\Assets\*.png" Link="Assets\%(FileName)%(Extension)" />
+		<Compile Remove="bin\**" />
+		<EmbeddedResource Remove="bin\**" />
+		<None Remove="bin\**" />
+		<Content Include="Fonts\winjs-symbols.woff2" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Include="WasmCSS\Fonts.css" />
+		<EmbeddedResource Include="WasmScripts\AppManifest.js" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<LinkerDescriptor Include="LinkerConfig.xml" />
+	</ItemGroup>
+	
+	<ItemGroup>
+		<!-- 
+    This item group is required by the project templace because of the
+    new SDK-Style project, otherwise some files are not aded automatically.
+    
+    You can safely this ItemGroup completely.
+    -->
+		<Compile Remove="Program.cs" />
+		<Compile Include="Program.cs" />
+		<Content Include="LinkerConfig.xml" />
+	</ItemGroup>
+
+  <PropertyGroup>
+    <RestoreSources>
+      $(RestoreSources);
+      ..\..\libs\MvvmLight_Std_20;
+      https://api.nuget.org/v3/index.json
+    </RestoreSources>
+  </PropertyGroup>
+
+  <ItemGroup>
+		<PackageReference Include="MvvmLightLibsStd20" Version="5.4.1" />
+		<PackageReference Include="Uno.UI" Version="1.31.0-dev.62" />
+		<PackageReference Include="Uno.Wasm.Bootstrap" Version="1.0.0-dev.21" />
+	</ItemGroup>
+
+	<Import Project="..\UnoTest.Shared\UnoTest.Shared.projitems" Label="Shared" Condition="Exists('..\UnoTest.Shared\UnoTest.Shared.projitems')" />
+
+	<Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+	  <Exec Command="for /d %%a in ($(SolutionDir)UnoTest\UnoTest.Wasm\bin\Debug\netstandard2.0\dist\managed-*) do rd %%a /s /q&#xD;&#xA;" />
+	</Target>
+
+</Project>

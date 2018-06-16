@@ -1,0 +1,23 @@
+﻿{
+    //"Colors": {
+    //    "Favorite": "blue"
+    //},
+
+    //"DisableSSL": false,
+    "ConnectionStrings": {
+        "OouiTestConnectionString": "server=.\\SQLExpress; Database=UnoTest; Integrated Security=true;MultipleActiveResultSets=true;"
+    }
+
+    //"Logging": {
+    //    "LogLevel": {
+    //        "Microsoft": "Warning",
+    //        "Default": "Information"
+    //    }
+    //},
+
+    //"Tokens": {
+    //    "Key": "aasdfaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaadddddddddd",
+    //    "Issuer": "localhost:8888",
+    //    "Audience": "users"
+    //}
+}
