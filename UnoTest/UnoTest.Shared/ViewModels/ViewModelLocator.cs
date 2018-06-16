@@ -32,7 +32,7 @@ namespace UnoTest.Shared.ViewModels
             }
 
             //Register your services used here
-            //  SimpleIoc.Default.Register<INavigationService, NavigationService>();
+            SimpleIoc.Default.Register<INavigationService, NavigationService>();
             SimpleIoc.Default.Register<MainPageViewModel>();
 
         }
