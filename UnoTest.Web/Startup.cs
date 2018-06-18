@@ -27,13 +27,13 @@
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //services.AddDbContext<OouiTestDbContext>(cfg =>
+            //services.AddDbContext<UnoTestDbContext>(cfg =>
             //{
-            //    //cfg.UseInMemoryDatabase("OouiTest");
-            //    cfg.UseSqlServer(configuration.GetConnectionString("OouiTestConnectionString"));
+            //    //cfg.UseInMemoryDatabase("UnoTest");
+            //    cfg.UseSqlServer(configuration.GetConnectionString("UnoTestConnectionString"));
             //});
 
-            // services.AddTransient<OouiTestDbSeeder>();
+            // services.AddTransient<UnoTestDbSeeder>();
 
             var mvcBuilder = services.AddMvc();
 
@@ -52,8 +52,8 @@
 
             #endregion
 
-            //var connection = @"Data Source=.\SQLEXPRESS;Initial Catalog=OouiTest;Trusted_Connection=True";
-            //services.AddDbContext<OouiTestDbContext>(options => options.UseSqlServer(connection));
+            //var connection = @"Data Source=.\SQLEXPRESS;Initial Catalog=UnoTest;Trusted_Connection=True";
+            //services.AddDbContext<UnoTestDbContext>(options => options.UseSqlServer(connection));
 
         }
 
@@ -111,7 +111,7 @@
             //{
             //    using (var scope = app.ApplicationServices.CreateScope())
             //    {
-            //        var seeder = scope.ServiceProvider.GetService<OouiTestDbSeeder>();
+            //        var seeder = scope.ServiceProvider.GetService<UnoTestDbSeeder>();
             //        seeder.Seed().Wait();
             //    }
             //}

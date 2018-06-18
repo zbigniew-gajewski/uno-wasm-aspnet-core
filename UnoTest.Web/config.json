@@ -5,7 +5,7 @@
 
     //"DisableSSL": false,
     "ConnectionStrings": {
-        "OouiTestConnectionString": "server=.\\SQLExpress; Database=UnoTest; Integrated Security=true;MultipleActiveResultSets=true;"
+        "UnoTestConnectionString": "server=.\\SQLExpress; Database=UnoTest; Integrated Security=true;MultipleActiveResultSets=true;"
     }
 
     //"Logging": {
