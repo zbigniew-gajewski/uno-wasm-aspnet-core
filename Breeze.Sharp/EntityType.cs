@@ -35,7 +35,7 @@ namespace Breeze.Sharp {
       jNode.GetJNodeArray("dataProperties").ForEach(jn => {
         var dpName = GetPropertyNameFromJNode(jn);
         var dp = et.GetDataProperty(dpName);
-//// ###---### if (dp == null) throw new Exception($"EntityType.cs Line 38");
+//// ##### if (dp == null) throw new Exception($"EntityType.cs Line 38");
           dp.UpdateFromJNode(jn, isFromServer);
         
       });
