@@ -5,53 +5,153 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       mc:Ignorable="d">
-    <!--DataContext="{Binding MainPageViewModelInstance, Source={StaticResource Locator}}">-->
+  <!--DataContext="{Binding MainPageViewModelInstance, Source={StaticResource Locator}}">-->
 
-    <Grid  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+  <Grid Background="LightGray" >
 
+    <Grid.RowDefinitions>
+      <RowDefinition Height="200" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition />
+    </Grid.RowDefinitions>
+
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition />
+      <ColumnDefinition />
+    </Grid.ColumnDefinitions>
+
+    <Button
+      Content="Click to get web data using HttpClient..."
+      Command="{Binding GetDataUsingHttpClientCommand}"
+      HorizontalAlignment="Center"
+      FontSize="20"
+      Foreground="White"
+      Background="Navy"/>
+
+    <Button
+      Grid.Column="1"
+      Content="Click to get web data using BreezeSharp..."
+      Command="{Binding GetDataUsingBreezeSharpCommand}"
+      HorizontalAlignment="Center"
+      FontSize="20"
+      Foreground="White"
+      Background="Navy"/>
+
+    <TextBlock
+      Grid.Row="1"
+      Grid.ColumnSpan="2"
+      HorizontalAlignment="Stretch"
+      Text ="Result:"
+      FontSize="20"
+      Foreground="DarkRed"
+      FontWeight="Bold" />
+
+    <TextBlock
+      Grid.Row="2"
+      Grid.ColumnSpan="2"
+      HorizontalAlignment="Stretch"
+      VerticalAlignment="Stretch"
+      Text ="{Binding Result}"
+      FontSize="15"
+      Foreground="DarkRed" />
+
+  </Grid>
+
+
+
+  <!--<Grid  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="Auto" />
+      <ColumnDefinition />
+    </Grid.ColumnDefinitions>
+
+    <ListView Background="Silver"
+               HorizontalAlignment="Stretch"
+               VerticalAlignment="Stretch"
+               ItemsSource="{Binding NavigationItems}"
+              SelectedItem="{Binding SelectedNavigationItem, Mode=TwoWay}" >
+      <ListView.ItemTemplate>
+        <DataTemplate>
+          <TextBlock Text="{Binding}"
+             Foreground="White"
+             FontSize="15"
+             FontWeight="Bold"
+             Margin="5"/>
+        </DataTemplate>
+      </ListView.ItemTemplate>
+    </ListView>
+
+    <Grid Grid.Column="1">
+      <Grid.RowDefinitions>
+        <RowDefinition />
+        <RowDefinition />
+        <RowDefinition />
+      </Grid.RowDefinitions>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition />
+        <ColumnDefinition />
+      </Grid.ColumnDefinitions>
+
+      <Grid Background="LightBlue">
         <Grid.RowDefinitions>
-            <RowDefinition />
-            <RowDefinition />
+          <RowDefinition/>
+          <RowDefinition/>
         </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition />
-            <ColumnDefinition />
-        </Grid.ColumnDefinitions>
+        <TextBlock Grid.Row="0" x:Name="TextBlock"
+                   Margin="20"
+                   FontSize="50"
+                   VerticalAlignment="Center"
+                   HorizontalAlignment="Center"
+                   Text="{Binding NumberOfClicks}" />
 
-        <Grid Background="LightBlue">
-            <TextBlock x:Name="TextBlock"
-                       Margin="20"
-                       FontSize="50"
-                       VerticalAlignment="Center"
-                       HorizontalAlignment="Center"
-                       Text="{Binding NumberOfClicks}" />
-        </Grid>
+        <TextBlock Grid.Row="1" x:Name="CustomerNameTextBlock"
+                     Margin="20"
+                     FontSize="50"
+                     VerticalAlignment="Center"
+                     HorizontalAlignment="Center"
+                     Text="{Binding CustomerName}" />
+      </Grid>
 
-        <Button Grid.Row="1"
-                Grid.ColumnSpan="2"
-                FontSize="35"
-                Foreground="White"
-                Background="Green"
-                Content="Click Me !"
-                VerticalAlignment="Center"
-                HorizontalAlignment="Center"
-                Command="{Binding ClickMeButtonCommand}" />
+      <Button Grid.Row="1"
+              Grid.ColumnSpan="2"
+              FontSize="35"
+              Foreground="White"
+              Background="Green"
+              Content="Click Me !"
+              VerticalAlignment="Center"
+              HorizontalAlignment="Center"
+              Command="{Binding ClickMeButtonCommand}" />
 
-        <ListView Grid.Row="0"
-                  Grid.Column="1"
-                  Background="Blue"
-                  HorizontalAlignment="Stretch"
-                  VerticalAlignment="Stretch"
-                  ItemsSource="{Binding Numbers}">
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <TextBlock Text="{Binding}"
-                               Foreground="White"
-                               FontSize="20"
-                               FontWeight="Bold" />
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+      <ListView Grid.Row="0"
+                Grid.Column="1"
+                Background="Blue"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                ItemsSource="{Binding Numbers}">
+        <ListView.ItemTemplate>
+          <DataTemplate>
+            <TextBlock Text="{Binding}"
+                       Foreground="White"
+                       FontSize="20"
+                       FontWeight="Bold" />
+          </DataTemplate>
+        </ListView.ItemTemplate>
+      </ListView>
 
+      <StackPanel Grid.Row="2" Grid.ColumnSpan="2" Orientation="Vertical">
+        <TextBlock HorizontalAlignment="Left"
+                  VerticalAlignment="Top"
+                  Text ="Error Message"
+                  FontSize="13"
+                  Foreground="Red"
+                   FontWeight="Bold"/>
+        <TextBlock HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    Text ="{Binding ErrorMessage}"
+                    FontSize="11"
+                    Foreground="Red" />
+      </StackPanel>
     </Grid>
+  </Grid>-->
 </Page>

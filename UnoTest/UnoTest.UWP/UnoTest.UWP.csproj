@@ -97,6 +97,10 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
+    <ProjectReference Include="..\..\Breeze.Sharp\Breeze.Sharp.csproj">
+      <Project>{f3e83b78-0b91-498b-986b-2af416d6580f}</Project>
+      <Name>Breeze.Sharp</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />

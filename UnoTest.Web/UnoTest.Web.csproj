@@ -6,7 +6,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Breeze.AspNetCore.NetCore" Version="0.1.2" />
+    <PackageReference Include="Breeze.Persistence.EFCore" Version="0.1.2" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.8" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\UnoTest.Web.Data\UnoTest.Web.Data.csproj" />
   </ItemGroup>
 
 </Project>

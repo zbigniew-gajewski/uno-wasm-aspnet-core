@@ -1,5 +1,7 @@
 ﻿namespace UnoWeb.Test
 {
+    using Breeze.AspNetCore;
+    using Breeze.Core;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.StaticFiles;
@@ -9,6 +11,8 @@
     using Microsoft.Extensions.FileProviders;
     using Newtonsoft.Json.Serialization;
     using System.IO;
+    using UnoTest.Web.Data;
+    using UnoTestWeb.Data;
 
     public class Startup
     {
@@ -27,28 +31,29 @@
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //services.AddDbContext<UnoTestDbContext>(cfg =>
-            //{
-            //    //cfg.UseInMemoryDatabase("UnoTest");
-            //    cfg.UseSqlServer(configuration.GetConnectionString("UnoTestConnectionString"));
-            //});
+            services.AddDbContext<UnoTestDbContext>(cfg =>
+            {
+                cfg.UseInMemoryDatabase("UnoTest");
+                //cfg.UseSqlServer(configuration.GetConnectionString("UnoTestConnectionString"));
+            });
 
-            // services.AddTransient<UnoTestDbSeeder>();
+            services.AddTransient<UnoTestDbSeeder>();
 
             var mvcBuilder = services.AddMvc();
 
             #region Breeze
-            //mvcBuilder.AddJsonOptions(opt => {
-            //    var ss = JsonSerializationFns.UpdateWithDefaults(opt.SerializerSettings);
-            //    var resolver = ss.ContractResolver;
-            //    if (resolver != null)
-            //    {
-            //        var res = resolver as DefaultContractResolver;
-            //        res.NamingStrategy = null;  // <<!-- this removes the camelcasing
-            //    }
-            //});
+            mvcBuilder.AddJsonOptions(opt =>
+            {
+                var ss = JsonSerializationFns.UpdateWithDefaults(opt.SerializerSettings);
+                var resolver = ss.ContractResolver;
+                if (resolver != null)
+                {
+                    var res = resolver as DefaultContractResolver;
+                    res.NamingStrategy = null;  // <<!-- this removes the camelcasing
+                }
+            });
 
-            //mvcBuilder.AddMvcOptions(o => { o.Filters.Add(new GlobalExceptionFilter()); });
+            mvcBuilder.AddMvcOptions(o => { o.Filters.Add(new GlobalExceptionFilter()); });
 
             #endregion
 
@@ -65,6 +70,7 @@
             provider.Mappings[".wasm"] = "application/wasm";
             provider.Mappings[".dll"] = "application/dll";
             provider.Mappings[".clrdll"] = "application/clrdll";
+            provider.Mappings[".clr"] = "application/clr";
 
             if (env.IsDevelopment())
             {
@@ -78,8 +84,8 @@
             //app.UseWebSockets();
             //app.UseMiddleware<WebSocketMiddleware>();
 
-   
-            var parentDirectory = Directory.GetParent(Directory.GetCurrentDirectory());
+            var currentDirectory = Directory.GetCurrentDirectory();
+            var parentDirectory = Directory.GetParent(currentDirectory);
             var newWwwRootDirectory = Path.Combine(parentDirectory.FullName, "UnoTest", "UnoTest.Wasm", "bin", "Debug", "netstandard2.0", "dist");
 
             app.UseDefaultFiles();
@@ -107,14 +113,14 @@
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
 
-            //if (env.IsDevelopment())
-            //{
-            //    using (var scope = app.ApplicationServices.CreateScope())
-            //    {
-            //        var seeder = scope.ServiceProvider.GetService<UnoTestDbSeeder>();
-            //        seeder.Seed().Wait();
-            //    }
-            //}
+            if (env.IsDevelopment())
+            {
+                using (var scope = app.ApplicationServices.CreateScope())
+                {
+                    var seeder = scope.ServiceProvider.GetService<UnoTestDbSeeder>();
+                    seeder.Seed().Wait();
+                }
+            }
         }
     }
 }
