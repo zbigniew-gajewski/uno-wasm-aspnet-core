@@ -39,7 +39,6 @@ namespace UnoTest.Shared.ViewModels
             }
         }
 
-
         private async void OnGetDataUsingHttpClient()
         {
             #region simple HttpClient
@@ -65,10 +64,6 @@ namespace UnoTest.Shared.ViewModels
 
         private async void OnGetDataUsingBreezeSharp()
         {
-            // Breeze.Sharp token authentication https://stackoverflow.com/questions/24104452/get-access-token-with-breezesharp
-            // https://stackoverflow.com/questions/21146587/passing-authentication-token-with-breeze-query
-            // Breeze.Sharp examples:  https://github.com/Breeze/breeze.sharp.samples/tree/master/ToDo
-
             try
             {
                 var serviceAddress = "http://localhost:53333/breeze/Customer/";
@@ -82,13 +77,18 @@ namespace UnoTest.Shared.ViewModels
                 var query = new EntityQuery<Customer>();
                 var result = await entityManager.ExecuteQuery(query);
 
-                // CustomerName = result?.FirstOrDefault()?.FirstName;
+                Result = result?.FirstOrDefault()?.FirstName;
             }
             catch (Exception ex)
             {
                 Result = ex.ToString();
             }
         }
+
+
+
+
+
 
 
 

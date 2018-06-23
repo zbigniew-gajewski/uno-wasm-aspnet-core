@@ -93,14 +93,14 @@ namespace Breeze.Sharp {
 #if __WASM__
         if (httpClient == null) {
             var handler = new Uno.UI.Wasm.WasmHttpHandler();
-        httpClient = new HttpClient(handler);
-      }
+            httpClient = new HttpClient(handler);
+        }
 #else
 
-            if (httpClient == null)
-    {
-        httpClient = DefaultHttpMessageHandler == null ? new HttpClient() : new HttpClient(DefaultHttpMessageHandler);
-    }
+        if (httpClient == null)
+        {
+            httpClient = DefaultHttpMessageHandler == null ? new HttpClient() : new HttpClient(DefaultHttpMessageHandler);
+        }
 #endif
 
             _httpClient = httpClient;
