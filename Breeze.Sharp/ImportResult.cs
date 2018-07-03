@@ -1,4 +1,5 @@
 ﻿using Breeze.Sharp.Core;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
@@ -9,7 +10,7 @@ namespace Breeze.Sharp {
   /// </summary>
   public class ImportResult {
 
-    public ImportResult(IEnumerable<IEntity> entities, Dictionary<EntityKey, EntityKey> tempKeyMap) {
+    public ImportResult(IEnumerable<IEntity> entities, ConcurrentDictionary<EntityKey, EntityKey> tempKeyMap) {
       _importedEntities = new SafeList<IEntity>(entities);
       _tempKeyMap = new ReadOnlyDictionary<EntityKey, EntityKey>(tempKeyMap);
     }

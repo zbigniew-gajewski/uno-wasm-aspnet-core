@@ -1,12 +1,13 @@
 ﻿
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
+//using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+//using System.Text;
+//using System.Threading.Tasks;
 
 using Breeze.Sharp.Core;
 
@@ -35,7 +36,7 @@ namespace Breeze.Sharp {
 
     private void Initialize(EntityManager em) {
       _entityAspects = new EntityCollection();
-      _entityKeyMap = new Dictionary<EntityKey, EntityAspect>();
+      _entityKeyMap = new ConcurrentDictionary<EntityKey, EntityAspect>();
       EntityManager = em;
       EntityType = em.MetadataStore.GetEntityType(ClrType);
       // insure that any added table can watch for change events
@@ -233,9 +234,11 @@ namespace Breeze.Sharp {
       RemoveFromKeyMap(aspect);
     }
 
-    public void ReplaceKey(EntityAspect entityAspect, EntityKey oldKey, EntityKey newKey) {
-      _entityKeyMap.Remove(oldKey);  // it may not exist if this object was just Imported or Queried.
-      _entityKeyMap.Add(newKey, entityAspect);
+    public void ReplaceKey(EntityAspect entityAspect, EntityKey oldKey, EntityKey newKey)
+    {
+            EntityAspect res;
+      _entityKeyMap.TryRemove(oldKey, out res);  // it may not exist if this object was just Imported or Queried.
+      _entityKeyMap.TryAdd(newKey, entityAspect);
     }
 
     public void UpdateFkVal(DataProperty fkProp, Object oldValue, Object newValue) {
@@ -257,14 +260,16 @@ namespace Breeze.Sharp {
 
     private void AddToKeyMap(EntityAspect aspect) {
       try {
-        _entityKeyMap.Add(aspect.EntityKey, aspect);
+        _entityKeyMap.TryAdd(aspect.EntityKey, aspect);
       } catch (ArgumentException) {
         throw new InvalidOperationException("An entity with this key: " + aspect.EntityKey.ToString() + " already exists in this EntityManager");
       }
     }
 
-    private void RemoveFromKeyMap(EntityAspect aspect) {
-      _entityKeyMap.Remove(aspect.EntityKey);
+    private void RemoveFromKeyMap(EntityAspect aspect)
+    {
+        EntityAspect res;
+        _entityKeyMap.TryRemove(aspect.EntityKey, out res);
     }
 
    
@@ -294,7 +299,7 @@ namespace Breeze.Sharp {
     // this member will only exist on EntityCache's sent from the server to the client
     // it should always be null on persistent client side entity sets
     private EntityCollection _entityAspects;
-    private Dictionary<EntityKey, EntityAspect> _entityKeyMap;
+    private ConcurrentDictionary<EntityKey, EntityAspect> _entityKeyMap;
     private SafeList<EntityGroup> _selfAndSubtypeGroups;
 
 

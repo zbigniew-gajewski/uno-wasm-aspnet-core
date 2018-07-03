@@ -1,14 +1,16 @@
 ﻿using Breeze.Sharp.Core;
+using ConcurrentCollections;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
+// using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using System.Threading;
+//using System.Threading;
 using System.Threading.Tasks;
 
 namespace Breeze.Sharp {
@@ -17,7 +19,7 @@ namespace Breeze.Sharp {
   /// An instance of the MetadataStore contains all of the metadata about a collection of <see cref="EntityType"/>s 
   /// and <see cref="ComplexType"/>s.
   /// </summary>
-  [DebuggerDisplay("StoreID: {StoreID}")]
+//   [DebuggerDisplay("StoreID: {StoreID}")]
   public class MetadataStore : IJsonSerializable {
 
 
@@ -28,8 +30,12 @@ namespace Breeze.Sharp {
     }
 
     public MetadataStore() {
-      
-      lock (__lock) {
+
+#if !__WASM__
+//            lock (__lock)
+#endif
+
+            {
         StoreID = __nextStoreID++;
       }
     }
@@ -50,7 +56,10 @@ namespace Breeze.Sharp {
     /// </summary>
     public ICollection<EntityType> EntityTypes {
       get {
-        lock (_structuralTypes) {
+#if !__WASM__
+                lock (_structuralTypes)
+#endif
+                {
           return _structuralTypes.OfType<EntityType>().ToList();
         }
       }
@@ -61,7 +70,10 @@ namespace Breeze.Sharp {
     /// </summary>
     public ICollection<ComplexType> ComplexTypes {
       get {
-        lock (_structuralTypes) {
+#if !__WASM__
+//                lock (_structuralTypes)
+#endif
+                {
           return _structuralTypes.OfType<ComplexType>().ToList();
         }
       }
@@ -140,35 +152,21 @@ namespace Breeze.Sharp {
     /// <returns></returns>
     public async Task<DataService> FetchMetadata(DataService dataService)
     {
-        return await FetchMetadata(dataService, CancellationToken.None);
-    }
 
-    /// <summary>
-    /// Fetches the metadata for a specified 'service'. This method is automatically called 
-    /// internally by an EntityManager before its first query against a new service.
-    /// </summary>
-    /// <param name="dataService"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    public async Task<DataService> FetchMetadata(DataService dataService, CancellationToken cancellationToken) {
       String serviceName;
 
       serviceName = dataService.ServiceName;
       var ds = GetDataService(serviceName);
       if (ds != null) return dataService;
 
-      await _asyncSemaphore.WaitAsync();
-
-      cancellationToken.ThrowIfCancellationRequested();
+//      await _asyncSemaphore.WaitAsync();
 
       String metadata;
       try {
         ds = GetDataService(serviceName);
         if (ds != null) return dataService;
 
-        metadata = await dataService.GetAsync("Metadata", cancellationToken);
-
-        cancellationToken.ThrowIfCancellationRequested();
+        metadata = await dataService.GetAsync("Metadata");
       }
       catch (Exception e)
       {
@@ -176,7 +174,7 @@ namespace Breeze.Sharp {
             throw new Exception("Unable to locate metadata resource for: " + dataService.ServiceName, e);
           throw;
       } finally {
-        _asyncSemaphore.Release();
+//        _asyncSemaphore.Release();
       }
       metadata = metadata.Trim();
       // this section is needed if metadata is returned as an escaped string - ( not common but does happen ... ).
@@ -191,8 +189,9 @@ namespace Breeze.Sharp {
         var metadataProcessor = new CsdlMetadataProcessor();
         metadataProcessor.ProcessMetadata(this, json);
       } else {
-        // metadata returned in breeze native format
-        this.ImportMetadata(metadata, true);
+                // metadata returned in breeze native format
+                Console.WriteLine($"2 - MetadataStore - 181 {json}");
+                this.ImportMetadata(metadata, true);
         
       }
       var errorMessages = GetMessages(MessageType.Error).ToList();
@@ -212,7 +211,10 @@ namespace Breeze.Sharp {
     /// <param name="serviceName"></param>
     /// <returns></returns>
     public DataService GetDataService(String serviceName) {
-      lock (_dataServiceMap) {
+#if !__WASM__
+            lock (_dataServiceMap)
+#endif
+            {
         if (_dataServiceMap.ContainsKey(serviceName)) {
           return _dataServiceMap[serviceName];
         } else {
@@ -229,7 +231,11 @@ namespace Breeze.Sharp {
     /// <param name="dataService"></param>
     /// <param name="shouldOverwrite"></param>
     public void AddDataService(DataService dataService, bool shouldOverwrite = false) {
-      lock (_dataServiceMap) {
+
+#if !__WASM__
+            lock (_dataServiceMap)
+#endif
+            {
         if (_dataServiceMap.ContainsKey(dataService.ServiceName) && !shouldOverwrite) {
           throw new Exception("A dataService with this name '" + dataService.ServiceName + "' already exists in this MetadataStore");
         }
@@ -278,6 +284,7 @@ namespace Breeze.Sharp {
     // T is ComplexType or EntityType
     public T GetStructuralType<T>(Type clrType) where T : class {
       var st = GetStructuralType(clrType);
+            Console.WriteLine($" --- MetadataStore - 268 st: {st}");
       var result = st as T;
       if (result == null) {
         throw new Exception("A type by this name exists but is not a " + typeof(T).FullName);
@@ -312,19 +319,35 @@ namespace Breeze.Sharp {
       }
       // not need for okIfNotFound because we will create a type if one isn't found.
       var stName = TypeNameInfo.FromClrType(clrType).StructuralTypeName;
-      lock (_structuralTypes) {
+            Console.WriteLine($" 10 - 02 MetadataStore - 303 {stName} ");
+
+#if !__WASM__      
+//            lock (_structuralTypes)
+#endif
+            {
         var st = _structuralTypes[stName];
-        if (st == null) {
+                if (_structuralTypes == null)
+                {
+                    Console.WriteLine($" 10 - 03 MetadataStore - 307 _structurelTypes is null ");
+                }
+       Console.WriteLine($" 10 - 03 MetadataStore - 311 st.ClrType  {st}");
+                if (st == null) {
           var stb = new StructuralTypeBuilder(this);
+
           st = stb.CreateStructuralType(clrType);
-          _structuralTypes[stName] = st;
+         Console.WriteLine($" 10 - 04 MetadataStore - 336 st.ClrType  {st}");
+                    _structuralTypes[stName] = st;
         }
         return st;
       }
     }
 
     private StructuralType GetStructuralTypeCore(String stName) {
-      lock (_structuralTypes) {
+#if !__WASM__
+            lock (_structuralTypes)
+#endif
+
+            {
         if (!TypeNameInfo.IsQualifiedTypeName(stName)) {
           String fullStName;
           if (_shortNameMap.TryGetValue(stName, out fullStName)) {
@@ -336,7 +359,8 @@ namespace Breeze.Sharp {
           var clrType = Configuration.Instance.GetClrType(stName);
           if (clrType == null) return null;
           var stb = new StructuralTypeBuilder(this);
-          st = stb.CreateStructuralType(clrType);
+                    Console.WriteLine("9 - MetadataStore - 326");
+                    st = stb.CreateStructuralType(clrType);
           _structuralTypes[stName] = st;
         }
         return st;
@@ -362,7 +386,12 @@ namespace Breeze.Sharp {
 
 
     public void SetResourceName(String resourceName, EntityType entityType, bool isDefault = false) {
-      lock (_defaultResourceNameMap) {
+
+#if !__WASM__
+            lock (_defaultResourceNameMap)
+#endif
+
+            {
         _resourceNameEntityTypeMap[resourceName] = entityType;
         if (isDefault) {
           _defaultResourceNameMap[entityType] = resourceName;
@@ -382,7 +411,11 @@ namespace Breeze.Sharp {
     public EntityType GetEntityTypeForResourceName(String resourceName, bool okIfNotFound) {
       // by convention locking the _defaultResourceMap is a surrogate for also locking the _resourceNameEntityTypeMap;
       EntityType et;
-      lock (_defaultResourceNameMap) {
+#if !__WASM__
+            lock (_defaultResourceNameMap)
+#endif
+
+            {
         if (_resourceNameEntityTypeMap.TryGetValue(resourceName, out et)) {
           return et;
         } else if (okIfNotFound) {
@@ -409,7 +442,11 @@ namespace Breeze.Sharp {
     /// <param name="entityType"></param>
     /// <returns></returns>
     public  string GetDefaultResourceName(EntityType entityType) {
-      lock (_defaultResourceNameMap) {
+#if !__WASM__
+            lock (_defaultResourceNameMap)
+#endif
+
+            {
         String resourceName = null;
         // give the type it's base's resource name if it doesn't have its own.
         if (!_defaultResourceNameMap.TryGetValue(entityType, out resourceName)) {
@@ -428,6 +465,7 @@ namespace Breeze.Sharp {
     /// <param name="clrType"></param>
     /// <returns></returns>
     public static bool IsStructuralType(Type clrType) {
+            Console.WriteLine($" 10 - 01 MetadataStore - 421 {typeof(IStructuralObject).IsAssignableFrom(clrType)}");
       return typeof(IStructuralObject).IsAssignableFrom(clrType);
     }
 
@@ -459,7 +497,8 @@ namespace Breeze.Sharp {
     /// <param name="isFromServer"></param>
     public void ImportMetadata(String metadata, bool isFromServer = false) {
       var jNode = JNode.DeserializeFrom(metadata);
-      ImportMetadata(jNode, isFromServer);
+            Console.WriteLine($"3 - MetadataStore - 449 {metadata} ");
+            ImportMetadata(jNode, isFromServer);
     }
 
     /// <summary>
@@ -473,7 +512,8 @@ namespace Breeze.Sharp {
     }
 
     public void ImportMetadata(JNode jNode, bool isFromServer ) {
-      DeserializeFrom(jNode, isFromServer);
+            Console.WriteLine($"4 - MetadataStore - 465 {jNode}");
+            DeserializeFrom(jNode, isFromServer);
       EntityTypes.ForEach(et => {
         // cross entity/complex type fixup.
         et.UpdateNavigationProperties();
@@ -486,7 +526,11 @@ namespace Breeze.Sharp {
 
 
     JNode IJsonSerializable.ToJNode(Object config) {
-      lock (_structuralTypes) {
+#if !__WASM__
+            lock (_structuralTypes)
+#endif
+
+            {
         var jo = new JNode();
         jo.AddPrimitive("metadataVersion", MetadataVersion);
         // jo.Add("name", this.Name);
@@ -521,7 +565,9 @@ namespace Breeze.Sharp {
           AddDataService(ds);
         }
       });
-      jNode.GetJNodeArray("structuralTypes")
+            Console.WriteLine("5 - MetadataStore - 513");
+            Console.WriteLine("   7 - MetadataStore - 513");
+            jNode.GetJNodeArray("structuralTypes")
         .ForEach(jn => UpdateStructuralTypeFromJNode(jn, isFromServer));
 
       jNode.GetMap<String>("resourceEntityTypeMap").ForEach(kvp => {
@@ -540,7 +586,8 @@ namespace Breeze.Sharp {
 
     private void UpdateStructuralTypeFromJNode(JNode jNode, bool isFromServer) {
       var name = GetStructuralTypeNameFromJNode(jNode, isFromServer);
-      var stype = GetStructuralTypeCore(name);
+            Console.WriteLine("8 - MetadataStore - 534");
+            var stype = GetStructuralTypeCore(name);
       if (stype == null) {
         var isComplexType = jNode.Get<bool>("isComplexType", false);
         OnMetadataMismatch(name, null, isComplexType ? 
@@ -598,8 +645,11 @@ namespace Breeze.Sharp {
     private void AddStructuralType(StructuralType stType, bool allowMerge = true) {
       // don't register anon types
       if (stType.IsAnonymous) return;
+#if !__WASM__
+            lock (_structuralTypes)
+#endif
 
-      lock (_structuralTypes) {
+            {
         if (_structuralTypes.ContainsKey(stType.Name)) {
           throw new Exception("Type " + stType.Name + " already exists in this MetadataStore.");
         }
@@ -618,12 +668,15 @@ namespace Breeze.Sharp {
  
 
     private class InternCache<T> where T : Internable {
-      public readonly Dictionary<String, Type> TypeMap = new Dictionary<string, Type>();
-      public readonly Dictionary<JNode, T> JNodeMap = new Dictionary<JNode, T>();
+      public readonly ConcurrentDictionary<String, Type> TypeMap = new ConcurrentDictionary<string, Type>();
+      public readonly ConcurrentDictionary<JNode, T> JNodeMap = new ConcurrentDictionary<JNode, T>();
 
       public T FindOrCreate(JNode jNode) {
         try {
-          lock (TypeMap) {
+#if !__WASM__
+                    lock (TypeMap)
+#endif
+                    {
             T internable;
 
             if (JNodeMap.TryGetValue(jNode, out internable)) {
@@ -643,7 +696,11 @@ namespace Breeze.Sharp {
         if (internable.IsInterned) return internable;
         var jNode = internable.ToJNode();
 
-        lock (TypeMap) {
+#if !__WASM__
+                lock (TypeMap)
+#endif
+
+                {
           if (!TypeMap.ContainsKey(internable.Name)) {
             TypeMap[internable.Name] = internable.GetType();
           }
@@ -664,7 +721,10 @@ namespace Breeze.Sharp {
         if (ti.IsAbstract) return;
         if (ti.GenericTypeParameters.Length != 0) return;
         var key = UtilFns.TypeToSerializationName(internableType, defaultSuffix);
-        lock (TypeMap) {
+#if !__WASM__
+                lock (TypeMap)
+#endif
+                {
           TypeMap[key] = internableType;
         }
       }
@@ -694,7 +754,7 @@ namespace Breeze.Sharp {
 
     #region Private vars
 
-    private static Object __lock = new Object();
+//    private static Object __lock = new Object();
     private static int __nextStoreID = 1;
     // Note: the two lines above need to appear before this next one 
     private static MetadataStore __detached = new MetadataStore();
@@ -702,32 +762,32 @@ namespace Breeze.Sharp {
 
     private NamingConvention _namingConvention = new NamingConvention();
 
-    private readonly AsyncSemaphore _asyncSemaphore = new AsyncSemaphore(1);
-    private readonly Object _lock = new Object();
+//    private readonly AsyncSemaphore _asyncSemaphore = new AsyncSemaphore(1);
+//    private readonly Object _lock = new Object();
 
     // lock using _dataServiceMap
-    private readonly Dictionary<String, DataService> _dataServiceMap = new Dictionary<String, DataService>();
+    private readonly ConcurrentDictionary<String, DataService> _dataServiceMap = new ConcurrentDictionary<String, DataService>();
       
     
-    private readonly HashSet<Assembly> _probedAssemblies = new HashSet<Assembly>();
-    private readonly List<Tuple<Type, Action<Type>, Func<Assembly, bool>>> _typeDiscoveryActions = new List<Tuple<Type, Action<Type>, Func<Assembly, bool>>>();
+    private readonly ConcurrentHashSet<Assembly> _probedAssemblies = new ConcurrentHashSet<Assembly>();
+    private readonly ConcurrentHashSet<Tuple<Type, Action<Type>, Func<Assembly, bool>>> _typeDiscoveryActions = new ConcurrentHashSet<Tuple<Type, Action<Type>, Func<Assembly, bool>>>();
 
     private readonly StructuralTypeCollection _structuralTypes = new StructuralTypeCollection();
-    private readonly Dictionary<String, String> _shortNameMap = new Dictionary<string, string>();
+    private readonly ConcurrentDictionary<String, String> _shortNameMap = new ConcurrentDictionary<string, string>();
     
 
     // locked using _resourceNameEntityTypeMap
-    private readonly Dictionary<EntityType, String> _defaultResourceNameMap = new Dictionary<EntityType, string>();
-    private readonly Dictionary<String, EntityType> _resourceNameEntityTypeMap = new Dictionary<string, EntityType>();
+    private readonly ConcurrentDictionary<EntityType, String> _defaultResourceNameMap = new ConcurrentDictionary<EntityType, string>();
+    private readonly ConcurrentDictionary<String, EntityType> _resourceNameEntityTypeMap = new ConcurrentDictionary<string, EntityType>();
 
     private InternCache<Validator> _validatorCache = new InternCache<Validator>();
     private InternCache<NamingConvention> _namingConventionCache = new InternCache<NamingConvention>();
 
  
-    private readonly Dictionary<String, Type> _namingConventionMap = new Dictionary<string, Type>();
-    private readonly Dictionary<JNode, NamingConvention> _namingConventionJNodeCache = new Dictionary<JNode, NamingConvention>();
+    private readonly ConcurrentDictionary<String, Type> _namingConventionMap = new ConcurrentDictionary<string, Type>();
+    private readonly ConcurrentDictionary<JNode, NamingConvention> _namingConventionJNodeCache = new ConcurrentDictionary<JNode, NamingConvention>();
 
-    private readonly List<Message> _messages = new List<Message>();
+    private readonly ConcurrentHashSet<Message> _messages = new ConcurrentHashSet<Message>();
 
 
     #endregion

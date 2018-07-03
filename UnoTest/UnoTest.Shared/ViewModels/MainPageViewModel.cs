@@ -1,13 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Windows.Input;
 using Breeze.Sharp;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Uno.Extensions;
+using Uno.Logging;
 using UnoTest.Web.Data;
 
 namespace UnoTest.Shared.ViewModels
@@ -26,6 +31,7 @@ namespace UnoTest.Shared.ViewModels
             GetDataUsingBreezeSharpCommand = new RelayCommand(OnGetDataUsingBreezeSharp);
         }
 
+    
         public ICommand GetDataUsingHttpClientCommand { get; }
         public ICommand GetDataUsingBreezeSharpCommand { get; }
 
@@ -56,14 +62,29 @@ namespace UnoTest.Shared.ViewModels
 
             var jsonString = await response.Content.ReadAsStringAsync();
 
-            // todo: deserialization here
-            Result = jsonString.ToString();
+            // todo: better deserialization here:
+            var jsonStringSplitted = jsonString
+                .Replace('}',' ')
+                .Replace(']', ' ')
+                .Split(',')
+                .Where(l => l.Contains("First") || l.Contains("Last"));
+
+            var stringBuilder = new StringBuilder();
+            foreach (var line in jsonStringSplitted)
+            {
+                stringBuilder.Append(line + "\n");
+            }
+
+            Result = stringBuilder.ToString();
 
             #endregion
         }
 
         private async void OnGetDataUsingBreezeSharp()
         {
+            //this.Log().Debug("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+            //Console.WriteLine("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+
             try
             {
                 var serviceAddress = "http://localhost:53333/breeze/Customer/";
@@ -77,7 +98,7 @@ namespace UnoTest.Shared.ViewModels
                 var query = new EntityQuery<Customer>();
                 var result = await entityManager.ExecuteQuery(query);
 
-                Result = result?.FirstOrDefault()?.FirstName;
+                //Result = result?.FirstOrDefault()?.FirstName;
             }
             catch (Exception ex)
             {

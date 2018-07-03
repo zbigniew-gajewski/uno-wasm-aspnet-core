@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.ComponentModel;
-using System.Runtime.CompilerServices;
+//using System.Runtime.CompilerServices;
 
 namespace Breeze.Sharp {
 
@@ -25,13 +25,13 @@ namespace Breeze.Sharp {
 
     #region syntactic sugar helper methods 
 
-    protected T GetValue<T>([CallerMemberName] string propertyName = "") {
-      return ComplexAspect.GetValue<T>(propertyName);
-    }
+    //protected T GetValue<T>([CallerMemberName] string propertyName = "") {
+    //  return ComplexAspect.GetValue<T>(propertyName);
+    //}
 
-    protected void SetValue(Object value, [CallerMemberName] string propertyName = "") {
-      ComplexAspect.SetValue(propertyName, value);
-    }
+    //protected void SetValue(Object value, [CallerMemberName] string propertyName = "") {
+    //  ComplexAspect.SetValue(propertyName, value);
+    //}
 
     public bool StructuralEquals(BaseComplexObject other) {
       return this.ComplexAspect.StructuralEquals(other.ComplexAspect);

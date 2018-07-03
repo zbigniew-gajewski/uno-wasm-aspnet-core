@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using Breeze.Sharp.Core;
 using System;
-using System.Diagnostics;
+// using System.Diagnostics;
 using System.Linq;
 using System.Collections.Generic;
 
@@ -24,7 +24,7 @@ namespace Breeze.Sharp {
   /// and then updated via Metadata retrieval from an entity server. Itt is also possible to 
   /// update/extend them directly on the client.
   /// </summary>
-  [DebuggerDisplay("{Name} - {ParentType.Name}")]
+  // [DebuggerDisplay("{Name} - {ParentType.Name}")]
   public class DataProperty : StructuralProperty, IJsonSerializable {
 
     public DataProperty(String name)

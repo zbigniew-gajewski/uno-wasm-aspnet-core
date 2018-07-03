@@ -1,10 +1,11 @@
 ﻿using Breeze.Sharp.Core;
-using Microsoft.Data.OData;
+//using Microsoft.Data.OData;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+//using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -155,7 +156,7 @@ namespace Breeze.Sharp {
         serializer.Deserialize<IEnumerable<IEntity>>(entityNodes.CreateReader());
         var allEntities = mappingContext.Entities;
         allEntities.ForEach(e => e.EntityAspect.AcceptChanges());
-        return new SaveResult(allEntities, keyMappings);
+        return new SaveResult(allEntities, new ConcurrentDictionary<EntityKey, EntityKey>(keyMappings));
       }
 
     }

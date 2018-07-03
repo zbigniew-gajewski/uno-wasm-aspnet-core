@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
+//using System.Diagnostics;
 using System.Linq;
 
 namespace Breeze.Sharp {
@@ -10,7 +10,7 @@ namespace Breeze.Sharp {
   /// <summary>
   /// Container for all of the metadata about a specific type of Entity.
   /// </summary>
-  [DebuggerDisplay("{Name}")]
+//  [DebuggerDisplay("{Name}")]
   public sealed class EntityType : StructuralType, IJsonSerializable {
 
     public EntityType(MetadataStore metadataStore) : base(metadataStore) {
@@ -35,8 +35,8 @@ namespace Breeze.Sharp {
       jNode.GetJNodeArray("dataProperties").ForEach(jn => {
         var dpName = GetPropertyNameFromJNode(jn);
         var dp = et.GetDataProperty(dpName);
-//// ##### if (dp == null) throw new Exception($"EntityType.cs Line 38");
-          dp.UpdateFromJNode(jn, isFromServer);
+// ###        if (dp == null) Console.WriteLine("EntityType line 38: dp is null!!");
+        dp.UpdateFromJNode(jn, isFromServer);
         
       });
       jNode.GetJNodeArray("navigationProperties").ForEach(jn => {
@@ -241,7 +241,8 @@ namespace Breeze.Sharp {
         // this can happen if subtype overrides base type property.
         return altDp;
       }
-      base.AddDataProperty(dp);
+            Console.WriteLine("13 - EntityTypeBuilder - 244");
+            base.AddDataProperty(dp);
       if (dp.IsPartOfKey) _keyProperties.Add(dp);
       if (dp.IsConcurrencyProperty) _concurrencyProperties.Add(dp);
       if (dp.IsComplexProperty) _complexProperties.Add(dp);

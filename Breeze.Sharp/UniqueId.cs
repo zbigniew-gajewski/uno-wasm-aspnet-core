@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 using Breeze.Sharp.Core;
+using ConcurrentCollections;
 
 namespace Breeze.Sharp {
   /// <summary>
@@ -104,7 +106,7 @@ namespace Breeze.Sharp {
   /// <summary>
   /// Represents a collection of <see cref="UniqueId"/> objects.
   /// </summary>
-  public class UniqueIdCollection : HashSet<UniqueId> {
+  public class UniqueIdCollection : ConcurrentHashSet<UniqueId> {
 
     /// <summary>
     /// Ctor.
@@ -149,7 +151,7 @@ namespace Breeze.Sharp {
   /// <seealso cref="IKeyGenerator"/>
   /// </summary>
   /// <remarks>Used when mapping temporary to real identifiers.</remarks>
-  public class UniqueIdMap : Dictionary<UniqueId, Object> {
+  public class UniqueIdMap : ConcurrentDictionary<UniqueId, Object> {
 
     /// <summary>
     /// Initializes a new instance of the UniqueIdMap class.
@@ -182,7 +184,7 @@ namespace Breeze.Sharp {
     public void AddMap(UniqueIdMap map) {
       if (map == null) return;
       foreach (KeyValuePair<UniqueId, Object> entry in map) {
-        this.Add(entry.Key, entry.Value);
+        this.TryAdd(entry.Key, entry.Value);
       }
     }
 
@@ -192,7 +194,7 @@ namespace Breeze.Sharp {
     /// <param name="collection"></param>
     public void AddCollection(UniqueIdCollection collection) {
       if (collection == null || collection.Count == 0) return;
-      collection.ForEach(u => this.Add(u, null));
+      collection.ForEach(u => this.TryAdd(u, null));
     }
 
 

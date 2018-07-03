@@ -1,9 +1,10 @@
 ﻿using Breeze.Sharp.Core;
+using ConcurrentCollections;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
+// using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -19,7 +20,7 @@ namespace Breeze.Sharp {
   /// The <b>EntityAspect</b> implements interfaces to support editing, change tracking and change notification.
   /// One instance of the EntityAspect class is associated with each persistable entity within a domain model.
   /// </remarks>
-  [DebuggerDisplay("{EntityKey} - {EntityState}")]
+// [DebuggerDisplay("{EntityKey} - {EntityState}")]
   public sealed class EntityAspect : StructuralAspect, IEditableObject, IChangeTracking, IRevertibleChangeTracking, INotifyPropertyChanged,
     INotifyDataErrorInfo, IComparable {
     // what about IDataErrorInfo
@@ -786,7 +787,7 @@ namespace Breeze.Sharp {
             SetRawValue(dp.Name, dp.DefaultValue);
           }
         } catch (Exception e) {
-          Debug.WriteLine("Exception caught during initialization of {0}.{1}: {2}", this.EntityType.Name, dp.Name, e.Message);
+//          Debug.WriteLine("Exception caught during initialization of {0}.{1}: {2}", this.EntityType.Name, dp.Name, e.Message);
         }
       });
       this.EntityType.NavigationProperties.ForEach(np => {
@@ -1198,20 +1199,20 @@ namespace Breeze.Sharp {
       return GetValue(navProperty.Name);
     }
 
-    public List<String> LoadedNavigationPropertyNames {
+    public ConcurrentHashSet<String> LoadedNavigationPropertyNames {
       get;
       set;
     }
 
     public void AddLoadedNavigationPropertyName(String propertyName, bool wasLoaded) {
       if (LoadedNavigationPropertyNames == null) {
-        LoadedNavigationPropertyNames = new List<string>();
+        LoadedNavigationPropertyNames = new ConcurrentHashSet<string>();
       }
       if (wasLoaded == LoadedNavigationPropertyNames.Contains(propertyName)) return;
       if (wasLoaded) {
         LoadedNavigationPropertyNames.Add(propertyName);
       } else {
-        LoadedNavigationPropertyNames.Remove(propertyName);
+        LoadedNavigationPropertyNames.TryRemove(propertyName);
       }
     }
 

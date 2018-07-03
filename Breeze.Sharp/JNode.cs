@@ -11,6 +11,7 @@ using System.Linq;
 using Breeze.Sharp.Core;
 using Newtonsoft.Json.Serialization;
 using System.Globalization;
+using System.Collections.Concurrent;
 
 namespace Breeze.Sharp {
 
@@ -204,24 +205,24 @@ namespace Breeze.Sharp {
       }
     }
 
-    public Dictionary<String, T> GetMap<T>(String propName) {
+    public ConcurrentDictionary<String, T> GetMap<T>(String propName) {
       var map = (JObject)GetToken<JObject>(propName);
       
-      var rmap = new Dictionary<String, T>();
+      var rmap = new ConcurrentDictionary<String, T>();
       if (map == null) return rmap;
       foreach (var kvp in map) {
-        rmap.Add(kvp.Key, kvp.Value.ToObject<T>());
+        rmap.TryAdd(kvp.Key, kvp.Value.ToObject<T>());
       }
       return rmap;
     }
 
-    public Dictionary<String, Object> GetMap(String propName, Func<String, Type> toTypeFn) {
+    public ConcurrentDictionary<String, Object> GetMap(String propName, Func<String, Type> toTypeFn) {
       var map = (JObject)GetToken<JObject>(propName);
       if (map == null) return null;
-      var rmap = new Dictionary<String, Object>();
+      var rmap = new ConcurrentDictionary<String, Object>();
       foreach (var kvp in map) {
         var toType = toTypeFn(kvp.Key);
-        rmap.Add(kvp.Key, kvp.Value.ToObject(toType));
+        rmap.TryAdd(kvp.Key, kvp.Value.ToObject(toType));
       }
       return rmap;
     }
@@ -259,11 +260,11 @@ namespace Breeze.Sharp {
     public IDictionary<String, IEnumerable<JNode>> GetJNodeArrayMap(String propName) {
       var map = GetToken<JObject>(propName);
       if (map == null) return null;
-      var rmap = new Dictionary<String, IEnumerable<JNode>>();
+      var rmap = new ConcurrentDictionary<String, IEnumerable<JNode>>();
       foreach (var kvp in map) {
         var ja = (JArray)kvp.Value;
         var values = ja.Select(item => new JNode((JObject)item));
-        rmap.Add(kvp.Key, values);
+        rmap.TryAdd(kvp.Key, values);
       }
       return rmap;
     }

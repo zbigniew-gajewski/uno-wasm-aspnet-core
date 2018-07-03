@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="ConcurrentHashSet" Version="1.0.2" />
     <PackageReference Include="Microsoft.Data.Edm" Version="5.8.3" />
     <PackageReference Include="Microsoft.Data.OData" Version="5.8.3" />
     <PackageReference Include="Microsoft.Data.Services.Client" Version="5.8.3" />

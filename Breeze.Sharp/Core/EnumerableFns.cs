@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ConcurrentCollections;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,7 +33,8 @@ namespace Breeze.Sharp.Core {
     /// <include file='EnumerableFns.Examples.xml' path='//Class[@name="EnumerableFns"]/method[@name="ForEach"]/*' />
     public static void ForEach<T>(this IEnumerable<T> items, Action<T> action) {
       foreach (T item in items) {
-        action(item);
+                Console.WriteLine($"6 - EnumerableFns - 35 {item}");
+                action(item);
       }
     }
 
@@ -74,8 +76,8 @@ namespace Breeze.Sharp.Core {
     /// <typeparam name="T"></typeparam>
     /// <param name="items"></param>
     /// <returns></returns>
-    public static HashSet<T> ToHashSet<T>(this IEnumerable<T> items) {
-      return new HashSet<T>(items);
+    public static ConcurrentHashSet<T> ToConcurrentHashSet<T>(this IEnumerable<T> items) {
+      return new ConcurrentHashSet<T>(items);
     }
 
     // Not named GetHashCode to avoid naming conflict; object.GetHashCode would

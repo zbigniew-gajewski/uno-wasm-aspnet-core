@@ -5,7 +5,8 @@ using System.Linq;
 
 using System.Reflection;
 using Breeze.Sharp.Core;
-using System.Diagnostics;
+using ConcurrentCollections;
+// using System.Diagnostics;
 
 namespace Breeze.Sharp {
 
@@ -21,10 +22,10 @@ namespace Breeze.Sharp {
   /// <summary>
   /// Base class for both <see cref="EntityType"/> and <see cref="ComplexType"/> classes.
   /// </summary>
-  [DebuggerDisplay("{Name}")]
+//   [DebuggerDisplay("{Name}")]
   public abstract class StructuralType {
     public StructuralType(MetadataStore metadataStore) {
-      Warnings = new List<string>();
+      Warnings = new ConcurrentHashSet<string>();
       MetadataStore = metadataStore;
     }
 
@@ -80,7 +81,7 @@ namespace Breeze.Sharp {
     public bool IsAbstract { get; set; }
     // TODO: determine if this is  still needed;
     public bool IsAnonymous { get; set; }
-    public List<String> Warnings { get; set; }
+    public ConcurrentHashSet<String> Warnings { get; set; }
     public abstract bool IsEntityType { get;  }
     
     public virtual  IEnumerable<StructuralProperty> Properties {

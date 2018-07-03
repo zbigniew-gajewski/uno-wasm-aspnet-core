@@ -2,10 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
+//using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+//using System.Text;
+//using System.Threading.Tasks;
 
 using Breeze.Sharp.Core;
 
@@ -238,7 +238,7 @@ namespace Breeze.Sharp {
             SetDpValue(dp, dp.DefaultValue);
           }
         } catch (Exception e) {
-          Debug.WriteLine("Exception caught during initialization of {0}.{1}: {2}", this.ComplexObject.GetType().Name, dp.Name, e.Message);
+          // Debug.WriteLine("Exception caught during initialization of {0}.{1}: {2}", this.ComplexObject.GetType().Name, dp.Name, e.Message);
         }
       });
     }

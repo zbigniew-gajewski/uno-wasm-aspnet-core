@@ -1,6 +1,6 @@
 ﻿using Breeze.Sharp.Core;
 using System;
-using System.Diagnostics;
+// using System.Diagnostics;
 using System.Linq;
 
 namespace Breeze.Sharp {
@@ -8,7 +8,7 @@ namespace Breeze.Sharp {
   /// <summary>
   /// A collection of ValidationErrors.
   /// </summary>
-  [DebuggerDisplay("Count = {Count}")]
+//  [DebuggerDisplay("Count = {Count}")]
   public class ValidationErrorCollection : MapCollection<String, ValidationError> {
     public ValidationErrorCollection(EntityAspect entityAspect) {
       EntityAspect = entityAspect;
@@ -60,7 +60,7 @@ namespace Breeze.Sharp {
   /// <summary>
   /// The result of a failed validation operation
   /// </summary>
-  [DebuggerDisplay("{Validator.Name} Error: {Message}")]
+//  [DebuggerDisplay("{Validator.Name} Error: {Message}")]
   public class ValidationError {
 
     public ValidationError(Validator validator, ValidationContext context, String message = null, String key = null) {

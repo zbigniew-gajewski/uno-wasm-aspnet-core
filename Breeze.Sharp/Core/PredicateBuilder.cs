@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
+//using System.Text;
+//using System.Threading.Tasks;
 
 namespace Breeze.Sharp.Core {
   /// <summary>
@@ -53,10 +54,10 @@ namespace Breeze.Sharp.Core {
     /// Combines the first expression with the second using the specified merge function.
     /// </summary>
     static Expression<T> Compose<T>(this Expression<T> first, Expression<T> second, Func<Expression, Expression, Expression> mergeFn) {
-      // zip parameters (map from parameters of second to parameters of first)
-      var map = first.Parameters
-          .Select((f, i) => new { f, s = second.Parameters[i] })
-          .ToDictionary(p => p.s, p => p.f);
+            // zip parameters (map from parameters of second to parameters of first)
+            var map = new ConcurrentDictionary<ParameterExpression, ParameterExpression>(first.Parameters
+                .Select((f, i) => new { f, s = second.Parameters[i] })
+          .ToDictionary(p => p.s, p => p.f));
 
       // replace parameters in the second lambda expression with the parameters in the first
       var secondBody = ParameterRebinder.ReplaceParameters(map, second.Body);
@@ -67,11 +68,11 @@ namespace Breeze.Sharp.Core {
 
     class ParameterRebinder : ExpressionVisitor {
       
-      private ParameterRebinder(Dictionary<ParameterExpression, ParameterExpression> map) {
-        this._map = map ?? new Dictionary<ParameterExpression, ParameterExpression>();
+      private ParameterRebinder(ConcurrentDictionary<ParameterExpression, ParameterExpression> map) {
+        this._map = map ?? new ConcurrentDictionary<ParameterExpression, ParameterExpression>();
       }
 
-      public static Expression ReplaceParameters(Dictionary<ParameterExpression, ParameterExpression> map, Expression exp) {
+      public static Expression ReplaceParameters(ConcurrentDictionary<ParameterExpression, ParameterExpression> map, Expression exp) {
         return new ParameterRebinder(map).Visit(exp);
       }
 
@@ -84,7 +85,7 @@ namespace Breeze.Sharp.Core {
         return base.VisitParameter(p);
       }
 
-      private readonly Dictionary<ParameterExpression, ParameterExpression> _map;
+      private readonly ConcurrentDictionary<ParameterExpression, ParameterExpression> _map;
     }
   }
 }

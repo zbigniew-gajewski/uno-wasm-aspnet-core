@@ -8,21 +8,42 @@
         //[Key]
         public int Id
         {
-            get { return GetValue<int>(); }
-            set { SetValue(value); }
+            get
+            {
+                return EntityAspect.GetValue<int>("Id");
+            }
+            set
+            {
+                //SetValue(value);
+                EntityAspect.SetValue("Id", value);
+            }
         }
 
         //[Required, StringLength(maximumLength: 30)]    // Validation rules
         public string FirstName                      // "Get milk"
         {
-            get { return GetValue<string>(); }
-            set { SetValue(value); }
+            get
+            {
+                return EntityAspect.GetValue<string>("FirstName");
+            }
+            set
+            {
+                // SetValue(value);
+                EntityAspect.SetValue("FirstName", value);
+            }
         }
 
         public string LastName                      // "Get milk"
         {
-            get { return GetValue<string>(); }
-            set { SetValue(value); }
+            get
+            {
+                return EntityAspect.GetValue<string>("LastName");
+            }
+            set
+            {
+                //SetValue(value);
+                EntityAspect.SetValue("LastName", value);
+            }
         }
     }
 }

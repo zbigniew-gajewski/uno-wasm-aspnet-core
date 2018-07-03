@@ -10,7 +10,7 @@
   <Grid Background="LightGray" >
 
     <Grid.RowDefinitions>
-      <RowDefinition Height="200" />
+      <RowDefinition Height="Auto" />
       <RowDefinition Height="Auto" />
       <RowDefinition />
     </Grid.RowDefinitions>
@@ -52,7 +52,7 @@
       HorizontalAlignment="Stretch"
       VerticalAlignment="Stretch"
       Text ="{Binding Result}"
-      FontSize="15"
+      FontSize="12"
       Foreground="DarkRed" />
 
   </Grid>

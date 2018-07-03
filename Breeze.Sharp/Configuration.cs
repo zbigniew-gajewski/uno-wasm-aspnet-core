@@ -1,12 +1,14 @@
 ﻿using Breeze.Sharp.Core;
+using ConcurrentCollections;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
+// using System.Diagnostics;
+//using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+//using System.Text.RegularExpressions;
+//using System.Threading.Tasks;
 
 namespace Breeze.Sharp {
 
@@ -47,7 +49,11 @@ namespace Breeze.Sharp {
     /// previously cached or registered data.
     /// </summary>
     public static void __Reset() {
-      lock (__lock) {
+#if !__WASM__
+//            lock (__lock)
+#endif
+
+            {
         var x = __instance._probedAssemblies;
         __instance = new Configuration();
       }
@@ -61,7 +67,11 @@ namespace Breeze.Sharp {
     /// <param name="assembliesToProbe"></param>
     /// <returns></returns>
     public bool ProbeAssemblies(params Assembly[] assembliesToProbe) {
-      lock (_typeDiscoveryActions) {
+#if !__WASM__
+//            lock (_typeDiscoveryActions)
+#endif
+
+            {
         var assemblies = assembliesToProbe.Except(_probedAssemblies).ToList();
         if (assemblies.Any()) {
           assemblies.ForEach(asm => {
@@ -86,7 +96,12 @@ namespace Breeze.Sharp {
     /// <param name="structuralTypeName"></param>
     /// <returns></returns>
     public Type GetClrType(String structuralTypeName) {
-      lock (_clrTypeMap) {
+
+#if !__WASM__
+//            lock (_clrTypeMap)
+#endif
+
+            {
         Type type;
         _clrTypeMap.TryGetValue(structuralTypeName, out type);
         return type;
@@ -120,9 +135,23 @@ namespace Breeze.Sharp {
     // includeThisAssembly = whether to probe the assembly where 'type' is defined
     private void RegisterTypeDiscoveryActionCore(Type type, Action<Type> action, bool includeThisAssembly) {
       Func<Assembly, bool> shouldProcessAssembly = (a) => {
-        return includeThisAssembly ? true : a != this.GetType().GetTypeInfo().Assembly;
+
+          bool result;
+          if (includeThisAssembly)
+          {
+              return true;
+          }
+          else
+          {
+              return a != this.GetType().GetTypeInfo().Assembly;
+          }
+              //return includeThisAssembly ? true : a != this.GetType().GetTypeInfo().Assembly;
       };
-      lock (_typeDiscoveryActions) {
+#if !__WASM__
+//            lock (_typeDiscoveryActions)
+#endif
+
+            {
         _typeDiscoveryActions.Add(Tuple.Create(type, action, shouldProcessAssembly));
       }
     }
@@ -152,7 +181,11 @@ namespace Breeze.Sharp {
     }
 
     private void RegisterStructuralType(Type clrType) {
-      lock (_clrTypeMap) {
+#if !__WASM__
+//            lock (_clrTypeMap)
+#endif
+
+            {
         var stName = TypeNameInfo.FromClrType(clrType).StructuralTypeName;
         _clrTypeMap[stName] = clrType;
       }
@@ -175,12 +208,15 @@ namespace Breeze.Sharp {
     #region Inner classes 
 
     private class InternCache<T> where T : Internable {
-      public readonly Dictionary<String, Type> TypeMap = new Dictionary<string, Type>();
-      public readonly Dictionary<JNode, T> JNodeMap = new Dictionary<JNode, T>();
+      public readonly ConcurrentDictionary<String, Type> TypeMap = new ConcurrentDictionary<string, Type>();
+      public readonly ConcurrentDictionary<JNode, T> JNodeMap = new ConcurrentDictionary<JNode, T>();
 
       public T FindOrCreate(JNode jNode) {
         try {
-          lock (TypeMap) {
+#if !__WASM__
+//                    lock (TypeMap)
+#endif
+                    {
             T internable;
 
             if (JNodeMap.TryGetValue(jNode, out internable)) {
@@ -199,8 +235,10 @@ namespace Breeze.Sharp {
       public T Intern(T internable) {
         if (internable.IsInterned) return internable;
         var jNode = internable.ToJNode();
-
-        lock (TypeMap) {
+#if !__WASM__
+                lock (TypeMap)
+#endif
+                {
           if (!TypeMap.ContainsKey(internable.Name)) {
             TypeMap[internable.Name] = internable.GetType();
           }
@@ -221,7 +259,10 @@ namespace Breeze.Sharp {
         if (ti.IsAbstract) return;
         if (ti.GenericTypeParameters.Length != 0) return;
         var key = UtilFns.TypeToSerializationName(internableType, defaultSuffix);
-        lock (TypeMap) {
+#if !__WASM__
+                lock (TypeMap)
+#endif
+                {
           TypeMap[key] = internableType;
         }
       }
@@ -247,17 +288,17 @@ namespace Breeze.Sharp {
     public static String ANONTYPE_PREFIX = "_IB_";
 
     private static Configuration __instance = new Configuration();
-    private static readonly Object __lock = new Object();
+//    private static readonly Object __lock = new Object();
     
-    private readonly AsyncSemaphore _asyncSemaphore = new AsyncSemaphore(1);
-    private readonly Object _lock = new Object();
+//    private readonly AsyncSemaphore _asyncSemaphore = new AsyncSemaphore(1);
+//    private readonly Object _lock = new Object();
 
-    private Dictionary<String, Type> _clrTypeMap = new Dictionary<string, Type>();
+    private ConcurrentDictionary<String, Type> _clrTypeMap = new ConcurrentDictionary<string, Type>();
 
-    private readonly HashSet<Assembly> _probedAssemblies = new HashSet<Assembly>();
-    private readonly List<Tuple<Type, Action<Type>, Func<Assembly, bool>>> _typeDiscoveryActions = new List<Tuple<Type, Action<Type>, Func<Assembly, bool>>>();
+    private readonly ConcurrentHashSet<Assembly> _probedAssemblies = new ConcurrentHashSet<Assembly>();
+    private readonly ConcurrentHashSet<Tuple<Type, Action<Type>, Func<Assembly, bool>>> _typeDiscoveryActions = new ConcurrentHashSet<Tuple<Type, Action<Type>, Func<Assembly, bool>>>();
     
-    private readonly Dictionary<String, String> _shortNameMap = new Dictionary<string, string>();
+    private readonly ConcurrentDictionary<String, String> _shortNameMap = new ConcurrentDictionary<string, string>();
 
     private InternCache<Validator> _validatorCache = new InternCache<Validator>();
     private InternCache<NamingConvention> _namingConventionCache = new InternCache<NamingConvention>();

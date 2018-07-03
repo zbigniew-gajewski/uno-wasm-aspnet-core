@@ -1,8 +1,9 @@
 ﻿using Breeze.Sharp.Core;
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
+// using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -229,7 +230,7 @@ namespace Breeze.Sharp {
         var expr = Expression.Call(selectedMethod, argsList);
         return expr;
       } catch (Exception e) {
-        Debug.WriteLine("Unable to handle CacheQuery " + returnType + " ordering:" + e.Message);
+//        Debug.WriteLine("Unable to handle CacheQuery " + returnType + " ordering:" + e.Message);
         return null;
       }
     }
@@ -324,9 +325,9 @@ namespace Breeze.Sharp {
     public static class StringFns {
 
       // this line needs to occur before Map property below.
-      private static readonly Lazy<Dictionary<String, MethodInfo>> __lazyMap = new Lazy<Dictionary<string, MethodInfo>>(() => BuildMap());
+      private static readonly Lazy<ConcurrentDictionary<String, MethodInfo>> __lazyMap = new Lazy<ConcurrentDictionary<string, MethodInfo>>(() => BuildMap());
 
-      public static Dictionary<String, MethodInfo> Map {
+      public static ConcurrentDictionary<String, MethodInfo> Map {
         get { return __lazyMap.Value; }
       }
 
@@ -365,12 +366,12 @@ namespace Breeze.Sharp {
         return s1.IndexOf(s2, cqo.StringComparison);
       }
 
-      private static Dictionary<String, MethodInfo> BuildMap() {
+      private static ConcurrentDictionary<String, MethodInfo> BuildMap() {
         var methods = typeof(StringFns).GetTypeInfo().DeclaredMethods
           .Where(m => (m.IsPublic || m.IsStatic) && m.GetParameters().Length > 0);
         //var methods = typeof(StringFns).GetMethods(BindingFlags.Public | BindingFlags.Static)
         //  .Where(m => m.GetParameters().Length > 0 );
-        return methods.ToDictionary(m => m.Name, m => m);
+        return new ConcurrentDictionary<string, MethodInfo>(methods.ToDictionary(m => m.Name, m => m));
       }
 
     }

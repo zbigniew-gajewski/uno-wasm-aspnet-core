@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
+// using System.Diagnostics;
 using System.Linq;
 
 namespace Breeze.Sharp {
@@ -22,7 +22,7 @@ namespace Breeze.Sharp {
   /// Instances of the NavigationProperty class are constructed automatically during Metadata retrieval. 
   /// However it is also possible to construct them directly via the constructor.
   /// </summary>
-  [DebuggerDisplay("{Name} - {ParentType.Name}")]
+  // buggerDisplay("{Name} - {ParentType.Name}")]
   public class NavigationProperty : StructuralProperty, IJsonSerializable {
     // TODO: what about IsNullable on a scalar navigation property
 

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+// using System.Diagnostics;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
-using System.Threading;
+//using System.Threading;
 using System.Threading.Tasks;
 
 namespace Breeze.Sharp {
@@ -77,13 +77,19 @@ namespace Breeze.Sharp {
     /// </summary>
     public static HttpMessageHandler DefaultHttpMessageHandler {
       get {
-        lock (__lock) {
+#if !__WASM__
+//                lock (__lock)
+#endif
+                {
           return __defaultHttpMessageHandler;
         }
       }
       set {
-        lock (__lock) {
-          __defaultHttpMessageHandler = value;
+#if !__WASM__
+//                lock (__lock)
+#endif
+                {
+                    __defaultHttpMessageHandler = value;
         }
       }
     }
@@ -139,18 +145,13 @@ namespace Breeze.Sharp {
     public String ServerMetadata { get; set; }
 
     public async Task<String> GetAsync(String resourcePath) {
-      return await GetAsync(resourcePath, CancellationToken.None);
-    }
-
-    public async Task<String> GetAsync(String resourcePath, CancellationToken cancellationToken) {
       try {
-        var response = await _httpClient.GetAsync(resourcePath, cancellationToken);
-
-        cancellationToken.ThrowIfCancellationRequested();
-
+        var response = await _httpClient.GetAsync(resourcePath);
+                Console.WriteLine($"DataService - 144 Response: {response} " );
         return await ReadResult(response);
       } catch (Exception e) {
-        Debug.WriteLine(e);
+                //      Debug.WriteLine(e);
+                Console.WriteLine($"DataService - catch 148 exception:{e.ToString()}");
         throw;
       }
     }
@@ -169,7 +170,7 @@ namespace Breeze.Sharp {
         return await ReadResult(response);
       }
       catch (Exception e) {
-        Debug.WriteLine(e);
+//        Debug.WriteLine(e);
         throw;
       }
     }
@@ -197,7 +198,7 @@ namespace Breeze.Sharp {
     private HttpClient _httpClient;
     private String _serviceName;
     private static HttpMessageHandler __defaultHttpMessageHandler;
-    private static Object __lock = new Object();
+//    private static Object __lock = new Object();
 
   }
 

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+//using System.Linq;
+//using System.Text;
+//using System.Threading.Tasks;
 
 namespace Breeze.Sharp {
   /// <summary>
@@ -37,12 +37,20 @@ namespace Breeze.Sharp {
     /// </summary>
     public static CacheQueryOptions Default {
       get {
-        lock (__lock) {
+#if !__WASM__
+//                lock (__lock)
+#endif
+
+                {
           return __default;
         }
       }
       set {
-        lock (__lock) {
+#if !__WASM__
+//                lock (__lock)
+#endif
+
+                {
           __default.StringComparison = value.StringComparison;
           __default.UseSql92CompliantStringComparison = value.UseSql92CompliantStringComparison;
           __default.GuidOrdering = value.GuidOrdering;

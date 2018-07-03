@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
+// using System.Diagnostics;
+// using System.Runtime.CompilerServices;
 
 namespace Breeze.Sharp {
 
@@ -10,7 +10,7 @@ namespace Breeze.Sharp {
   /// Default base class implementation of <see cref="IEntity"/>.
   /// All entities should inherit from this class either directly or indirectly.
   /// </summary>
-  [DebuggerDisplay("{EntityAspect.EntityKey} - {EntityAspect.EntityState}")]
+//  [DebuggerDisplay("{EntityAspect.EntityKey} - {EntityAspect.EntityState}")]
   public abstract class BaseEntity : IEntity {
 
     /// <summary>
@@ -29,13 +29,13 @@ namespace Breeze.Sharp {
 
     #region syntactic sugar helper methods 
 
-    protected T GetValue<T>([CallerMemberName] string propertyName = "") {
-      return EntityAspect.GetValue<T>(propertyName);
-    }
+    //protected T GetValue<T>([CallerMemberName] string propertyName = "") {
+    //  return EntityAspect.GetValue<T>(propertyName);
+    //}
 
-    protected void SetValue(Object value, [CallerMemberName] string propertyName = "") {
-      EntityAspect.SetValue(propertyName, value);
-    }
+    //protected void SetValue(Object value, [CallerMemberName] string propertyName = "") {
+    //  EntityAspect.SetValue(propertyName, value);
+    //}
 
     #endregion
 

@@ -1,7 +1,25 @@
 ﻿<linker>
-  <!--<assembly fullname="Breeze.Sharp">
+  <assembly fullname="Breeze.Sharp">
     <type fullname="*" />
-  </assembly>-->
+  </assembly>
+  <assembly fullname="ConcurrentCollections">
+    <type fullname="*" />
+  </assembly>
+  <assembly fullname="System.Net.Http">
+    <type fullname="*" />
+  </assembly>
+  <assembly fullname="System.Xml">
+    <type fullname="*" />
+  </assembly>
+  <assembly fullname="System.IO">
+    <type fullname="*" />
+  </assembly>
+  <assembly fullname="System.Threading">
+    <type fullname="*" />
+  </assembly>
+  <assembly fullname="System.Threading.Tasks">
+    <type fullname="*" />
+  </assembly>
   <assembly fullname="GalaSoft.MvvmLight">
     <type fullname="*" />
   </assembly>
@@ -20,10 +38,22 @@
   <assembly fullname="Newtonsoft.Json">
     <type fullname="*" />
   </assembly>
-  <!--<assembly fullname="Newtonsoft.Json.Serialization">
+  <assembly fullname="System.Collections">
     <type fullname="*" />
-  </assembly>-->
+  </assembly>
+  <assembly fullname="System.Collections.Concurrent">
+    <type fullname="*" />
+  </assembly>
+  <assembly fullname="System.Linq">
+    <type fullname="*" />
+  </assembly>
+  <assembly fullname=" System">
+    <type fullname="*" />
+  </assembly>
   <assembly fullname="System.Reflection">
+    <type fullname="*" />
+  </assembly>
+  <assembly fullname="System.ComponentModel">
     <type fullname="*" />
   </assembly>
   <assembly fullname="System.ComponentModel.DataAnnotations">
@@ -31,7 +61,7 @@
   </assembly>
   <assembly fullname="Uno.UI">
 		<type fullname="*" />
-	</assembly>
+	</assembly> 
 	<assembly fullname="System.Core">
 		<!-- This is required by JSon.NET and any expression.Compile caller -->
 		<type fullname="System.Linq.Expressions*" />

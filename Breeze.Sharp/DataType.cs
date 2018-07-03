@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ConcurrentCollections;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
@@ -56,7 +57,7 @@ namespace Breeze.Sharp {
     public Func<Object, String> FmtOData { get; set; }
     public Func<Object> GetNextTempValue { get; set; }
     public DataTypeInfo DataTypeInfo { get; set; }
-    public static List<DataType> All = new List<DataType>();
+    public static ConcurrentHashSet<DataType> All = new ConcurrentHashSet<DataType>();
 
     public static DataType String = new DataType(typeof(String)) {
       DefaultValue = "",

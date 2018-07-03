@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace Breeze.Sharp.Core {
@@ -6,10 +7,10 @@ namespace Breeze.Sharp.Core {
   // Dictionary with a ReadOnly property
   // should be used for public list variable whose contents will need to be exposed 
   // as a ReadOnlyCollection<T>
-  public class SafeDictionary<K, V> : Dictionary<K, V> {
+  public class SafeDictionary<K, V> : ConcurrentDictionary<K, V> {
     public SafeDictionary() : base() { 
     }
-    public SafeDictionary(Dictionary<K, V> map) : base(map) {
+    public SafeDictionary(ConcurrentDictionary<K, V> map) : base(map) {
     }
 
     public ReadOnlyDictionary<K,V> ReadOnlyDictionary {

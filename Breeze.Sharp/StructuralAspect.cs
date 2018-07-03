@@ -1,6 +1,7 @@
 ﻿using Breeze.Sharp.Core;
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -21,7 +22,7 @@ namespace Breeze.Sharp {
   public abstract class StructuralAspect {
 
     public StructuralAspect(IStructuralObject stObj) {
-      _backingStore = (stObj is IHasBackingStore) ? null : new Dictionary<String, Object>();
+      _backingStore = (stObj is IHasBackingStore) ? null : new ConcurrentDictionary<String, Object>();
     }
 
     #region Public/protected properties 
@@ -337,7 +338,7 @@ namespace Breeze.Sharp {
         if (_originalValuesMap.ContainsKey(property.Name)) return;
       }
       // reference copy of complex object is deliberate - actual original values will be stored in the co itself.
-      _originalValuesMap.Add(property.Name, oldValue);
+      _originalValuesMap.TryAdd(property.Name, oldValue);
     }
 
     private void BackupProposedValueIfNeeded(DataProperty property, Object oldValue) {
@@ -346,7 +347,7 @@ namespace Breeze.Sharp {
       } else {
         if (_preproposedValuesMap.ContainsKey(property.Name)) return;
       }
-      _preproposedValuesMap.Add(property.Name, oldValue);
+      _preproposedValuesMap.TryAdd(property.Name, oldValue);
     }
 
     public ReadOnlyDictionary<String, Object> OriginalValuesMap {

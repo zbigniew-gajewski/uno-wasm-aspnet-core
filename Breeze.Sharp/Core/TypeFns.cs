@@ -1,6 +1,8 @@
-﻿using System;
+﻿using ConcurrentCollections;
+using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
+// using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
@@ -153,7 +155,11 @@ namespace Breeze.Sharp.Core {
     }
 
     public static IEnumerable<Type> GetTypes(Assembly assembly) {
-      lock (__invalidAssemblies) {
+#if !__WASM__
+//            lock (__invalidAssemblies)
+#endif
+
+            {
         if (__invalidAssemblies.Contains(assembly)) {
           return new Type[] { };
         }
@@ -166,25 +172,34 @@ namespace Breeze.Sharp.Core {
         if (ex is System.Reflection.ReflectionTypeLoadException) {
           msg = ((ReflectionTypeLoadException)ex).LoaderExceptions.ToAggregateString(". ");
         }
-        
-        Debug.WriteLine("Error: Unable to execute Assembly.DefinedTypes for "
-          + assembly.ToString() + "." + msg);
-        lock (__invalidAssemblies) {
+
+                //        Debug.WriteLine("Error: Unable to execute Assembly.DefinedTypes for "
+                //          + assembly.ToString() + "." + msg);
+#if !__WASM__
+//                lock (__invalidAssemblies)
+#endif
+
+                {
           __invalidAssemblies.Add(assembly);
         }
         return new Type[] { };
       }
     }
 
-    private static List<Assembly> GetValidAssemblies(IEnumerable<Assembly> assemblies) {
-      List<Assembly> validAssemblies;
-      lock (__invalidAssemblies) {
-        validAssemblies = assemblies.Except(__invalidAssemblies).ToList();
+    private static ConcurrentHashSet<Assembly> GetValidAssemblies(IEnumerable<Assembly> assemblies) {
+            ConcurrentHashSet<Assembly> validAssemblies;
+
+#if !__WASM__
+//            lock (__invalidAssemblies)
+#endif
+
+            {
+        validAssemblies = assemblies.Except(__invalidAssemblies).ToConcurrentHashSet();
       }
       return validAssemblies;
     }
 
-    private static List<Assembly> __invalidAssemblies = new List<Assembly>();
+    private static ConcurrentBag<Assembly> __invalidAssemblies = new ConcurrentBag<Assembly>();
 
     #endregion
 
@@ -222,12 +237,27 @@ namespace Breeze.Sharp.Core {
     /// <param name="type"></param>
     /// <returns></returns>
     public static Type GetNonNullableType(Type type) {
-      return IsNullableType(type) ? GetGenericArgument(type) : type;
+
+            Type resultType;
+            if (IsNullableType(type))
+            {
+                return GetGenericArgument(type);
+            }
+            else
+            {
+                return type;
+            }
+      //return IsNullableType(type) ? GetGenericArgument(type) : type;
     }
 
-    private static Dictionary<Type, NullableInfo> NullableInfoMap {
+    private static ConcurrentDictionary<Type, NullableInfo> NullableInfoMap {
       get {
-        lock (__nullableInfoMap) {
+
+#if !__WASM__
+//                lock (__nullableInfoMap)
+#endif
+
+                {
           if (__nullableInfoMap.Count == 0) {
             UpdateNullableInfoMap<Byte>();
             UpdateNullableInfoMap<SByte>();
@@ -257,7 +287,7 @@ namespace Breeze.Sharp.Core {
       __nullableInfoMap[typeof(T)] = new NullableInfo(typeof(Nullable<T>), default(T));
     }
 
-    private static Dictionary<Type, NullableInfo> __nullableInfoMap = new Dictionary<Type, NullableInfo>();
+    private static ConcurrentDictionary<Type, NullableInfo> __nullableInfoMap = new ConcurrentDictionary<Type, NullableInfo>();
 
     private class NullableInfo {
       public NullableInfo(Type pNullableType, Object pDefaultValue) {
