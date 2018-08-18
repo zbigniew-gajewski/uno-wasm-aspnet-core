@@ -62,12 +62,12 @@ namespace UnoTest.Shared.ViewModels
 
             var jsonString = await response.Content.ReadAsStringAsync();
 
-            // todo: better deserialization here:
+            // to do: better deserialization here:
             var jsonStringSplitted = jsonString
                 .Replace('}',' ')
                 .Replace(']', ' ')
                 .Split(',')
-                .Where(l => l.Contains("First") || l.Contains("Last"));
+                .Where(l => l.Contains("First") || l.Contains("Last") || l.Contains("Descrip"));
 
             var stringBuilder = new StringBuilder();
             foreach (var line in jsonStringSplitted)

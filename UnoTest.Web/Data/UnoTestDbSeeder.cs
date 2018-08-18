@@ -29,9 +29,9 @@
                     ctx.Customers.AddRange(
                         new List<Customer>(
                         new[] {
-                        new Customer { FirstName = "Adam1", LastName = "Novak1" },
-                        new Customer { FirstName = "Adam2", LastName = "Novak2" },
-                        new Customer { FirstName = "Adam3", LastName = "Novak3" }
+                        new Customer { FirstName = "Adam1", LastName = "Novak1", Description = "Description of Novak 1" },
+                        new Customer { FirstName = "Adam2", LastName = "Novak2", Description = "Description of Novak 2" },
+                        new Customer { FirstName = "Adam3", LastName = "Novak3", Description = "Description of Novak 3" }
                         }));
                     ctx.SaveChanges();
                 }

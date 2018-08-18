@@ -48,9 +48,9 @@
 
   <ItemGroup>
 		<PackageReference Include="ConcurrentHashSet" Version="1.0.2" />
-		<PackageReference Include="Microsoft.Data.Edm" Version="5.8.3" />
-		<PackageReference Include="Microsoft.Data.OData" Version="5.8.3" />
-		<PackageReference Include="Microsoft.Data.Services.Client" Version="5.8.3" />
+		<PackageReference Include="Microsoft.Data.Edm" Version="5.8.4" />
+		<PackageReference Include="Microsoft.Data.OData" Version="5.8.4" />
+		<PackageReference Include="Microsoft.Data.Services.Client" Version="5.8.4" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="1.1.1" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Filter" Version="1.1.1" />
 		<PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
@@ -58,8 +58,8 @@
 		<PackageReference Include="System.ComponentModel.Annotations" Version="4.5.0" />
 		<PackageReference Include="Uno.GalaSoft.MvvmLight" Version="5.4.0-uno.134" />
 		<PackageReference Include="Uno.GalaSoft.MvvmLight.Platform" Version="5.4.0-uno.134" />
-		<PackageReference Include="Uno.UI" Version="1.31.0-dev.108" />
-		<PackageReference Include="Uno.Wasm.Bootstrap" Version="1.0.0-dev.23" />
+		<PackageReference Include="Uno.UI" Version="1.31.0-dev.278" />
+		<PackageReference Include="Uno.Wasm.Bootstrap" Version="1.0.0-dev.40" />
 	</ItemGroup>
 
   <ItemGroup>
