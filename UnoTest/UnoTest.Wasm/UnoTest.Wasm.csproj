@@ -51,8 +51,8 @@
 		<PackageReference Include="Microsoft.Data.Edm" Version="5.8.4" />
 		<PackageReference Include="Microsoft.Data.OData" Version="5.8.4" />
 		<PackageReference Include="Microsoft.Data.Services.Client" Version="5.8.4" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="1.1.1" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Filter" Version="1.1.1" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="2.1.1" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Filter" Version="1.1.2" />
 		<PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
 		<PackageReference Include="OpenRiaServices.Client" Version="4.5.3" />
 		<PackageReference Include="System.ComponentModel.Annotations" Version="4.5.0" />
