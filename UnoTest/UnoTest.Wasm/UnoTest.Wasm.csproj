@@ -53,12 +53,12 @@
 		<PackageReference Include="Microsoft.Data.Services.Client" Version="5.8.4" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="2.1.1" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Filter" Version="1.1.2" />
-		<PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+		<PackageReference Include="Newtonsoft.Json" Version="12.0.1-beta1" />
 		<PackageReference Include="OpenRiaServices.Client" Version="4.5.3" />
 		<PackageReference Include="System.ComponentModel.Annotations" Version="4.5.0" />
 		<PackageReference Include="Uno.GalaSoft.MvvmLight" Version="5.4.0-uno.134" />
 		<PackageReference Include="Uno.GalaSoft.MvvmLight.Platform" Version="5.4.0-uno.134" />
-		<PackageReference Include="Uno.UI" Version="1.41.1-dev.206" />
+		<PackageReference Include="Uno.UI" Version="1.42.0-dev.278" />
 		<PackageReference Include="Uno.Wasm.Bootstrap" Version="1.0.0-dev.58" />
 	</ItemGroup>
 
