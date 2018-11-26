@@ -8,7 +8,7 @@
   <ItemGroup>
     <PackageReference Include="Breeze.AspNetCore.NetCore" Version="0.1.2" />
     <PackageReference Include="Breeze.Persistence.EFCore" Version="0.1.2" />
-    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.1.5" />
+    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.1.6" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.1-beta1" />
   </ItemGroup>
 
