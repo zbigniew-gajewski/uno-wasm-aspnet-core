@@ -1,4 +1,5 @@
 ﻿using System;
+using Windows.UI.Xaml;
 
 namespace UnoTest.Wasm
 {
@@ -8,7 +9,7 @@ namespace UnoTest.Wasm
 
 		static void Main(string[] args)
 		{
-			_app = new App();
+			Application.Start(_ => new App());
 		}
 	}
 }
