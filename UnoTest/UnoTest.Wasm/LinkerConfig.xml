@@ -1,68 +1,234 @@
 ﻿<linker>
-  <assembly fullname="Breeze.Sharp">
+   <assembly fullname="breeze.sharp">
     <type fullname="*" />
   </assembly>
-  <assembly fullname="ConcurrentCollections">
+  <assembly fullname="concurrentcollections">
     <type fullname="*" />
   </assembly>
-  <assembly fullname="System.Net.Http">
+  <assembly fullname="system.net.http">
     <type fullname="*" />
   </assembly>
-  <assembly fullname="System.Xml">
+  <assembly fullname="system.xml">
     <type fullname="*" />
   </assembly>
-  <assembly fullname="System.IO">
+  <assembly fullname="system.io">
     <type fullname="*" />
   </assembly>
-  <assembly fullname="System.Threading">
+  <assembly fullname="system.threading">
     <type fullname="*" />
   </assembly>
-  <assembly fullname="System.Threading.Tasks">
+  <assembly fullname="system.threading.tasks">
     <type fullname="*" />
   </assembly>
-  <assembly fullname="GalaSoft.MvvmLight">
+  <assembly fullname="galasoft.mvvmlight">
     <type fullname="*" />
   </assembly>
-  <assembly fullname="Microsoft.Data.Edm">
+  <assembly fullname="microsoft.data.edm">
     <type fullname="*" />
   </assembly>
-  <assembly fullname="Microsoft.Data.OData">
+  <assembly fullname="microsoft.data.odata">
     <type fullname="*" />
   </assembly>
-  <assembly fullname="Microsoft.Data.Services.Client">
+  <assembly fullname="microsoft.data.services.client">
     <type fullname="*" />
   </assembly>
-  <assembly fullname="GalaSoft.MvvmLight.Platform">
+  <assembly fullname="galasoft.mvvmlight.platform">
     <type fullname="*" />
   </assembly>
-  <assembly fullname="Newtonsoft.Json">
+  <assembly fullname="newtonsoft.json">
     <type fullname="*" />
   </assembly>
-  <assembly fullname="System.Collections">
+  <assembly fullname="system.collections">
     <type fullname="*" />
   </assembly>
-  <assembly fullname="System.Collections.Concurrent">
+  <assembly fullname="system.collections.concurrent">
     <type fullname="*" />
   </assembly>
-  <assembly fullname="System.Linq">
+  <assembly fullname="system.linq">
     <type fullname="*" />
   </assembly>
-  <assembly fullname=" System">
+  <assembly fullname=" system">
     <type fullname="*" />
   </assembly>
-  <assembly fullname="System.Reflection">
+  <assembly fullname="system.reflection">
     <type fullname="*" />
   </assembly>
-  <assembly fullname="System.ComponentModel">
+ <assembly fullname="system.componentmodel">
     <type fullname="*" />
   </assembly>
-  <assembly fullname="System.ComponentModel.DataAnnotations">
+  
+  <!--Does not compile-->
+  <!--<assembly fullname="System.ComponentModel.DataAnnotations">
+    <type fullname="*" />
+  </assembly>-->
+
+  <assembly fullname="System.ComponentModel.Composition">
     <type fullname="*" />
   </assembly>
-  <assembly fullname="Uno.UI">
-		<type fullname="*" />
-	</assembly> 
-	<assembly fullname="System.Core">
+
+  <assembly fullname="System.Web.Services">
+    <type fullname="*" />
+  </assembly>
+
+  <assembly fullname="System.IO.Compression">
+    <type fullname="*" />
+  </assembly>
+
+  <assembly fullname="System.IO.Compression.FileSystem">
+    <type fullname="*" />
+  </assembly>
+
+  <assembly fullname="System.ServiceModel.Internals">
+    <type fullname="*" />
+  </assembly>
+  
+  <assembly fullname="Microsoft.Extensions.Configuration.Abstractions">
+    <type fullname="*" />
+  </assembly>
+  
+  <assembly fullname="System.Dynamic.Runtime">
+    <type fullname="*" />
+  </assembly>
+
+  <assembly fullname="System.Net.Requests">
+    <type fullname="*" />
+  </assembly>
+
+  <assembly fullname="System.Resources.ResourceManager">
+    <type fullname="*" />
+  </assembly>
+  
+  <assembly fullname="System.Net.Requests">
+    <type fullname="*" />
+  </assembly>
+  
+  <assembly fullname="System.Net.Requests">
+    <type fullname="*" />
+  </assembly>
+
+  <assembly fullname="System.Runtime.Extensions">
+    <type fullname="*" />
+  </assembly>
+
+  <assembly fullname=" System.Transactions">
+    <type fullname="*" />
+  </assembly>
+
+  <assembly fullname="System.Globalization">
+    <type fullname="*" />
+  </assembly>
+
+  <assembly fullname="System.Diagnostics.Debug">
+    <type fullname="*" />
+  </assembly>
+
+  <assembly fullname="System.Reflection.Emit.Lightweight">
+    <type fullname="*" />
+  </assembly>
+
+  <assembly fullname="System.Reflection.Emit.ILGeneration">
+    <type fullname="*" />
+  </assembly>
+
+  <assembly fullname="Microsoft.Extensions.DependencyInjection.Abstractions">
+    <type fullname="*" />
+  </assembly>
+
+  <assembly fullname="System.Memory">
+    <type fullname="*" />
+  </assembly>
+
+  <assembly fullname="System.Runtime.CompilerServices.Unsafe">
+    <type fullname="*" />
+  </assembly>
+
+  <assembly fullname="System.Numerics.Vectors">
+    <type fullname="*" />
+  </assembly>
+
+  <assembly fullname="System.Text.RegularExpressions">
+    <type fullname="*" />
+  </assembly>
+
+  <assembly fullname="System.Xml.ReaderWriter">
+    <type fullname="*" />
+  </assembly>
+
+  <assembly fullname="System.Linq.Expressions">
+    <type fullname="*" />
+  </assembly>
+
+  <assembly fullname="System.ComponentModel.EventBasedAsync">
+    <type fullname="*" />
+  </assembly>
+
+  <assembly fullname="System.Text.Encoding">
+    <type fullname="*" />
+  </assembly>
+
+  <assembly fullname="System.ObjectModel">
+    <type fullname="*" />
+  </assembly>
+
+  <assembly fullname="System.Reflection.Extensions">
+    <type fullname="*" />
+  </assembly>
+
+  <assembly fullname="System.Text.Encoding.Extensions">
+    <type fullname="*" />
+  </assembly>
+
+  <assembly fullname="System.Net.Primitives">
+    <type fullname="*" />
+  </assembly>
+
+  <assembly fullname="System.Xml.XDocument">
+    <type fullname="*" />
+  </assembly>
+
+  <assembly fullname="Microsoft.Extensions.Options.ConfigurationExtensions">
+    <type fullname="*" />
+  </assembly>
+
+  <assembly fullname="Microsoft.Extensions.Options.ConfigurationExtensions">
+    <type fullname="*" />
+  </assembly>
+
+  <assembly fullname="Microsoft.Extensions.Configuration.Binder">
+    <type fullname="*" />
+  </assembly>
+
+  <assembly fullname="Microsoft.Extensions.Configuration.Binder">
+    <type fullname="*" />
+  </assembly>
+
+  <assembly fullname="Microsoft.Extensions.Logging.Configuration">
+    <type fullname="*" />
+  </assembly>
+
+  <assembly fullname="Microsoft.Extensions.Configuration">
+    <type fullname="*" />
+  </assembly>
+  
+
+
+
+  <assembly fullname="System.Linq.Queryable">
+  </assembly>
+  
+  <assembly fullname="System.Runtime">
+    <type fullname="*" />
+  </assembly>
+  
+  <assembly fullname="netstandard" />
+
+  <assembly fullname="UnoTest.Wasm" />
+  <assembly fullname="Uno.UI" />
+
+  <assembly fullname="mscorlib">
+  </assembly>
+
+  <assembly fullname="System.Core">
 		<!-- This is required by JSon.NET and any expression.Compile caller -->
 		<type fullname="System.Linq.Expressions*" />
 	</assembly>

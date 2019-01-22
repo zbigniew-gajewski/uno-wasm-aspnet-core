@@ -1,14 +1,26 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<!--<Project Sdk="Microsoft.NET.Sdk.Web">-->
 
-	<PropertyGroup>
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <WasmHead>true</WasmHead>
+    <DefineConstants>__WASM__</DefineConstants>
+    <!--<MonoRuntimeDebuggerEnabled>true</MonoRuntimeDebuggerEnabled>-->
+
+  </PropertyGroup>
+
+
+	<!--<PropertyGroup>
 		<OutputType>Exe</OutputType>
 		<TargetFramework>netstandard2.0</TargetFramework>
 		<WasmHead>true</WasmHead>
 		<DefineConstants>$(DefineConstants);__WASM__</DefineConstants>
 		<NoWarn>NU1701</NoWarn>
 		<RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
-    <!--<LinkedOpenRiaServerProject>..\..\UnoTest.Web\UnoTest.Web.csproj</LinkedOpenRiaServerProject>-->
-  </PropertyGroup>
+    --><!--<LinkedOpenRiaServerProject>..\..\UnoTest.Web\UnoTest.Web.csproj</LinkedOpenRiaServerProject>--><!--
+  </PropertyGroup>-->
 
 	<ItemGroup>
 		<Content Include="..\UnoTest.UWP\Assets\*.png" Link="Assets\%(FileName)%(Extension)" />
@@ -58,8 +70,9 @@
 		<PackageReference Include="System.ComponentModel.Annotations" Version="4.5.0" />
 		<PackageReference Include="Uno.GalaSoft.MvvmLight" Version="5.4.0-uno.134" />
 		<PackageReference Include="Uno.GalaSoft.MvvmLight.Platform" Version="5.4.0-uno.134" />
-		<PackageReference Include="Uno.UI" Version="1.43.0-dev.641" />
-		<PackageReference Include="Uno.Wasm.Bootstrap" Version="1.0.0-dev.137" />
+		<PackageReference Include="Uno.UI" Version="1.43.0-dev.675" />
+		<PackageReference Include="Uno.Wasm.Bootstrap" Version="1.0.0-dev.147" />
+    <DotNetCliToolReference Include="Uno.Wasm.Bootstrap.Cli" Version="1.0.0-dev.112" />
 	</ItemGroup>
 
   <ItemGroup>
