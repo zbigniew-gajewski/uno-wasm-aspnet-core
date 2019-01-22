@@ -7,7 +7,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <WasmHead>true</WasmHead>
     <DefineConstants>__WASM__</DefineConstants>
-    <!--<MonoRuntimeDebuggerEnabled>true</MonoRuntimeDebuggerEnabled>-->
+    <MonoRuntimeDebuggerEnabled>true</MonoRuntimeDebuggerEnabled>
 
   </PropertyGroup>
 

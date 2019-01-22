@@ -71,6 +71,7 @@
             provider.Mappings[".dll"] = "application/dll";
             provider.Mappings[".clrdll"] = "application/clrdll";
             provider.Mappings[".clr"] = "application/clr";
+            provider.Mappings[".pdb"] = "application/pdb";
 
             if (env.IsDevelopment())
             {
