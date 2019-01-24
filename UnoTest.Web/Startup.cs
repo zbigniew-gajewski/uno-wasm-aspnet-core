@@ -37,6 +37,8 @@
                 //cfg.UseSqlServer(configuration.GetConnectionString("UnoTestConnectionString"));
             });
 
+            services.AddCors();
+
             services.AddTransient<UnoTestDbSeeder>();
 
             var mvcBuilder = services.AddMvc();
@@ -105,7 +107,11 @@
                 ContentTypeProvider = provider,
                 FileProvider = new PhysicalFileProvider(newWwwRootDirectory),
                 //RequestPath = "/uno"
-            });        
+            });
+
+            app.UseCors(builder =>
+                 builder.WithOrigins("http://localhost:60614"));
+
 
             app.UseMvc(routes =>
             {
