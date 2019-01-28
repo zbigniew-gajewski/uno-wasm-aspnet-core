@@ -2,9 +2,6 @@
    <assembly fullname="Breeze.Sharp">
     <type fullname="*" />
   </assembly>
-  <!--<assembly fullname="ConcurrentCollections">
-    <type fullname="*" />
-  </assembly>-->
   <assembly fullname="System.Net.Http">
     <type fullname="*" />
   </assembly>
@@ -14,6 +11,10 @@
   <assembly fullname="System.Io">
     <type fullname="*" />
   </assembly>
+  <assembly fullname="Microsoft.Data.Services.Client">
+    <type fullname="*" />
+  </assembly>
+
   
   <!--<assembly fullname="System.Threading">
     <type fullname="*" />

@@ -196,17 +196,15 @@ namespace Breeze.Sharp {
     public override String GetResourcePath(MetadataStore metadataStore) {
 
       var dsq = this.DataServiceQuery;
-
-      return @"Customers?";      
-
+            
       var requestUri = dsq.RequestUri.AbsoluteUri;
-
 
       var s2 = requestUri.Replace(__placeholderServiceName, "");
 
       var resourceName = (String.IsNullOrEmpty(ResourceName))
         ? metadataStore.GetDefaultResourceName(this.QueryableType)
         : ResourceName;
+
       if (String.IsNullOrEmpty(resourceName)) {
         throw new Exception("Cannot find a default resource name for CLR type: " + this.QueryableType.FullName);
       }
