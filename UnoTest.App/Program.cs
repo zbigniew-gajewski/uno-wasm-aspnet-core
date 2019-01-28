@@ -30,7 +30,7 @@ namespace UnoApp
                 var result = await entityManager.ExecuteQuery(query);
                 foreach (var customer in result)
                 {
-                    Console.WriteLine($"{customer.FirstName} {customer.LastName}");
+                    Console.WriteLine($"{customer.FirstName} {customer.LastName} {customer.Description}");
                 }
             }
             catch (Exception ex)

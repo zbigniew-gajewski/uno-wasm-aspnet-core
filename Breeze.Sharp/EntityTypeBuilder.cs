@@ -1,6 +1,6 @@
 ﻿
 using System.Linq;
-// using System.Threading;
+using System.Threading;
 using Breeze.Sharp.Core;
 using System;
 using System.Linq.Expressions;
@@ -20,95 +20,46 @@ namespace Breeze.Sharp {
     public MetadataStore MetadataStore { get; private set; }
 
 
-    public StructuralType CreateStructuralType(Type clrType) {
+    internal StructuralType CreateStructuralType(Type clrType) {
       if (typeof(IEntity).IsAssignableFrom(clrType)) {
-                Console.WriteLine("10 - MetadataStore - 25");
-                return CreateEntityType(clrType);
+        return CreateEntityType(clrType);
       } else {
         return CreateComplexType(clrType);
       }
     }
 
-    public EntityType CreateEntityType(Type clrType ) {
+    internal EntityType CreateEntityType(Type clrType ) {
+      var typeInfo = clrType.GetTypeInfo();
+      var baseEntityType = (typeInfo.BaseType == typeof(Object)) ? null : MetadataStore.GetEntityType(typeInfo.BaseType);
+      
+      var entityType = new EntityType(MetadataStore) {
+        ClrType = clrType,
+        BaseEntityType = baseEntityType
+      };
 
-            try
-            {
-                var typeInfo = clrType.GetTypeInfo();
-                //      Console.WriteLine($" --- EntityTypeBuilder TypeInfo: {typeInfo.ToString()}");
-                EntityType baseEntityType;
-                if (typeInfo.BaseType == typeof(Object))
-                {
-                    baseEntityType = null;
-                    //               Console.WriteLine($" --- EntityTypeBuilder baseEntityType is NULL");
-                }
-                else
-                {
-                    //                Console.WriteLine($" --- EntityTypeBuilder baseEntityType is NOT NULL ");
-                    baseEntityType = MetadataStore.GetEntityType(typeInfo.BaseType);
-                    //                Console.WriteLine($" --- EntityTypeBuilder typeInfo.BaseType = {typeInfo.BaseType}");
-                }
+      MetadataStore.AddEntityType(entityType);
 
-                //var baseEntityType = (typeInfo.BaseType == typeof(Object)) ? null : MetadataStore.GetEntityType(typeInfo.BaseType);
+      if (baseEntityType != null) {
+        if (typeof (IEntity).IsAssignableFrom(typeInfo.BaseType) && typeInfo.BaseType != typeof (BaseEntity)) {
+          UpdateBaseProperties(entityType, baseEntityType);
+        }
+      }
 
-                //            Console.WriteLine($" --- EntityTypeBuilder baseEntityType: {baseEntityType.ToString()}");
+      foreach (var pi in typeInfo.DeclaredProperties) {
+        if (!pi.GetMethod.IsPublic) continue;
+        if (pi.Name == "EntityAspect") continue;
 
-                var entityType = new EntityType(MetadataStore)
-                {
-                    ClrType = clrType,
-                    BaseEntityType = baseEntityType
-                };
-
-                Console.WriteLine("11 - 01 - EntityTypeBuilder - 57");
-                MetadataStore.AddEntityType(entityType);
-                Console.WriteLine($"11 - 02 - EntityTypeBuilder - 63 {MetadataStore.EntityTypes.Count()}");
-
-                if (baseEntityType != null)
-                {
-                    if (typeof(IEntity).IsAssignableFrom(typeInfo.BaseType) && typeInfo.BaseType != typeof(BaseEntity))
-                    {
-                        UpdateBaseProperties(entityType, baseEntityType);
-                    }
-                }
-
-                foreach (var pi in typeInfo.DeclaredProperties)
-                {
-                    Console.WriteLine("11 - 01 - EntityTypeBuilder - 66");
-                    try
-                    {
-                        if (!pi.GetMethod.IsPublic) continue;
-                        if (pi.Name == "EntityAspect") continue;
-
-                        if (pi.PropertyType.GenericTypeArguments.Any() &&
-                            pi.PropertyType.GetGenericTypeDefinition() == typeof(NavigationSet<>))
-                        {
-                            Console.WriteLine("11 - MetadataStore - 75");
-                            CreateNavigationProperty(entityType, pi);
-                        }
-                        else if (typeof(IEntity).IsAssignableFrom(pi.PropertyType))
-                        {
-                            Console.WriteLine("11 - MetadataStore - 79");
-                            CreateNavigationProperty(entityType, pi);
-                        }
-                        else
-                        {
-                            Console.WriteLine("11 - MetadataStore - 84");
-                            CreateDataProperty(entityType, pi);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.Write(ex);
-                    }
-
-                }
-
-                return entityType;
-            }
-            catch (Exception ex)
-            {
-                Console.Write(ex);
-                return null;
-            }
+        if (pi.PropertyType.GenericTypeArguments.Any() &&
+            pi.PropertyType.GetGenericTypeDefinition() == typeof (NavigationSet<>)) {
+          CreateNavigationProperty(entityType, pi);
+        } else if (typeof (IEntity).IsAssignableFrom(pi.PropertyType)) {
+          CreateNavigationProperty(entityType, pi);
+        } else {
+          CreateDataProperty(entityType, pi);
+        }
+      }
+      
+      return entityType;
     }
 
     private ComplexType CreateComplexType(Type clrType) {
@@ -116,8 +67,8 @@ namespace Breeze.Sharp {
       var complexType = new ComplexType(MetadataStore) {
         ClrType = clrType
       };
-            Console.WriteLine("11 00 01 - MetadataStore - 129");
-            MetadataStore.AddComplexType(complexType);
+
+      MetadataStore.AddComplexType(complexType);
 
       var baseComplexType = (typeInfo.BaseType == typeof(Object)) ? null : MetadataStore.GetComplexType(typeInfo.BaseType);
       if (baseComplexType != null)
@@ -125,15 +76,11 @@ namespace Breeze.Sharp {
         UpdateBaseProperties(complexType, baseComplexType);
       }
 
-
-            Console.WriteLine("11 001 - MetadataStore - 129");
-
-            foreach (var pi in typeInfo.DeclaredProperties) {
+      foreach (var pi in typeInfo.DeclaredProperties) {
         if (!pi.GetMethod.IsPublic) {
           continue;
         }
-                Console.WriteLine("11 01 - MetadataStore - 136");
-                CreateDataProperty(complexType, pi);
+        CreateDataProperty(complexType, pi);
       }
       
       return complexType;
@@ -142,7 +89,6 @@ namespace Breeze.Sharp {
     private static void UpdateBaseProperties(StructuralType structuralType, StructuralType baseStructuralType) {
       baseStructuralType.DataProperties.ForEach(dp => {
         var newDp = new DataProperty(dp);
-          Console.WriteLine($" vvv EntityTypeBuilder - 127");
         structuralType.AddDataProperty(newDp);
       });
       if (baseStructuralType.IsEntityType) {
@@ -156,13 +102,11 @@ namespace Breeze.Sharp {
     }
 
     private DataProperty CreateDataProperty(StructuralType structuralType, PropertyInfo pInfo) {
-            Console.WriteLine("12 - EntityTypeBuilder - 137");
-            var propType = pInfo.PropertyType;
+      var propType = pInfo.PropertyType;
       var dp = new DataProperty(pInfo.Name);
 
-            Console.WriteLine("12 - EntityTypeBuilder - 140");
-            // TODO: handle isScalar
-            if (typeof(IComplexObject).IsAssignableFrom(propType)) {
+      // TODO: handle isScalar
+      if (typeof(IComplexObject).IsAssignableFrom(propType)) {
         dp.ComplexType = MetadataStore.GetComplexType(propType);
         dp.IsNullable = false;
         // complex Objects do not have defaultValues currently
@@ -179,8 +123,7 @@ namespace Breeze.Sharp {
         }
       }
 
-            Console.WriteLine("12 - EntityTypeBuilder - 159");
-            structuralType.AddDataProperty(dp);
+      structuralType.AddDataProperty(dp);
       return dp;
     }
 
@@ -268,7 +211,7 @@ namespace Breeze.Sharp {
       return new NavigationPropertyBuilder<TEntity, TTarget>(this, np);
     }
 
-    public PropertyInfo GetPropertyInfo<TValue>(Expression<Func<TEntity, TValue>> propExpr) {
+    internal PropertyInfo GetPropertyInfo<TValue>(Expression<Func<TEntity, TValue>> propExpr) {
       var lambda = propExpr as LambdaExpression;
       if (lambda == null) throw new ArgumentNullException("propExpr");
       var memberExpr = lambda.Body as MemberExpression;
@@ -287,7 +230,7 @@ namespace Breeze.Sharp {
   /// Provides a fluent interface for configuring an DataProperty within the MetadataStore.
   /// </summary>
   public class DataPropertyBuilder {
-    public DataPropertyBuilder(DataProperty dp ) {
+    internal DataPropertyBuilder(DataProperty dp ) {
       DataProperty = dp;
     }
     
@@ -373,7 +316,7 @@ namespace Breeze.Sharp {
   /// <typeparam name="TTarget"></typeparam>
   public class NavigationPropertyBuilder<TEntity, TTarget> where TEntity: IEntity where TTarget: IEntity {
 
-    public NavigationPropertyBuilder(EntityTypeBuilder<TEntity> etb, NavigationProperty np) {
+    internal NavigationPropertyBuilder(EntityTypeBuilder<TEntity> etb, NavigationProperty np) {
       _etb = etb;
       NavigationProperty = np;
     }

@@ -7,12 +7,10 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-//using System.Threading;
+using System.Threading;
 using Newtonsoft.Json.Linq;
-using ConcurrentCollections;
-using System.Collections.Concurrent;
-//using Newtonsoft.Json.Converters;
-//using System.Text.RegularExpressions;
+using Newtonsoft.Json.Converters;
+using System.Text.RegularExpressions;
 
 namespace Breeze.Sharp {
 
@@ -68,10 +66,10 @@ namespace Breeze.Sharp {
     }
 
     private void Initialize() {
-      //var x = AuthorizedThreadId;
+      var x = AuthorizedThreadId;
       EntityGroups = new EntityGroupCollection();
       UnattachedChildrenMap = new UnattachedChildrenMap();
-      TempIds = new List<UniqueId>();
+      TempIds = new HashSet<UniqueId>();
     }
 
   
@@ -79,46 +77,46 @@ namespace Breeze.Sharp {
 
     #region Thread checking
 
-    //public Int32 CurrentThreadId {
-    //  get {
+    public Int32 CurrentThreadId {
+      get {
 
-    //    if (__threadLocalId == null) {
-    //      __threadLocalId = new ThreadLocal<int>();
-    //    }
-    //    if (__threadLocalId.Value == 0) {
-    //      __threadLocalId.Value = __nextThreadId++;
-    //    }
+        if (__threadLocalId == null) {
+          __threadLocalId = new ThreadLocal<int>();
+        }
+        if (__threadLocalId.Value == 0) {
+          __threadLocalId.Value = __nextThreadId++;
+        }
 
-    //    return __threadLocalId.Value;
-    //  }
-    //}
+        return __threadLocalId.Value;
+      }
+    }
 
-    //public Int32 AuthorizedThreadId {
-    //  get {
-    //    if (_authorizedThreadId == 0) {
-    //      _authorizedThreadId = CurrentThreadId;
-    //    }
-    //    return _authorizedThreadId;
-    //  }
-    //}
+    public Int32 AuthorizedThreadId {
+      get {
+        if (_authorizedThreadId == 0) {
+          _authorizedThreadId = CurrentThreadId;
+        }
+        return _authorizedThreadId;
+      }
+    }
 
-    //public void CheckAuthorizedThreadId() {
-    //  return;
+    public void CheckAuthorizedThreadId() {
+      return;
 
-    //  //if (CurrentThreadId != AuthorizedThreadId) {
-    //  //  String msg = "An EntityManager can only execute on a single thread. This EntityManager is authorized to execute on the thread with id=’{0}’; ";
-    //  //  msg += "the requested operation came from the thread with Id=‘{1}’.\n\n";
-    //  //  msg += "You may have to disable this cross-thread checking for specific reasons such as automated testing. ";
-    //  //  msg += "Please review our documentation on multi-threading issues and the EntityManager.AuthorizedThreadId property.";
-    //  //  msg = String.Format(msg, AuthorizedThreadId, CurrentThreadId);
-    //  //  throw new Exception(msg);
-    //  //}
-    //}
+      //if (CurrentThreadId != AuthorizedThreadId) {
+      //  String msg = "An EntityManager can only execute on a single thread. This EntityManager is authorized to execute on the thread with id=’{0}’; ";
+      //  msg += "the requested operation came from the thread with Id=‘{1}’.\n\n";
+      //  msg += "You may have to disable this cross-thread checking for specific reasons such as automated testing. ";
+      //  msg += "Please review our documentation on multi-threading issues and the EntityManager.AuthorizedThreadId property.";
+      //  msg = String.Format(msg, AuthorizedThreadId, CurrentThreadId);
+      //  throw new Exception(msg);
+      //}
+    }
 
-    //[ThreadStatic]
-    //private static ThreadLocal<Int32> __threadLocalId;
-    //private static Int32 __nextThreadId = 34;
-    //private Int32 _authorizedThreadId;
+    [ThreadStatic]
+    private static ThreadLocal<Int32> __threadLocalId;
+    private static Int32 __nextThreadId = 34;
+    private Int32 _authorizedThreadId;
 
     #endregion
 
@@ -196,12 +194,21 @@ namespace Breeze.Sharp {
     /// <returns></returns>
     public async Task<DataService> FetchMetadata(DataService dataService = null)
     {
+        return await FetchMetadata(CancellationToken.None, dataService);
+    }
+    /// <summary>
+    /// Fetches the metadata associated with the EntityManager's current 'serviceName'. 
+    /// This call also occurs internally before the first query to any service if the metadata hasn't already been loaded.
+    /// </summary>
+    /// <param name="dataService"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public async Task<DataService> FetchMetadata(CancellationToken cancellationToken, DataService dataService = null) {
       dataService = dataService != null ? dataService : this.DataService;
       if (!dataService.HasServerMetadata) {
         throw new Exception("This DataService does not provide metadata: " + dataService.ServiceName);
       }
-      Console.WriteLine("1 - EntityManager - 202");
-      return await MetadataStore.FetchMetadata(dataService);
+      return await MetadataStore.FetchMetadata(dataService, cancellationToken);
     }
 
     /// <summary>
@@ -212,7 +219,19 @@ namespace Breeze.Sharp {
     /// <returns></returns>
     public async Task<IEnumerable<T>> ExecuteQuery<T>(EntityQuery<T> query)
     {
-      var result = await ExecuteQuery((EntityQuery) query);
+        var result = await ExecuteQuery((EntityQuery)query, CancellationToken.None);
+        return (IEnumerable<T>)result;
+    }
+
+    /// <summary>
+    /// Performs an asynchronous query and that returns a typed result.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="query"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public async Task<IEnumerable<T>> ExecuteQuery<T>(EntityQuery<T> query, CancellationToken cancellationToken) {
+      var result = await ExecuteQuery((EntityQuery) query, cancellationToken);
       return (IEnumerable<T>)result;
     }
 
@@ -223,6 +242,19 @@ namespace Breeze.Sharp {
     /// <returns></returns>
     public async Task<IEnumerable> ExecuteQuery(EntityQuery query)
     {
+        return await ExecuteQuery(query, CancellationToken.None);
+    }
+
+    /// <summary>
+    /// Performs an asynchronous query and that returns an untyped result.
+    /// </summary>
+    /// <param name="query"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public async Task<IEnumerable> ExecuteQuery(EntityQuery query, CancellationToken cancellationToken)
+    {
+      cancellationToken.ThrowIfCancellationRequested();
+
       if (query.ElementType == null) {
         throw new Exception("Cannot execute a query with a null TargetType");
       }
@@ -236,14 +268,17 @@ namespace Breeze.Sharp {
       var dataService = query.DataService ?? this.DataService;
       if (dataService.HasServerMetadata) {
         await FetchMetadata(dataService);
-//        CheckAuthorizedThreadId();
+        CheckAuthorizedThreadId();
       }
       var resourcePath = query.GetResourcePath(this.MetadataStore);
       // HACK
       resourcePath = resourcePath.Replace("/*", "");
       
-      var result = await dataService.GetAsync(resourcePath);
-//      CheckAuthorizedThreadId();
+      var result = await dataService.GetAsync(resourcePath, cancellationToken);
+
+      cancellationToken.ThrowIfCancellationRequested();
+      
+      CheckAuthorizedThreadId();
       var mergeStrategy = query.QueryOptions.MergeStrategy ?? this.DefaultQueryOptions.MergeStrategy ?? QueryOptions.Default.MergeStrategy;
 
       var mappingContext = new MappingContext() {
@@ -252,7 +287,7 @@ namespace Breeze.Sharp {
         LoadingOperation = LoadingOperation.Query,
         JsonResultsAdapter = query.JsonResultsAdapter ?? dataService.JsonResultsAdapter
       };
-      // cannot reuse a jsonConverter - public mappingContext is one instance/query
+      // cannot reuse a jsonConverter - internal mappingContext is one instance/query
       var jsonConverter = new JsonEntityConverter(mappingContext);
       var serializer = new JsonSerializer();
       serializer.Converters.Add(jsonConverter);
@@ -349,13 +384,26 @@ namespace Breeze.Sharp {
     /// <returns></returns>
     public async Task<EntityKeyFetchResult> FetchEntityByKey(EntityKey entityKey, bool checkLocalCacheFirst = false)
     {
+        return await FetchEntityByKey(entityKey, CancellationToken.None, checkLocalCacheFirst);
+    }
+
+    /// <summary>
+    /// Performs an asynchronous query that optionally checks the local cache first.
+    /// </summary>
+    /// <param name="entityKey"></param>
+    /// <param name="cancellationToken"></param>
+    /// <param name="checkLocalCacheFirst"></param>
+    /// <returns></returns>
+    public async Task<EntityKeyFetchResult> FetchEntityByKey(EntityKey entityKey, CancellationToken cancellationToken, bool checkLocalCacheFirst = false) {
       IEntity entity;
       
+      cancellationToken.ThrowIfCancellationRequested();
+
       if (checkLocalCacheFirst) {
         entity = GetEntityByKey(entityKey);
         if (entity != null) return new EntityKeyFetchResult(entity, true);
       }
-      var results = await ExecuteQuery(entityKey.ToQuery());
+      var results = await ExecuteQuery(entityKey.ToQuery(), cancellationToken);
       entity = results.Cast<IEntity>().FirstOrDefault();
       return new EntityKeyFetchResult(entity, false);
     }
@@ -390,7 +438,7 @@ namespace Breeze.Sharp {
     public event EventHandler<EntityManagerHasChangesChangedEventArgs> HasChangesChanged;
 
 
-    public bool OnEntityChanging(IEntity entity, EntityAction action, EventArgs actionEventArgs = null) {
+    internal bool OnEntityChanging(IEntity entity, EntityAction action, EventArgs actionEventArgs = null) {
       EventHandler<EntityChangingEventArgs> handler = EntityChanging;
       if (handler != null) {
         var args = new EntityChangingEventArgs(entity, action, actionEventArgs);
@@ -405,7 +453,7 @@ namespace Breeze.Sharp {
       return true;
     }
 
-    public void OnEntityChanged(IEntity entity, EntityAction entityAction, EventArgs actionEventArgs = null) {
+    internal void OnEntityChanged(IEntity entity, EntityAction entityAction, EventArgs actionEventArgs = null) {
       EventHandler<EntityChangedEventArgs> handler = EntityChanged;
       if (handler != null) {
         var args = new EntityChangedEventArgs(entity, entityAction, actionEventArgs);
@@ -418,7 +466,7 @@ namespace Breeze.Sharp {
       }
     }
 
-    public void OnHasChangesChanged() {
+    internal void OnHasChangesChanged() {
       var handler = HasChangesChanged;
       if (handler != null) {
         var args = new EntityManagerHasChangesChangedEventArgs(this);
@@ -426,7 +474,7 @@ namespace Breeze.Sharp {
       }
     }
 
-    public void FireQueuedEvents() {
+    internal void FireQueuedEvents() {
       // IsLoadingEntity will still be true when this occurs.
       if (! _queuedEvents.Any()) return;
       var events = _queuedEvents.ToList();
@@ -438,7 +486,7 @@ namespace Breeze.Sharp {
 
     }
 
-    public ConcurrentHashSet<Action> QueuedEvents {
+    internal List<Action> QueuedEvents {
       get { return _queuedEvents; }
     }
 
@@ -506,10 +554,10 @@ namespace Breeze.Sharp {
       }
       var entityGroupNodesMap = jn.GetJNodeArrayMap("entityGroupMap");
       // tempKeyMap will have a new values where collisions will occur
-      var tempKeyMap = new ConcurrentDictionary<EntityKey, EntityKey>(jn.GetJNodeArray("tempKeys").Select(jnEk => new EntityKey(jnEk, this.MetadataStore)).ToDictionary(
+      var tempKeyMap = jn.GetJNodeArray("tempKeys").Select(jnEk => new EntityKey(jnEk, this.MetadataStore)).ToDictionary(
         ek => ek, 
         ek => this.GetEntityByKey(ek) == null ? ek : EntityKey.Create(ek.EntityType, KeyGenerator.GetNextTempId(ek.EntityType.KeyProperties.First())) 
-      ));
+      );
       
       var mergeStrategy = (importOptions.MergeStrategy ?? this.DefaultQueryOptions.MergeStrategy ?? QueryOptions.Default.MergeStrategy).Value;
       var importedEntities = new List<IEntity>();
@@ -525,7 +573,7 @@ namespace Breeze.Sharp {
       return new ImportResult(importedEntities, tempKeyMap);
     }
 
-    private List<IEntity> ImportEntityGroup(IEnumerable<JNode> entityNodes, EntityType entityType, ConcurrentDictionary<EntityKey, EntityKey> tempKeyMap, MergeStrategy mergeStrategy) {
+    private List<IEntity> ImportEntityGroup(IEnumerable<JNode> entityNodes, EntityType entityType, Dictionary<EntityKey, EntityKey> tempKeyMap, MergeStrategy mergeStrategy) {
       var importedEntities = new List<IEntity>();
       foreach (var entityNode in entityNodes) {
         var ek = ExtractEntityKey(entityType, entityNode);
@@ -611,7 +659,7 @@ namespace Breeze.Sharp {
       }
     }
 
-    private void UpdateTempFks(IEntity targetEntity, JNode entityAspectNode, ConcurrentDictionary<EntityKey, EntityKey> tempKeyMap) {
+    private void UpdateTempFks(IEntity targetEntity, JNode entityAspectNode, Dictionary<EntityKey, EntityKey> tempKeyMap) {
 
       var tempNavPropNames = entityAspectNode.GetArray<String>("tempNavPropNames");
       if (!tempNavPropNames.Any()) return;
@@ -643,15 +691,15 @@ namespace Breeze.Sharp {
     }
 
     private JNode ExportEntityGroupsAndTempKeys(IEnumerable<IEntity> entities) {
-      ConcurrentDictionary<String, IEnumerable<JNode>> map;
+      Dictionary<String, IEnumerable<JNode>> map;
       IEnumerable<EntityAspect> aspects;
 
       if (entities != null) {
         aspects = entities.Select(e => e.EntityAspect);
-        map = new ConcurrentDictionary<string, IEnumerable<JNode>>(aspects.GroupBy(ea => ea.EntityGroup.EntityType).ToDictionary(grp => grp.Key.Name, grp => ExportAspects(grp, grp.Key)));
+        map = aspects.GroupBy(ea => ea.EntityGroup.EntityType).ToDictionary(grp => grp.Key.Name, grp => ExportAspects(grp, grp.Key));
       } else {
         aspects = this.EntityGroups.SelectMany(eg => eg.EntityAspects);
-        map = new ConcurrentDictionary<string, IEnumerable<JNode>>(this.EntityGroups.ToDictionary(eg => eg.EntityType.Name, eg => ExportAspects(eg, eg.EntityType)));
+        map = this.EntityGroups.ToDictionary(eg => eg.EntityType.Name, eg => ExportAspects(eg, eg.EntityType));
       }
 
       var tempKeys = aspects.Where(ea => ea.HasTemporaryKey).Select(ea => ea.EntityKey);
@@ -1098,7 +1146,7 @@ namespace Breeze.Sharp {
       return entity.EntityAspect.Detach();
     }
 
-    public EntityAspect AttachQueriedEntity(IEntity entity, EntityType entityType) {
+    internal EntityAspect AttachQueriedEntity(IEntity entity, EntityType entityType) {
       var aspect = entity.EntityAspect;
       aspect.EntityType = entityType;
       AttachEntityAspect(aspect, EntityState.Unchanged); 
@@ -1111,7 +1159,7 @@ namespace Breeze.Sharp {
       return aspect;
     }
 
-    public EntityAspect AttachImportedEntity(IEntity entity, EntityType entityType, EntityState entityState) {
+    internal EntityAspect AttachImportedEntity(IEntity entity, EntityType entityType, EntityState entityState) {
       var aspect = entity.EntityAspect;
       aspect.EntityType = entityType;
       AttachEntityAspect(aspect, entityState);
@@ -1184,16 +1232,13 @@ namespace Breeze.Sharp {
     /// <returns>The <see cref="EntityGroup"/> associated with the specified Entity subtype</returns>
     /// <exception cref="ArgumentException">Bad entity type</exception>
     /// <exception cref="EntityServerException"/>
-    public EntityGroup GetEntityGroup(Type clrEntityType) {
+    internal EntityGroup GetEntityGroup(Type clrEntityType) {
       var eg = this.EntityGroups[clrEntityType];
       if (eg != null) {
         return eg;
       }
-#if !__WASM__
-//            lock (this.EntityGroups)
-#endif
-
-            {
+      
+      lock (this.EntityGroups) {
         // check again just in case another thread got in.
         eg = this.EntityGroups[clrEntityType];
         if (eg != null) {
@@ -1211,7 +1256,7 @@ namespace Breeze.Sharp {
       }
     }
 
-    public EntityGroup GetEntityGroup<T>() where T : IEntity {
+    internal EntityGroup GetEntityGroup<T>() where T : IEntity {
       return GetEntityGroup(typeof(T));
     }
 
@@ -1285,7 +1330,7 @@ namespace Breeze.Sharp {
     /// Insures that a temporary pk is set if necessary
     /// </summary>
     /// <param name="aspect"></param>
-    public void UpdatePkIfNeeded(EntityAspect aspect) {
+    internal void UpdatePkIfNeeded(EntityAspect aspect) {
       if (KeyGenerator == null) return;
       var keyProperties = aspect.EntityType.KeyProperties;
       
@@ -1312,7 +1357,7 @@ namespace Breeze.Sharp {
       }
     }
 
-    public void MarkTempIdAsMapped(EntityAspect aspect, bool isMapped) {
+    internal void MarkTempIdAsMapped(EntityAspect aspect, bool isMapped) {
       var keyProperties = aspect.EntityType.KeyProperties;
       foreach (var aProperty in keyProperties) {
         UniqueId aUniqueId = new UniqueId(aProperty, aspect.GetValue(aProperty.Name));
@@ -1327,7 +1372,7 @@ namespace Breeze.Sharp {
       }
     }
 
-    public void AddToTempIds(UniqueId uniqueId) {
+    internal void AddToTempIds(UniqueId uniqueId) {
       if (uniqueId != null) {
         TempIds.Add(uniqueId);
       }
@@ -1339,7 +1384,7 @@ namespace Breeze.Sharp {
       }
     }
 
-    public bool AnyStoreGeneratedTempIds {
+    internal bool AnyStoreGeneratedTempIds {
       get {
         return TempIds != null && TempIds.Any(id => id.Property.IsAutoIncrementing);
       }
@@ -1351,7 +1396,7 @@ namespace Breeze.Sharp {
       }
     }
 
-    public List<UniqueId> TempIds {
+    internal HashSet<UniqueId> TempIds {
       get;
       private set;
     }
@@ -1379,7 +1424,7 @@ namespace Breeze.Sharp {
       return entityGroups.Any(eg => eg != null && eg.HasChanges());
     }
 
-    public void CheckStateChange(EntityAspect entityAspect, bool wasUnchanged, bool isUnchanged) {
+    internal void CheckStateChange(EntityAspect entityAspect, bool wasUnchanged, bool isUnchanged) {
       if (wasUnchanged) {
         if (!isUnchanged) {
           this.NotifyStateChange(entityAspect, true);
@@ -1391,7 +1436,7 @@ namespace Breeze.Sharp {
       }
     }
 
-    public void NotifyStateChange(EntityAspect entityAspect, bool needsSave) {
+    internal void NotifyStateChange(EntityAspect entityAspect, bool needsSave) {
       entityAspect.OnEntityChanged(EntityAction.EntityStateChange);
 
       if (needsSave) {
@@ -1409,7 +1454,7 @@ namespace Breeze.Sharp {
       }
     }
 
-    public void SetHasChanges(bool? value) {
+    internal void SetHasChanges(bool? value) {
       var hasChanges = value.HasValue ? value.Value : this.HasChangesCore(null);
       if (hasChanges != this._hasChanges) {
         this._hasChanges = hasChanges;
@@ -1418,30 +1463,30 @@ namespace Breeze.Sharp {
       HasChangesAction = null;
     }
 
-    public Action HasChangesAction { get; set; }
+    internal Action HasChangesAction { get; set; }
 
     #endregion
 
-    #region Other public 
+    #region Other internal 
 
-    public void UpdateFkVal(DataProperty fkProp, Object oldValue, Object newValue) {
+    internal void UpdateFkVal(DataProperty fkProp, Object oldValue, Object newValue) {
       var eg = this.EntityGroups[fkProp.ParentType.ClrType];
       if (eg == null) return;
         
       eg.UpdateFkVal(fkProp, oldValue, newValue);
     }
 
-    public static void CheckEntityType(Type clrEntityType) {
+    internal static void CheckEntityType(Type clrEntityType) {
       var etInfo = clrEntityType.GetTypeInfo();
       if ( typeof(IEntity).GetTypeInfo().IsAssignableFrom(etInfo) && !etInfo.IsAbstract) return;
       throw new ArgumentException("This operation requires a nonabstract type that implements the IEntity interface");
     }
 
-    public LoadingBlock NewIsLoadingBlock(bool allowHasChangesAction=true) {
+    internal LoadingBlock NewIsLoadingBlock(bool allowHasChangesAction=true) {
       return new LoadingBlock(this, allowHasChangesAction);
     }
 
-    public class LoadingBlock : IDisposable {
+    internal class LoadingBlock : IDisposable {
       public LoadingBlock(EntityManager entityManager, bool allowHasChangesAction) {
         _entityManager = entityManager;
         _wasLoadingEntity = _entityManager.IsLoadingEntity;
@@ -1467,9 +1512,9 @@ namespace Breeze.Sharp {
       private bool _wasLoadingEntity;
     }
 
-    public bool IsLoadingEntity { get; set;  }
-    public bool IsRejectingChanges { get; set;  }
-    public UnattachedChildrenMap UnattachedChildrenMap { get; private set; }
+    internal bool IsLoadingEntity { get; set;  }
+    internal bool IsRejectingChanges { get; set;  }
+    internal UnattachedChildrenMap UnattachedChildrenMap { get; private set; }
 
     #endregion
 
@@ -1483,7 +1528,7 @@ namespace Breeze.Sharp {
     }
 
     private EntityGroupCollection EntityGroups { get; set; }
-    private ConcurrentHashSet<Action> _queuedEvents = new ConcurrentHashSet<Action>();
+    private List<Action> _queuedEvents = new List<Action>();
     private bool _changeNotificationEnabled = true;
     private DataService _dataService;
     private QueryOptions _defaultQueryOptions;

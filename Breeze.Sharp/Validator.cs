@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-//using System.Resources;
+using System.Resources;
 
 namespace Breeze.Sharp {
 
@@ -54,7 +54,7 @@ namespace Breeze.Sharp {
     [JsonIgnore]
     public LocalizedMessage LocalizedMessage {
       get;
-      set;
+      internal protected set;
     }
 
     /// <summary>
@@ -81,7 +81,7 @@ namespace Breeze.Sharp {
     public abstract String GetErrorMessage(ValidationContext validationContext);
 
     /// <summary>
-    /// For public use only - used during validator deserialization.
+    /// For internal use only - used during validator deserialization.
     /// </summary>
     /// <param name="jNode"></param>
     /// <returns></returns>
@@ -174,7 +174,7 @@ namespace Breeze.Sharp {
     }
   }
 
-  public class ValidatorCollection : SetCollection<Validator> {
+  internal class ValidatorCollection : SetCollection<Validator> {
 
     public ValidatorCollection() : base() { }
     public ValidatorCollection(IEnumerable<Validator> validators) : base(validators) { }

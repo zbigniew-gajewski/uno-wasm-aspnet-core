@@ -34,8 +34,8 @@ namespace Breeze.Sharp {
 
     public static SaveOptions Default = new SaveOptions(null, null, null);
 
-    public String ResourceName { get; set; }
-    public DataService DataService { get; set; }
+    public String ResourceName { get; internal set; }
+    public DataService DataService { get; internal set; }
     public String Tag { get; set;  }
     
   }

@@ -1,5 +1,4 @@
-﻿// using System;
-using ConcurrentCollections;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -30,7 +29,7 @@ namespace Breeze.Sharp.Core {
     }
     
     public void CopyTo(U[] array, int arrayIndex) {
-      //_set.CopyTo(array, arrayIndex);
+      _set.CopyTo(array, arrayIndex);
     }
 
     public int Count {
@@ -42,7 +41,7 @@ namespace Breeze.Sharp.Core {
     }
 
     public virtual bool Remove(U item) {
-      return _set.TryRemove(item);
+      return _set.Remove(item);
     }
 
 
@@ -54,7 +53,7 @@ namespace Breeze.Sharp.Core {
       return _set.GetEnumerator();
     }
 
-    private ConcurrentHashSet<U> _set = new ConcurrentHashSet<U>();
+    private HashSet<U> _set = new HashSet<U>();
 
   }
 

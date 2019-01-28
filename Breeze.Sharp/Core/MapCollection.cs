@@ -1,6 +1,5 @@
-﻿//using System;
+﻿using System;
 using System.Collections;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 
 namespace Breeze.Sharp.Core {
@@ -26,7 +25,7 @@ namespace Breeze.Sharp.Core {
 
     public virtual void Add(U value) {
       var key = GetKeyForItem(value);
-      _map.TryAdd(key, value);
+      _map.Add(key, value);
     }
 
     public ICollection<U> ReadOnlyValues {
@@ -42,7 +41,7 @@ namespace Breeze.Sharp.Core {
           return default(U);
         }
       }
-      set {
+      internal set {
         _map[key] = value;
       }
     }
@@ -72,14 +71,11 @@ namespace Breeze.Sharp.Core {
     }
 
     public virtual bool Remove(U item) {
-     U itemResult;
-      return _map.TryRemove(GetKeyForItem(item), out itemResult);
+      return _map.Remove(GetKeyForItem(item));
     }
 
     public virtual bool RemoveKey(T key) {
-
-            U itemResult;
-      return _map.TryRemove(key, out itemResult);
+      return _map.Remove(key);
     }
 
     IEnumerator<U> IEnumerable<U>.GetEnumerator() {
@@ -90,7 +86,7 @@ namespace Breeze.Sharp.Core {
       return _map.Values.GetEnumerator();
     }
 
-    private ConcurrentDictionary<T, U> _map = new ConcurrentDictionary<T, U>();
+    private Dictionary<T, U> _map = new Dictionary<T, U>();
 
   }
 

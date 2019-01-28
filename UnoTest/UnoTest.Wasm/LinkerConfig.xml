@@ -1,23 +1,24 @@
 ﻿<linker>
-   <assembly fullname="breeze.sharp">
+   <assembly fullname="Breeze.Sharp">
     <type fullname="*" />
   </assembly>
-  <assembly fullname="concurrentcollections">
+  <!--<assembly fullname="ConcurrentCollections">
+    <type fullname="*" />
+  </assembly>-->
+  <assembly fullname="System.Net.Http">
     <type fullname="*" />
   </assembly>
-  <assembly fullname="system.net.http">
+  <assembly fullname="System.Xml">
     <type fullname="*" />
   </assembly>
-  <assembly fullname="system.xml">
+  <assembly fullname="System.Io">
     <type fullname="*" />
   </assembly>
-  <assembly fullname="system.io">
+  
+  <!--<assembly fullname="System.Threading">
     <type fullname="*" />
-  </assembly>
-  <assembly fullname="system.threading">
-    <type fullname="*" />
-  </assembly>
-  <assembly fullname="system.threading.tasks">
+  </assembly>-->
+  <!--<assembly fullname="System.Threading.Tasks">
     <type fullname="*" />
   </assembly>
   <assembly fullname="galasoft.mvvmlight">
@@ -47,7 +48,7 @@
   <assembly fullname="system.linq">
     <type fullname="*" />
   </assembly>
-  <assembly fullname=" system">
+  <assembly fullname="system">
     <type fullname="*" />
   </assembly>
   <assembly fullname="system.reflection">
@@ -57,10 +58,10 @@
     <type fullname="*" />
   </assembly>
   
-  <!--Does not compile-->
-  <!--<assembly fullname="System.ComponentModel.DataAnnotations">
+  --><!--Does not compile--><!--
+  <assembly fullname="System.ComponentModel.DataAnnotations">
     <type fullname="*" />
-  </assembly>-->
+  </assembly>
 
   <assembly fullname="System.ComponentModel.Composition">
     <type fullname="*" />
@@ -218,7 +219,7 @@
   
   <assembly fullname="System.Runtime">
     <type fullname="*" />
-  </assembly>
+  </assembly>-->
   
   <assembly fullname="netstandard" />
 

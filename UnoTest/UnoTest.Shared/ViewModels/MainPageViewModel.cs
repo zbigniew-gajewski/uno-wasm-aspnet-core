@@ -29,6 +29,8 @@ namespace UnoTest.Shared.ViewModels
         {
             GetDataUsingHttpClientCommand = new RelayCommand(OnGetDataUsingHttpClient);
             GetDataUsingBreezeSharpCommand = new RelayCommand(OnGetDataUsingBreezeSharp);
+
+            OnGetDataUsingBreezeSharp();
         }
 
     
@@ -96,8 +98,15 @@ namespace UnoTest.Shared.ViewModels
                 var entityManager = new EntityManager(serviceAddress);
 
                 var query = new EntityQuery<Customer>();
-                var result = await entityManager.ExecuteQuery(query);
+                var customers = await entityManager.ExecuteQuery(query);
 
+                var stringBuilder = new StringBuilder();
+                foreach (var customer in customers)
+                {
+                    stringBuilder.AppendLine($"{customer.FirstName} - {customer.LastName} - {customer.Description} !");
+                }
+
+                Result = stringBuilder.ToString();
                 //Result = result?.FirstOrDefault()?.FirstName;
             }
             catch (Exception ex)

@@ -1,14 +1,12 @@
 ﻿using Breeze.Sharp.Core;
-using ConcurrentCollections;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-// using System.Diagnostics;
-//using System.IO;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Reflection;
-//using System.Text.RegularExpressions;
-//using System.Threading.Tasks;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace Breeze.Sharp {
 
@@ -49,11 +47,7 @@ namespace Breeze.Sharp {
     /// previously cached or registered data.
     /// </summary>
     public static void __Reset() {
-#if !__WASM__
-//            lock (__lock)
-#endif
-
-            {
+      lock (__lock) {
         var x = __instance._probedAssemblies;
         __instance = new Configuration();
       }
@@ -67,11 +61,7 @@ namespace Breeze.Sharp {
     /// <param name="assembliesToProbe"></param>
     /// <returns></returns>
     public bool ProbeAssemblies(params Assembly[] assembliesToProbe) {
-#if !__WASM__
-//            lock (_typeDiscoveryActions)
-#endif
-
-            {
+      lock (_typeDiscoveryActions) {
         var assemblies = assembliesToProbe.Except(_probedAssemblies).ToList();
         if (assemblies.Any()) {
           assemblies.ForEach(asm => {
@@ -96,12 +86,7 @@ namespace Breeze.Sharp {
     /// <param name="structuralTypeName"></param>
     /// <returns></returns>
     public Type GetClrType(String structuralTypeName) {
-
-#if !__WASM__
-//            lock (_clrTypeMap)
-#endif
-
-            {
+      lock (_clrTypeMap) {
         Type type;
         _clrTypeMap.TryGetValue(structuralTypeName, out type);
         return type;
@@ -135,23 +120,9 @@ namespace Breeze.Sharp {
     // includeThisAssembly = whether to probe the assembly where 'type' is defined
     private void RegisterTypeDiscoveryActionCore(Type type, Action<Type> action, bool includeThisAssembly) {
       Func<Assembly, bool> shouldProcessAssembly = (a) => {
-
-          bool result;
-          if (includeThisAssembly)
-          {
-              return true;
-          }
-          else
-          {
-              return a != this.GetType().GetTypeInfo().Assembly;
-          }
-              //return includeThisAssembly ? true : a != this.GetType().GetTypeInfo().Assembly;
+        return includeThisAssembly ? true : a != this.GetType().GetTypeInfo().Assembly;
       };
-#if !__WASM__
-//            lock (_typeDiscoveryActions)
-#endif
-
-            {
+      lock (_typeDiscoveryActions) {
         _typeDiscoveryActions.Add(Tuple.Create(type, action, shouldProcessAssembly));
       }
     }
@@ -160,32 +131,28 @@ namespace Breeze.Sharp {
 
     #region Validator & NamingConvention methods
 
-    public Validator FindOrCreateValidator(JNode jNode) {
+    internal Validator FindOrCreateValidator(JNode jNode) {
       // locking is handled internally
       return _validatorCache.FindOrCreate(jNode);
     }
 
-    public NamingConvention FindOrCreateNamingConvention(JNode jNode) {
+    internal NamingConvention FindOrCreateNamingConvention(JNode jNode) {
       // locking is handled internally
       return _namingConventionCache.FindOrCreate(jNode);
     }
 
-    public Validator InternValidator(Validator validator) {
+    internal Validator InternValidator(Validator validator) {
       // locking is handled internally
       return _validatorCache.Intern(validator);
     }
 
-    public NamingConvention InternNamingConvention(NamingConvention nc) {
+    internal NamingConvention InternNamingConvention(NamingConvention nc) {
       // locking is handled internally
       return _namingConventionCache.Intern(nc);
     }
 
     private void RegisterStructuralType(Type clrType) {
-#if !__WASM__
-//            lock (_clrTypeMap)
-#endif
-
-            {
+      lock (_clrTypeMap) {
         var stName = TypeNameInfo.FromClrType(clrType).StructuralTypeName;
         _clrTypeMap[stName] = clrType;
       }
@@ -208,15 +175,12 @@ namespace Breeze.Sharp {
     #region Inner classes 
 
     private class InternCache<T> where T : Internable {
-      public readonly ConcurrentDictionary<String, Type> TypeMap = new ConcurrentDictionary<string, Type>();
-      public readonly ConcurrentDictionary<JNode, T> JNodeMap = new ConcurrentDictionary<JNode, T>();
+      public readonly Dictionary<String, Type> TypeMap = new Dictionary<string, Type>();
+      public readonly Dictionary<JNode, T> JNodeMap = new Dictionary<JNode, T>();
 
-      public T FindOrCreate(JNode jNode) {
+      internal T FindOrCreate(JNode jNode) {
         try {
-#if !__WASM__
-//                    lock (TypeMap)
-#endif
-                    {
+          lock (TypeMap) {
             T internable;
 
             if (JNodeMap.TryGetValue(jNode, out internable)) {
@@ -235,10 +199,8 @@ namespace Breeze.Sharp {
       public T Intern(T internable) {
         if (internable.IsInterned) return internable;
         var jNode = internable.ToJNode();
-#if !__WASM__
-                lock (TypeMap)
-#endif
-                {
+
+        lock (TypeMap) {
           if (!TypeMap.ContainsKey(internable.Name)) {
             TypeMap[internable.Name] = internable.GetType();
           }
@@ -259,10 +221,7 @@ namespace Breeze.Sharp {
         if (ti.IsAbstract) return;
         if (ti.GenericTypeParameters.Length != 0) return;
         var key = UtilFns.TypeToSerializationName(internableType, defaultSuffix);
-#if !__WASM__
-                lock (TypeMap)
-#endif
-                {
+        lock (TypeMap) {
           TypeMap[key] = internableType;
         }
       }
@@ -283,22 +242,22 @@ namespace Breeze.Sharp {
     
     #endregion
 
-    #region Private and public vars
+    #region Private and Internal vars
 
-    public static String ANONTYPE_PREFIX = "_IB_";
+    internal static String ANONTYPE_PREFIX = "_IB_";
 
     private static Configuration __instance = new Configuration();
-//    private static readonly Object __lock = new Object();
+    private static readonly Object __lock = new Object();
     
-//    private readonly AsyncSemaphore _asyncSemaphore = new AsyncSemaphore(1);
-//    private readonly Object _lock = new Object();
+    private readonly AsyncSemaphore _asyncSemaphore = new AsyncSemaphore(1);
+    private readonly Object _lock = new Object();
 
-    private ConcurrentDictionary<String, Type> _clrTypeMap = new ConcurrentDictionary<string, Type>();
+    private Dictionary<String, Type> _clrTypeMap = new Dictionary<string, Type>();
 
-    private readonly ConcurrentHashSet<Assembly> _probedAssemblies = new ConcurrentHashSet<Assembly>();
-    private readonly ConcurrentHashSet<Tuple<Type, Action<Type>, Func<Assembly, bool>>> _typeDiscoveryActions = new ConcurrentHashSet<Tuple<Type, Action<Type>, Func<Assembly, bool>>>();
+    private readonly HashSet<Assembly> _probedAssemblies = new HashSet<Assembly>();
+    private readonly List<Tuple<Type, Action<Type>, Func<Assembly, bool>>> _typeDiscoveryActions = new List<Tuple<Type, Action<Type>, Func<Assembly, bool>>>();
     
-    private readonly ConcurrentDictionary<String, String> _shortNameMap = new ConcurrentDictionary<string, string>();
+    private readonly Dictionary<String, String> _shortNameMap = new Dictionary<string, string>();
 
     private InternCache<Validator> _validatorCache = new InternCache<Validator>();
     private InternCache<NamingConvention> _namingConventionCache = new InternCache<NamingConvention>();

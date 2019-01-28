@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-//using System.Linq;
-//using System.Text;
-//using System.Threading.Tasks;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Breeze.Sharp {
   /// <summary>
@@ -37,20 +37,12 @@ namespace Breeze.Sharp {
     /// </summary>
     public static CacheQueryOptions Default {
       get {
-#if !__WASM__
-//                lock (__lock)
-#endif
-
-                {
+        lock (__lock) {
           return __default;
         }
       }
       set {
-#if !__WASM__
-//                lock (__lock)
-#endif
-
-                {
+        lock (__lock) {
           __default.StringComparison = value.StringComparison;
           __default.UseSql92CompliantStringComparison = value.UseSql92CompliantStringComparison;
           __default.GuidOrdering = value.GuidOrdering;
@@ -85,7 +77,7 @@ namespace Breeze.Sharp {
     /// </summary>
     public StringComparison StringComparison {
       get;
-      set;
+      internal set;
     }
 
     /// <summary>
@@ -101,7 +93,7 @@ namespace Breeze.Sharp {
     /// </remarks>
     public bool UseSql92CompliantStringComparison {
       get;
-      set;
+      internal set;
     }
 
     /// <summary>
@@ -110,7 +102,7 @@ namespace Breeze.Sharp {
     /// </summary>
     public GuidOrdering GuidOrdering {
       get;
-      set;
+      internal set;
     }
 
     /// <summary>

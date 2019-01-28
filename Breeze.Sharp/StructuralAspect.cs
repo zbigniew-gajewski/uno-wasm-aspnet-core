@@ -1,7 +1,6 @@
 ﻿using Breeze.Sharp.Core;
 using System;
 using System.Collections;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -22,14 +21,14 @@ namespace Breeze.Sharp {
   public abstract class StructuralAspect {
 
     public StructuralAspect(IStructuralObject stObj) {
-      _backingStore = (stObj is IHasBackingStore) ? null : new ConcurrentDictionary<String, Object>();
+      _backingStore = (stObj is IHasBackingStore) ? null : new Dictionary<String, Object>();
     }
 
     #region Public/protected properties 
 
     public abstract EntityState EntityState { get; set; }
 
-    public abstract EntityVersion EntityVersion { get; set;  }
+    public abstract EntityVersion EntityVersion { get; internal set;  }
 
     public abstract IEnumerable<ValidationError> GetValidationErrors(String propertyPath);
      
@@ -39,7 +38,7 @@ namespace Breeze.Sharp {
 
     protected abstract IStructuralObject StructuralObject { get; }
 
-    public IDictionary<String, Object> BackingStore {
+    protected internal IDictionary<String, Object> BackingStore {
       get {
         return _backingStore ?? ((IHasBackingStore)StructuralObject).BackingStore;
       }
@@ -57,13 +56,13 @@ namespace Breeze.Sharp {
 
     #region Get/Set value
 
-    public Object GetRawValue(String propertyName) {
+    protected internal Object GetRawValue(String propertyName) {
       Object val = null;
       BackingStore.TryGetValue(propertyName, out val);
       return val;
     }
 
-    public void SetRawValue(string propertyName, Object value) {
+    protected internal void SetRawValue(string propertyName, Object value) {
       BackingStore[propertyName] = value;
     }
 
@@ -119,9 +118,9 @@ namespace Breeze.Sharp {
 
     public abstract void SetValue(String propertyName, object newValue);
 
-    public abstract void SetDpValue(DataProperty dp, object newValue);
+    protected internal abstract void SetDpValue(DataProperty dp, object newValue);
 
-    protected Object[] GetValues(IEnumerable<DataProperty> properties = null) {
+    protected internal Object[] GetValues(IEnumerable<DataProperty> properties = null) {
       if (properties == null) {
         properties = this.StructuralType.DataProperties;
       }
@@ -146,7 +145,7 @@ namespace Breeze.Sharp {
       return ValidateProperty(prop, value);
     }
 
-    public void ValidateInternal() {
+    protected internal void ValidateInternal() {
       var vc = new ValidationContext(this.StructuralObject);
       vc.IsMutable = true;
 
@@ -180,7 +179,7 @@ namespace Breeze.Sharp {
     }
 
     // called internally by property set logic
-    public IEnumerable<ValidationError> ValidateProperty(StructuralProperty prop, Object value) {
+    internal IEnumerable<ValidationError> ValidateProperty(StructuralProperty prop, Object value) {
       IEnumerable<ValidationError> errors = null;
       var co = value as IComplexObject;
       if (co != null) {
@@ -194,7 +193,7 @@ namespace Breeze.Sharp {
     // insures that validation events get fired and _validators collection is updated.
     protected abstract ValidationError ValidateCore(Validator vr, ValidationContext vc);
 
-    public virtual String GetPropertyPath(String propName) {
+    internal virtual String GetPropertyPath(String propName) {
       return propName;
     }
 
@@ -202,7 +201,7 @@ namespace Breeze.Sharp {
 
     #region other misc
 
-    public void Initialize() {
+    internal void Initialize() {
       if (this.Initialized) return;
       // will initialize base types as long as Initialize impls call base.Initialize();
       this.StructuralObject.Initialize();
@@ -289,14 +288,14 @@ namespace Breeze.Sharp {
       }
     }
 
-    protected virtual void ClearBackupVersion(EntityVersion version) {
+    protected internal virtual void ClearBackupVersion(EntityVersion version) {
       // don't need return value;
       GetBackupMap(version, true);
       ProcessComplexProperties((co) => co.ComplexAspect.ClearBackupVersion(version));
     }
 
     
-    public virtual void RestoreBackupVersion( EntityVersion version) {
+    protected internal virtual void RestoreBackupVersion( EntityVersion version) {
       var backupMap = GetBackupMap(version, true);
       if (backupMap != null) {
         backupMap.ForEach(kvp => {
@@ -325,7 +324,7 @@ namespace Breeze.Sharp {
       return result;
     }
 
-    public virtual void OnDataPropertyRestore(DataProperty dp) {
+    internal virtual void OnDataPropertyRestore(DataProperty dp) {
       // deliberate noop here;
     }
 
@@ -338,7 +337,7 @@ namespace Breeze.Sharp {
         if (_originalValuesMap.ContainsKey(property.Name)) return;
       }
       // reference copy of complex object is deliberate - actual original values will be stored in the co itself.
-      _originalValuesMap.TryAdd(property.Name, oldValue);
+      _originalValuesMap.Add(property.Name, oldValue);
     }
 
     private void BackupProposedValueIfNeeded(DataProperty property, Object oldValue) {
@@ -347,7 +346,7 @@ namespace Breeze.Sharp {
       } else {
         if (_preproposedValuesMap.ContainsKey(property.Name)) return;
       }
-      _preproposedValuesMap.TryAdd(property.Name, oldValue);
+      _preproposedValuesMap.Add(property.Name, oldValue);
     }
 
     public ReadOnlyDictionary<String, Object> OriginalValuesMap {
@@ -362,8 +361,8 @@ namespace Breeze.Sharp {
       return (map ?? BackupValuesMap.Empty).ReadOnlyDictionary;
     }
     
-    public BackupValuesMap _originalValuesMap;
-    public BackupValuesMap _preproposedValuesMap;
+    internal BackupValuesMap _originalValuesMap;
+    internal BackupValuesMap _preproposedValuesMap;
 
 
     #endregion

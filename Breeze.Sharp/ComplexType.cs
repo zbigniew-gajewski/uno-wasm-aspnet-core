@@ -1,7 +1,7 @@
 ﻿using Breeze.Sharp.Core;
 using System;
 using System.Collections.ObjectModel;
-// using System.Diagnostics;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Breeze.Sharp {
@@ -9,14 +9,14 @@ namespace Breeze.Sharp {
   /// <summary>
   /// Metadata information about a complex type.
   /// </summary>
-//  [DebuggerDisplay("{Name}")]
+  [DebuggerDisplay("{Name}")]
   public sealed class ComplexType: StructuralType, IJsonSerializable {
 
     public ComplexType(MetadataStore metadataStore) :base(metadataStore) {
 
     }
 
-    public override void UpdateFromJNode(JNode jNode, bool isFromServer) {
+    internal override void UpdateFromJNode(JNode jNode, bool isFromServer) {
       Name = this.MetadataStore.GetStructuralTypeNameFromJNode(jNode, isFromServer);
       // BaseTypeName = jnode.Get<String>("baseTypeName");
       // IsAbstract = jnode.Get<bool>("isAbstract");
@@ -51,9 +51,9 @@ namespace Breeze.Sharp {
   }
 
   /// <summary>
-  /// For public use only.
+  /// For internal use only.
   /// </summary>
-  public class ComplexTypeCollection : KeyedCollection<String, ComplexType> {
+  internal class ComplexTypeCollection : KeyedCollection<String, ComplexType> {
     protected override String GetKeyForItem(ComplexType item) {
       return item.ShortName + ":#" + item.Namespace;
     }

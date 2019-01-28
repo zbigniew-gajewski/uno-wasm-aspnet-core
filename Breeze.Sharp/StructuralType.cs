@@ -5,15 +5,14 @@ using System.Linq;
 
 using System.Reflection;
 using Breeze.Sharp.Core;
-using ConcurrentCollections;
-// using System.Diagnostics;
+using System.Diagnostics;
 
 namespace Breeze.Sharp {
 
   /// <summary>
-  /// For public use only.
+  /// For internal use only.
   /// </summary>
-  public class StructuralTypeCollection : MapCollection<String, StructuralType> {
+  internal class StructuralTypeCollection : MapCollection<String, StructuralType> {
     protected override String GetKeyForItem(StructuralType item) {
       return item.ShortName + ":#" + item.Namespace;
     }
@@ -22,10 +21,10 @@ namespace Breeze.Sharp {
   /// <summary>
   /// Base class for both <see cref="EntityType"/> and <see cref="ComplexType"/> classes.
   /// </summary>
-//   [DebuggerDisplay("{Name}")]
+  [DebuggerDisplay("{Name}")]
   public abstract class StructuralType {
     public StructuralType(MetadataStore metadataStore) {
-      Warnings = new ConcurrentHashSet<string>();
+      Warnings = new List<string>();
       MetadataStore = metadataStore;
     }
 
@@ -36,7 +35,7 @@ namespace Breeze.Sharp {
 
     public String Name { 
       get { return TypeNameInfo.ToStructuralTypeName(ShortName, Namespace); }
-      set {
+      internal set {
         var parts = TypeNameInfo.FromStructuralTypeName(value);
         ShortName = parts.ShortName;
         Namespace = parts.Namespace;
@@ -48,7 +47,7 @@ namespace Breeze.Sharp {
       get {
         return _nameOnServer;
       }
-      set {
+      internal set {
         _nameOnServer = value;
         Name = TypeNameInfo.FromStructuralTypeName(value).ToClient(MetadataStore).StructuralTypeName;
       }
@@ -56,16 +55,16 @@ namespace Breeze.Sharp {
 
     public Type ClrType {
       get { return _clrType; }
-      set {
+      internal set {
         _clrType = value;
         Name = TypeNameInfo.FromClrTypeName(_clrType.FullName).StructuralTypeName;
       }  
     }
 
-    public abstract void UpdateFromJNode(JNode jNode, bool isFromServer);
+    internal abstract void UpdateFromJNode(JNode jNode, bool isFromServer);
 
 
-    public String GetPropertyNameFromJNode(JNode jn) {
+    internal String GetPropertyNameFromJNode(JNode jn) {
       var dpName = jn.Get<String>("name");
       if (dpName == null) {
         var dpNameOnServer = jn.Get<String>("nameOnServer");
@@ -78,10 +77,10 @@ namespace Breeze.Sharp {
     public String ShortName { get; private set; }
     public String Namespace { get; private set;}
     public dynamic Custom { get; set; }
-    public bool IsAbstract { get; set; }
+    public bool IsAbstract { get; internal set; }
     // TODO: determine if this is  still needed;
-    public bool IsAnonymous { get; set; }
-    public ConcurrentHashSet<String> Warnings { get; set; }
+    public bool IsAnonymous { get; internal set; }
+    public List<String> Warnings { get; internal set; }
     public abstract bool IsEntityType { get;  }
     
     public virtual  IEnumerable<StructuralProperty> Properties {
@@ -100,7 +99,7 @@ namespace Breeze.Sharp {
       return _dataProperties[propName];
     }
 
-    public virtual DataProperty AddDataProperty(DataProperty dp) {
+    internal virtual DataProperty AddDataProperty(DataProperty dp) {
       dp.ParentType = this;
       _dataProperties.Add(dp);
       dp.UpdateClientServerNames();
@@ -119,20 +118,20 @@ namespace Breeze.Sharp {
       get { return _validators; }
     }
 
-    public void UpdateComplexProperties(DataProperty dp) {
+    internal void UpdateComplexProperties(DataProperty dp) {
       UpdateCollection( _complexProperties, dp, dp.IsComplexProperty);
     }
 
-    public void UpdateUnmappedProperties(DataProperty dp) {
+    internal void UpdateUnmappedProperties(DataProperty dp) {
       UpdateCollection( _unmappedProperties, dp, dp.IsUnmapped);
     }
 
-    public String FormatDpName(String propertyName) {
+    internal String FormatDpName(String propertyName) {
       var typeLabel = this.IsEntityType ? "EntityType" : "ComplexType";
       return String.Format("Data Property: '{0}' on the {1}: '{2}'", propertyName, typeLabel, this.Name);
     }
 
-    public String FormatNpName(String propertyName) {
+    internal String FormatNpName(String propertyName) {
       return String.Format("Navigation Property: '{0}' on the EntityType: '{1}'", propertyName, this.Name);
     }
     
@@ -150,10 +149,10 @@ namespace Breeze.Sharp {
     }
 
     private String _nameOnServer;
-    public readonly DataPropertyCollection _dataProperties = new DataPropertyCollection();
+    internal readonly DataPropertyCollection _dataProperties = new DataPropertyCollection();
     protected readonly SafeList<DataProperty> _complexProperties = new SafeList<DataProperty>();
     protected readonly SafeList<DataProperty> _unmappedProperties = new SafeList<DataProperty>();
-    public  ValidatorCollection _validators = new ValidatorCollection();
+    internal  ValidatorCollection _validators = new ValidatorCollection();
 
   }
 

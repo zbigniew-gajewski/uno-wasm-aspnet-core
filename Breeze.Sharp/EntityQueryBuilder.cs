@@ -1,15 +1,15 @@
 ﻿using Breeze.Sharp.Core;
 using System;
-// using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-//using System.Text;
-//using System.Threading.Tasks;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Breeze.Sharp {
   
-  public static class EntityQueryBuilder  {
+  internal static class EntityQueryBuilder  {
 
     /// <summary>
     /// Builds an <see cref="EntityQuery"/> based on a collection of <see cref="EntityKey"/>s.
@@ -109,7 +109,7 @@ namespace Breeze.Sharp {
     }
 
     /// <summary>
-    /// For public use only. Handles both scalar and multivalued primary keys
+    /// For internal use only. Handles both scalar and multivalued primary keys
     /// </summary>
     /// <param name="keys"></param>
     /// <returns></returns>
@@ -204,7 +204,7 @@ namespace Breeze.Sharp {
 
     // ------------------------------------------------------------------------------------------------
 
-    //public static EntityQuery BuildQuery(List<EntityAspect> aspects, EntityRelationLink relationLink) {
+    //internal static EntityQuery BuildQuery(List<EntityAspect> aspects, EntityRelationLink relationLink) {
     //  // Building a query of the form:
     //  // var q0 = customers
     //  //   .Where(c => c.CustomerID == 1 || c.CustomerID == 2)

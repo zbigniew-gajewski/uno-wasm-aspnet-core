@@ -17,7 +17,7 @@ namespace Breeze.Sharp {
       this(em, JNode.DeserializeFrom(json)) {
     }
     
-    public SaveException(EntityManager em, JNode jn) 
+    internal SaveException(EntityManager em, JNode jn) 
       : base() {
       _message = jn.Get<String>("ExceptionMessage") ?? "see EntityErrors";
       var entityErrors = jn.GetArray<EntityError>("Errors", "errors", "EntityErrors", "entityErrors");

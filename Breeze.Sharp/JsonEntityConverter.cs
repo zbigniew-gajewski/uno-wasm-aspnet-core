@@ -1,5 +1,5 @@
 ﻿
-// using System.Reflection;
+using System.Reflection;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -12,8 +12,6 @@ using System.Linq;
 
 using Breeze.Sharp.Core;
 using System.Xml;
-using ConcurrentCollections;
-using System.Collections.Concurrent;
 
 namespace Breeze.Sharp {
 
@@ -23,17 +21,17 @@ namespace Breeze.Sharp {
   /// </summary>
   public class MappingContext {
     public MappingContext() {
-      RefMap = new ConcurrentDictionary<string, object>();
-      Entities = new ConcurrentHashSet<IEntity>();
+      RefMap = new Dictionary<string, object>();
+      Entities = new List<IEntity>();
     }
     public EntityManager EntityManager;
     public MergeStrategy MergeStrategy;
     public LoadingOperation LoadingOperation;
     public IJsonResultsAdapter JsonResultsAdapter;
     // AllEntities is a list of all deserialized entities not just the top level ones.
-    public ConcurrentHashSet<IEntity> Entities { get; private set; }
-    public JsonSerializer Serializer { get; set; }
-    public ConcurrentDictionary<String, Object> RefMap { get; private set; }
+    public List<IEntity> Entities { get; private set; }
+    public JsonSerializer Serializer { get; internal set; }
+    public Dictionary<String, Object> RefMap { get; private set; }
 
     public MetadataStore MetadataStore {
       get { return EntityManager.MetadataStore; }
@@ -87,7 +85,7 @@ namespace Breeze.Sharp {
   }
 
   /// <summary>
-  /// For public use only.
+  /// For internal use only.
   /// </summary>
   public class JsonEntityConverter : JsonConverter {
 

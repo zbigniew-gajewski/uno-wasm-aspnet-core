@@ -1,8 +1,8 @@
 ﻿using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Text;
-//using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Breeze.Sharp.Core {
 
@@ -43,7 +43,7 @@ namespace Breeze.Sharp.Core {
     }
 
     /// <summary>
-    /// For public use only.
+    /// For internal use only.
     /// </summary>
     protected Action PostAction { get; set; }
 

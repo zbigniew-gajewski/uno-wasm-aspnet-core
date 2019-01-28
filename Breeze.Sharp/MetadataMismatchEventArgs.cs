@@ -1,18 +1,22 @@
-﻿using System;
+﻿using Breeze.Sharp.Core;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Breeze.Sharp {
 
   public class MetadataMismatchEventArgs {
-    public String StructuralTypeName { get; set; }
+    public String StructuralTypeName { get; internal set; }
 
     public TypeNameInfo StructuralTypeInfo {
       get { return TypeNameInfo.FromStructuralTypeName(StructuralTypeName); } 
     }
 
-    public String PropertyName { get; set; }
+    public String PropertyName { get; internal set; }
     public MetadataMismatchTypes MetadataMismatchType { get; set; }
-    public String Detail { get; set; }
+    public String Detail { get; internal set; }
     public bool Allow { get; set; }
     public String Message {
       get {

@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Resources;
@@ -121,10 +120,7 @@ namespace Breeze.Sharp {
 
     private ResourceManager GetResourceManager(Type resourceType) {
       ResourceManager rm;
-#if !__WASM__
-//            lock (__lock)
-#endif
-            {
+      lock (__lock) {
         if (!__resourceManagerTypeMap.TryGetValue(resourceType, out rm)) {
           try {
             rm = new ResourceManager(resourceType);
@@ -139,10 +135,7 @@ namespace Breeze.Sharp {
 
     private ResourceManager GetResourceManager(String baseName, Assembly assembly) {
       ResourceManager rm;
-#if !__WASM__
-//            lock (__lock)
-#endif
-            {
+      lock (__lock) {
         var key = Tuple.Create(baseName, assembly);
         if (!__resourceManagerFileMap.TryGetValue(key, out rm)) {
           try {
@@ -161,9 +154,9 @@ namespace Breeze.Sharp {
     private String _message;
     private bool _isLocalized;
     
-//    private static Object __lock = new Object();
-    private static ConcurrentDictionary<Type, ResourceManager> __resourceManagerTypeMap = new ConcurrentDictionary<Type, ResourceManager>();
-    private static ConcurrentDictionary<Tuple<String, Assembly>, ResourceManager> __resourceManagerFileMap = new ConcurrentDictionary<Tuple<string, Assembly>, ResourceManager>();
+    private static Object __lock = new Object();
+    private static Dictionary<Type, ResourceManager> __resourceManagerTypeMap = new Dictionary<Type, ResourceManager>();
+    private static Dictionary<Tuple<String, Assembly>, ResourceManager> __resourceManagerFileMap = new Dictionary<Tuple<string, Assembly>, ResourceManager>();
     private static ResourceManager __defaultResourceManager = new ResourceManager("Breeze.Sharp.LocalizedMessages", typeof(LocalizedMessage).GetTypeInfo().Assembly);
   }
 

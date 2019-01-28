@@ -1,15 +1,15 @@
 ﻿using System;
-//using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-//using System.Text;
-//using System.Threading.Tasks;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Breeze.Sharp.Core {
 
   // Note: Do not make this public yet - too hard to understand and use ( but usefull);
-  public static class MethodReflector {
+  internal static class MethodReflector {
 
     /*
     /// MethodInfo info = 
@@ -41,7 +41,7 @@ namespace Breeze.Sharp.Core {
     }
 
     /// <summary>
-    /// For public use only.
+    /// For internal use only.
     /// </summary>
     /// <typeparam name="TIn"></typeparam>
     /// <typeparam name="TOut"></typeparam>

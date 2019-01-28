@@ -1,5 +1,4 @@
-﻿using ConcurrentCollections;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,8 +32,7 @@ namespace Breeze.Sharp.Core {
     /// <include file='EnumerableFns.Examples.xml' path='//Class[@name="EnumerableFns"]/method[@name="ForEach"]/*' />
     public static void ForEach<T>(this IEnumerable<T> items, Action<T> action) {
       foreach (T item in items) {
-                Console.WriteLine($"6 - EnumerableFns - 35 {item}");
-                action(item);
+        action(item);
       }
     }
 
@@ -76,8 +74,8 @@ namespace Breeze.Sharp.Core {
     /// <typeparam name="T"></typeparam>
     /// <param name="items"></param>
     /// <returns></returns>
-    public static ConcurrentHashSet<T> ToConcurrentHashSet<T>(this IEnumerable<T> items) {
-      return new ConcurrentHashSet<T>(items);
+    public static HashSet<T> ToHashSet<T>(this IEnumerable<T> items) {
+      return new HashSet<T>(items);
     }
 
     // Not named GetHashCode to avoid naming conflict; object.GetHashCode would
@@ -133,7 +131,7 @@ namespace Breeze.Sharp.Core {
     /// <param name="items"></param>
     /// <param name="batchSize"></param>
     /// <returns></returns>
-    public static IEnumerable<IEnumerable<T>> Partition<T>(this IEnumerable<T> items, int batchSize) {
+    internal static IEnumerable<IEnumerable<T>> Partition<T>(this IEnumerable<T> items, int batchSize) {
       var remainingItems = items;
       while (remainingItems.Any()) {
         var batch = remainingItems.Take(batchSize).ToList();
@@ -233,7 +231,7 @@ namespace Breeze.Sharp.Core {
       return true;
     }
 
-    public static SafeList<T> ToSafeList<T>(this IEnumerable<T> items) {
+    internal static SafeList<T> ToSafeList<T>(this IEnumerable<T> items) {
       return new SafeList<T>(items);
     }
 

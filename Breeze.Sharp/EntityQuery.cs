@@ -10,7 +10,7 @@ using System.Data.Services.Common;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-// using System.Threading;
+using System.Threading;
 
 namespace Breeze.Sharp {
 
@@ -54,7 +54,7 @@ namespace Breeze.Sharp {
     }
 
     /// <summary>
-    /// For public use only.
+    /// For internal use only.
     /// </summary>
     /// <returns></returns>
     public override object  Clone() {
@@ -82,9 +82,24 @@ namespace Breeze.Sharp {
     /// <returns></returns>
     public new async Task<IEnumerable<T>> Execute(EntityManager entityManager = null)
     {
+        return await Execute(CancellationToken.None, entityManager);
+    }
+
+    /// <summary>
+    /// Executes this query, against an optionally specified EntityManager. If no EntityManager
+    /// is specified then the query is run on the EntityManager specified by the EntityManager 
+    /// property on this instance. ( <see cref="EntityQueryExtensions.With{TQuery}(TQuery, EntityManager)"/> )
+    /// If this value is null an exception will be thrown.
+    /// </summary>
+    /// <param name="cancellationToken"></param>
+    /// <param name="entityManager"></param>
+    /// <returns></returns>
+    public new Task<IEnumerable<T>> Execute(CancellationToken cancellationToken, EntityManager entityManager = null) {
       entityManager = CheckEm(entityManager);
 
-      return await entityManager.ExecuteQuery<T>(this);
+      cancellationToken.ThrowIfCancellationRequested();
+
+      return entityManager.ExecuteQuery<T>(this, cancellationToken);
     }
 
     /// <summary>
@@ -131,7 +146,7 @@ namespace Breeze.Sharp {
     }
 
     // can be called from EntityQuery;
-    public override EntityQuery ExpandNonGeneric(String path) {
+    protected internal override EntityQuery ExpandNonGeneric(String path) {
       return Expand(path);
     }
 
@@ -175,11 +190,14 @@ namespace Breeze.Sharp {
     }
 
     /// <summary>
-    /// For public use.
+    /// For internal use.
     /// </summary>
     /// <returns></returns>
     public override String GetResourcePath(MetadataStore metadataStore) {
+
       var dsq = this.DataServiceQuery;
+
+      return @"Customers?";      
 
       var requestUri = dsq.RequestUri.AbsoluteUri;
 
@@ -285,7 +303,7 @@ namespace Breeze.Sharp {
     }
 
     /// <summary>
-    /// public use only - part of <see cref="IQueryProvider"/> implementation.
+    /// Internal use only - part of <see cref="IQueryProvider"/> implementation.
     /// </summary>
     /// <typeparam name="TElement"></typeparam>
     /// <param name="expression"></param>
@@ -295,7 +313,7 @@ namespace Breeze.Sharp {
     }
 
     /// <summary>
-    /// public use only - part of <see cref="IQueryProvider"/> implementation.
+    /// Internal use only - part of <see cref="IQueryProvider"/> implementation.
     /// </summary>
     /// <param name="expression"></param>
     /// <returns></returns>
@@ -313,7 +331,7 @@ namespace Breeze.Sharp {
     }
 
     /// <summary>
-    /// public use only - part of <see cref="IQueryProvider"/> implementation.
+    /// Internal use only - part of <see cref="IQueryProvider"/> implementation.
     /// </summary>
     /// <typeparam name="TResult"></typeparam>
     /// <param name="expression"></param>
@@ -325,7 +343,7 @@ namespace Breeze.Sharp {
    
 
     /// <summary>
-    /// public use only - part of <see cref="IQueryProvider"/> implementation.
+    /// Internal use only - part of <see cref="IQueryProvider"/> implementation.
     /// </summary>
     /// <param name="expression"></param>
     /// <returns></returns>
@@ -343,7 +361,7 @@ namespace Breeze.Sharp {
     }
 
     /// <summary>
-    /// For public use.
+    /// For internal use.
     /// </summary>
     protected new DataServiceQuery<T> DataServiceQuery {
       get { return (DataServiceQuery<T>) base.DataServiceQuery;  }
@@ -351,7 +369,7 @@ namespace Breeze.Sharp {
     }
 
     
-    private static String __placeholderServiceName = "http://localhost:61555/breeze/Undefined/";
+    private static String __placeholderServiceName = "http://localhost:7890/breeze/Undefined/";
     private static String __placeholderResourceName = "__Undefined__";
 
   }
@@ -423,9 +441,24 @@ namespace Breeze.Sharp {
     /// <returns></returns>
     public async Task<IEnumerable> Execute(EntityManager entityManager = null)
     {
+        return await Execute(CancellationToken.None, entityManager);
+    }
+
+    /// <summary>
+    /// Executes this query against a remote service. 
+    /// This method requires that an EntityManager has been previously specified via the 
+    /// <see cref="EntityQueryExtensions.With(EntityManager)"/> method.
+    /// <see cref="Breeze.Sharp.EntityManager.ExecuteQuery{T}(EntityQuery{T})"/>
+    /// </summary>
+    /// <param name="cancellationToken"></param>
+    /// <param name="entityManager"></param>
+    /// <returns></returns>
+    public Task<IEnumerable> Execute(CancellationToken cancellationToken, EntityManager entityManager = null) {
       entityManager = CheckEm(entityManager);
 
-      return await entityManager.ExecuteQuery(this);
+      cancellationToken.ThrowIfCancellationRequested();
+
+      return entityManager.ExecuteQuery(this, cancellationToken);
     }
 
     /// <summary>
@@ -443,7 +476,7 @@ namespace Breeze.Sharp {
       return func(entityManager);
     }
 
-    public abstract EntityQuery ExpandNonGeneric(String path);
+    protected internal abstract EntityQuery ExpandNonGeneric(String path);
 
     protected void UpdateFrom(EntityQuery query) {
       ResourceName = query.ResourceName;
@@ -466,7 +499,7 @@ namespace Breeze.Sharp {
     /// <summary>
     /// The resource name specified for this query.
     /// </summary>
-    public String ResourceName { get; protected set; }
+    public String ResourceName { get; protected internal set; }
 
     /// <summary>
     /// The element type of the IEnumerable being returned by this query.
@@ -482,20 +515,20 @@ namespace Breeze.Sharp {
     /// <summary>
     /// The DataService associated with this query.
     /// </summary>
-    public DataService DataService { get; set; }
+    public DataService DataService { get; protected internal set; }
 
 
     /// <summary>
     /// The EntityManager associated with this query.
     /// </summary>
-    public EntityManager EntityManager { get; set; }
+    public EntityManager EntityManager { get; protected internal set; }
     public abstract Expression Expression { get; }
     /// <summary>
     /// The QueryOptions associated with this query. 
     /// </summary>
-    public QueryOptions QueryOptions { get; protected set; }
+    public QueryOptions QueryOptions { get; protected internal set; }
     /// <summary>
-    /// For public use only.
+    /// For internal use only.
     /// </summary>
     /// <returns></returns>
     public abstract object Clone();
@@ -504,9 +537,9 @@ namespace Breeze.Sharp {
     DataServiceQuery IHasDataServiceQuery.DataServiceQuery {
       get { return DataServiceQuery; }
     }
-    public DataServiceQuery DataServiceQuery { get; set; }
+    internal DataServiceQuery DataServiceQuery { get; set; }
 
-    public IJsonResultsAdapter JsonResultsAdapter { get; set; }
+    public IJsonResultsAdapter JsonResultsAdapter { get; protected internal set; }
   }
 
   /// <summary>
@@ -521,7 +554,7 @@ namespace Breeze.Sharp {
     Object Clone();
   }
 
-  public interface IHasDataServiceQuery {
+  internal interface IHasDataServiceQuery {
     DataServiceQuery DataServiceQuery { get; }
   }
 }

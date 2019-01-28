@@ -51,7 +51,7 @@ namespace Breeze.Sharp {
     // This is for perf reasons to avoid excessive creation of new ValidationContext objects,
     // by allowing them to be mutated as long as any other objects know that they are mutable
     // and that if they need to store refs to these objects that they should clone them first;
-    public bool IsMutable {
+    internal bool IsMutable {
       get;
       set;
     }

@@ -1,10 +1,9 @@
 ﻿using Breeze.Sharp.Core;
-using ConcurrentCollections;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-// using System.Diagnostics;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -20,16 +19,16 @@ namespace Breeze.Sharp {
   /// The <b>EntityAspect</b> implements interfaces to support editing, change tracking and change notification.
   /// One instance of the EntityAspect class is associated with each persistable entity within a domain model.
   /// </remarks>
-// [DebuggerDisplay("{EntityKey} - {EntityState}")]
+  [DebuggerDisplay("{EntityKey} - {EntityState}")]
   public sealed class EntityAspect : StructuralAspect, IEditableObject, IChangeTracking, IRevertibleChangeTracking, INotifyPropertyChanged,
     INotifyDataErrorInfo, IComparable {
     // what about IDataErrorInfo
 
     /// <summary>
-    /// For public use only.
+    /// For internal use only.
     /// </summary>
     /// <param name="entity"></param>
-    public EntityAspect(IEntity entity)
+    internal EntityAspect(IEntity entity)
       : base(entity) {
       Entity = entity;
       entity.EntityAspect = this;
@@ -51,7 +50,7 @@ namespace Breeze.Sharp {
       get {
         return _entityType;
       }
-      set {
+      internal set {
         _entityType = value;
       }
     }
@@ -100,7 +99,7 @@ namespace Breeze.Sharp {
         }
         return _entityKey;
       }
-      set {
+      protected internal set {
         // set it to null to force recalc
         _entityKey = value;
         OnEntityAspectPropertyChanged("EntityKey");
@@ -140,7 +139,7 @@ namespace Breeze.Sharp {
         }
         return _entityVersion;
       }
-      set {
+      internal set {
         _entityVersion = value;
         // not a public property on EntityAspect ( yet?)
         // OnEntityAspectPropertyChanged("EntityVersion");
@@ -156,7 +155,7 @@ namespace Breeze.Sharp {
     /// </remarks>
     public bool IsNullEntity {
       get;
-      set;
+      internal set;
     }
 
     /// <summary>
@@ -173,10 +172,10 @@ namespace Breeze.Sharp {
 
     #endregion
 
-    #region Protected/public properties
+    #region Protected/Internal properties
 
     // EntityGroup is null if never attached but once its non-null it keeps its previous value.
-    public EntityGroup EntityGroup {
+    internal EntityGroup EntityGroup {
       get { return _entityGroup; }
       set { _entityGroup = value; }
     }
@@ -311,7 +310,7 @@ namespace Breeze.Sharp {
       return true;
     }
 
-    public void DetachOnClear() {
+    internal void DetachOnClear() {
       // this.OriginalValuesMap = null;
       // this.PreproposedValuesMap = null;
       _entityState = EntityState.Detached;
@@ -404,7 +403,7 @@ namespace Breeze.Sharp {
 
     #region EntityState change methods
 
-    public void SetEntityStateCore(EntityState value) {
+    internal void SetEntityStateCore(EntityState value) {
 
       if (value.IsAdded()) {
         _originalValuesMap = null;
@@ -456,7 +455,7 @@ namespace Breeze.Sharp {
     /// You will usually have no reason to call this method from application code.  The EntityState
     /// is automatically set to Modified by the framework when any EntityProperty of the entity is changed.
     /// </remarks>
-    public void SetModified() {
+    internal void SetModified() {
       if (this.EntityState == EntityState.Modified) return;
       if (this.EntityState == EntityState.Detached) {
         throw new InvalidOperationException("Detached objects must be attached before calling SetModified");
@@ -526,7 +525,7 @@ namespace Breeze.Sharp {
       }
     }
 
-    public override void SetDpValue(DataProperty property, object newValue) {
+    protected internal override void SetDpValue(DataProperty property, object newValue) {
       SetValueWithEvents(property, newValue, SetDpValueCore);
     }
 
@@ -540,7 +539,7 @@ namespace Breeze.Sharp {
       }
     }
 
-    public void SetNpValue(NavigationProperty property, object newValue) {
+    internal void SetNpValue(NavigationProperty property, object newValue) {
       if (_inProcess) return;
       try {
         _inProcess = true;
@@ -773,7 +772,7 @@ namespace Breeze.Sharp {
 
 
     // only ever called once for each EntityAspect when the EntityType is first set
-    public void InitializeDefaultValues() {
+    internal void InitializeDefaultValues() {
       // TODO: if a string is nonnullable
       // what is the correct nonnullable default value.
       this.EntityType.DataProperties.ForEach(dp => {
@@ -787,7 +786,7 @@ namespace Breeze.Sharp {
             SetRawValue(dp.Name, dp.DefaultValue);
           }
         } catch (Exception e) {
-//          Debug.WriteLine("Exception caught during initialization of {0}.{1}: {2}", this.EntityType.Name, dp.Name, e.Message);
+          Debug.WriteLine("Exception caught during initialization of {0}.{1}: {2}", this.EntityType.Name, dp.Name, e.Message);
         }
       });
       this.EntityType.NavigationProperties.ForEach(np => {
@@ -822,16 +821,16 @@ namespace Breeze.Sharp {
 
     #endregion
 
-    #region Misc private and public methods/properties
+    #region Misc private and internal methods/properties
 
-    public override void OnDataPropertyRestore(DataProperty dp) {
+    internal override void OnDataPropertyRestore(DataProperty dp) {
       if (dp.IsForeignKey) {
         // TODO: review later
         // ((IScalarEntityReference)dp.RelatedNavigationProperty.GetEntityReference(this)).RefreshForFkChange();
       }
     }
 
-    public void LinkRelatedEntities() {
+    internal void LinkRelatedEntities() {
       //// we do not want entityState to change as a result of linkage.
       using (EntityManager.NewIsLoadingBlock()) {
         LinkUnattachedChildren();
@@ -871,7 +870,7 @@ namespace Breeze.Sharp {
           }
         } else {
           // unidirectional
-          if (np.ParentType == EntityType) {
+          if (np.ParentType == EntityType && np.ParentType != np.EntityType) {
 
             parentToChildNp = np;
             if (parentToChildNp.IsScalar) {
@@ -987,7 +986,7 @@ namespace Breeze.Sharp {
       });
     }
 
-    public void UpdateRelated(DataProperty property, object newValue, object oldValue) {
+    internal void UpdateRelated(DataProperty property, object newValue, object oldValue) {
       if (IsDetached) return;
       var relatedNavProp = property.RelatedNavigationProperty;
       if (relatedNavProp != null) {
@@ -1146,13 +1145,13 @@ namespace Breeze.Sharp {
     }
 
     //// TODO: check if ever used
-    //public bool IsCurrent(EntityAspect targetAspect, EntityAspect sourceAspect) {
+    //internal bool IsCurrent(EntityAspect targetAspect, EntityAspect sourceAspect) {
     //  var targetVersion = (targetAspect.EntityState == EntityState.Deleted) ? EntityVersion.Original : EntityVersion.Current;
     //  bool isCurrent = EntityType.ConcurrencyProperties.All(c => (Object.Equals(targetAspect.GetValue(c, targetVersion), sourceAspect.GetValue(c, EntityVersion.Current))));
     //  return isCurrent;
     //}
 
-    public EntityKey GetParentKey(NavigationProperty np) {
+    internal EntityKey GetParentKey(NavigationProperty np) {
       // returns null for np's that do not have a parentKey
       var fkProps = np.ForeignKeyProperties;
       if (fkProps.Count == 0) return null;
@@ -1160,7 +1159,7 @@ namespace Breeze.Sharp {
       return new EntityKey(np.EntityType, fkValues);
     }
 
-    public void ProcessNpValue(NavigationProperty np, Action<IEntity> action) {
+    internal void ProcessNpValue(NavigationProperty np, Action<IEntity> action) {
       if (np.IsScalar) {
         var toEntity = this.GetValue<IEntity>(np);
         if (toEntity != null) {
@@ -1182,7 +1181,7 @@ namespace Breeze.Sharp {
       }
     }
 
-    public int IndexInEntityGroup { get; set; }
+    internal int IndexInEntityGroup { get; set; }
 
     #endregion
 
@@ -1199,20 +1198,20 @@ namespace Breeze.Sharp {
       return GetValue(navProperty.Name);
     }
 
-    public ConcurrentHashSet<String> LoadedNavigationPropertyNames {
+    internal List<String> LoadedNavigationPropertyNames {
       get;
       set;
     }
 
-    public void AddLoadedNavigationPropertyName(String propertyName, bool wasLoaded) {
+    internal void AddLoadedNavigationPropertyName(String propertyName, bool wasLoaded) {
       if (LoadedNavigationPropertyNames == null) {
-        LoadedNavigationPropertyNames = new ConcurrentHashSet<string>();
+        LoadedNavigationPropertyNames = new List<string>();
       }
       if (wasLoaded == LoadedNavigationPropertyNames.Contains(propertyName)) return;
       if (wasLoaded) {
         LoadedNavigationPropertyNames.Add(propertyName);
       } else {
-        LoadedNavigationPropertyNames.TryRemove(propertyName);
+        LoadedNavigationPropertyNames.Remove(propertyName);
       }
     }
 
@@ -1299,8 +1298,8 @@ namespace Breeze.Sharp {
     }
 
     // also raises Entitychanged with an Action of PropertyChanged.
-    // public because may be called from ComplexAspect
-    public void OnPropertyChanged(PropertyChangedEventArgs pcArgs) {
+    // internal because may be called from ComplexAspect
+    internal void OnPropertyChanged(PropertyChangedEventArgs pcArgs) {
       if (IsDetached || !EntityGroup.ChangeNotificationEnabled) return;
       pcArgs = pcArgs ?? AllPropertiesChangedEventArgs;
       QueueEvent(() => {
@@ -1321,15 +1320,15 @@ namespace Breeze.Sharp {
 
     }
 
-    // public because may be called from ComplexAspect
-    public bool OnEntityChanging(EntityAction action, EventArgs actionEventArgs = null) {
+    // internal because may be called from ComplexAspect
+    internal bool OnEntityChanging(EntityAction action, EventArgs actionEventArgs = null) {
       if (IsDetached || !EntityGroup.ChangeNotificationEnabled) return true;
       return EntityManager.OnEntityChanging(this.Entity, action, actionEventArgs);
     }
 
 
 
-    public void OnEntityChanged(EntityAction entityAction, EventArgs args = null) {
+    internal void OnEntityChanged(EntityAction entityAction, EventArgs args = null) {
       if (IsDetached || !EntityGroup.ChangeNotificationEnabled) return;
       QueueEvent(() => OnEntityChangedCore(entityAction, args));
     }
@@ -1445,7 +1444,7 @@ namespace Breeze.Sharp {
     }
 
 
-    public void OnErrorsChanged(ValidationError validationError) {
+    internal void OnErrorsChanged(ValidationError validationError) {
       OnErrorsChanged(validationError.Context.PropertyPath);
     }
 

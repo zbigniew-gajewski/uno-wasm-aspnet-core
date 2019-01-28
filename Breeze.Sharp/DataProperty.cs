@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using Breeze.Sharp.Core;
 using System;
-// using System.Diagnostics;
+using System.Diagnostics;
 using System.Linq;
 using System.Collections.Generic;
 
@@ -10,9 +10,9 @@ using Microsoft.Data.Edm.Library;
 namespace Breeze.Sharp {
 
   /// <summary>
-  /// For public use only. Unique collection of DataProperties.
+  /// For internal use only. Unique collection of DataProperties.
   /// </summary>
-  public class DataPropertyCollection : MapCollection<String, DataProperty> {
+  internal class DataPropertyCollection : MapCollection<String, DataProperty> {
     protected override String GetKeyForItem(DataProperty item) {
       return item.Name;
     }
@@ -24,17 +24,17 @@ namespace Breeze.Sharp {
   /// and then updated via Metadata retrieval from an entity server. Itt is also possible to 
   /// update/extend them directly on the client.
   /// </summary>
-  // [DebuggerDisplay("{Name} - {ParentType.Name}")]
+  [DebuggerDisplay("{Name} - {ParentType.Name}")]
   public class DataProperty : StructuralProperty, IJsonSerializable {
 
-    public DataProperty(String name)
+    internal DataProperty(String name)
       : base(name) {
       IsScalar = true;
 
     }
 
     // only used to create an inherited property
-    public DataProperty(DataProperty dp)
+    internal DataProperty(DataProperty dp)
       : base(dp) {
 
       this._clrType = dp.ClrType;
@@ -54,7 +54,7 @@ namespace Breeze.Sharp {
 
     }
 
-    public void UpdateFromJNode(JNode jNode, bool isFromServer) {
+    internal void UpdateFromJNode(JNode jNode, bool isFromServer) {
       var complexTypeName = MetadataStore.GetStructuralTypeNameFromJNode(jNode, "complexTypeName", isFromServer);
       if (complexTypeName == null) {
         Check(DataType, DataType.FromName(jNode.Get<String>("dataType")), "DataType");
@@ -105,7 +105,7 @@ namespace Breeze.Sharp {
     /// <summary>
     /// The DataType for this property. This will be null for a ComplexType DataProperty.
     /// </summary>
-    public DataType DataType { get; set; }
+    public DataType DataType { get; internal set; }
 
     /// <summary>
     /// The ComplexType for this property. This will be null for a simple DataProprty.
@@ -131,7 +131,7 @@ namespace Breeze.Sharp {
       get {
         return _clrType;
       }
-      set {
+      internal set {
         if (_clrType == value) return;
         if (ParentType != null) {
           throw new Exception("The 'ClrType' property must be set before a DataProperty is added to its parent.");
@@ -238,7 +238,7 @@ namespace Breeze.Sharp {
 
     public Object DefaultValue {
       get { return _defaultValue; }
-      set {
+      internal set {
         // TODO: check if valid;
         if (value == _defaultValue) return;
         if (this.ParentType == null || this.ParentType is ComplexType) {
@@ -260,7 +260,7 @@ namespace Breeze.Sharp {
     // may be set even if no RelatedNavigationProperty ( if unidirectional nav)
     public bool IsForeignKey {
       get { return _isForeignKey; }
-      set {
+      internal set {
         if (value == _isForeignKey) return;
         if (this.ParentType == null) {
           _isForeignKey = value;
@@ -278,7 +278,7 @@ namespace Breeze.Sharp {
 
     public ConcurrencyMode ConcurrencyMode {
       get { return _concurrencyMode; }
-      set {
+      internal set {
         if (value == _concurrencyMode) return;
         if (this.ParentType == null) {
           _concurrencyMode = value;
@@ -294,14 +294,14 @@ namespace Breeze.Sharp {
       }
     }
 
-    public Int64? MaxLength { get; set; }
+    public Int64? MaxLength { get; internal set; }
 
-    public String EnumTypeName { get; set; }
-    public String RawTypeName { get; set; }
+    public String EnumTypeName { get; internal set; }
+    public String RawTypeName { get; internal set; }
 
     public NavigationProperty InverseNavigationProperty {
       get { return _inverseNavigationProperty; }
-      set {
+      internal set {
         _inverseNavigationProperty = value;
         this.IsForeignKey = true;
 

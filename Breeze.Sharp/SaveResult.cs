@@ -2,7 +2,6 @@
 using Breeze.Sharp.Core;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Concurrent;
 
 namespace Breeze.Sharp {
   
@@ -12,7 +11,7 @@ namespace Breeze.Sharp {
   /// </summary>
   public class SaveResult {
 
-    public SaveResult(IEnumerable<IEntity> entities, ConcurrentDictionary<EntityKey, EntityKey> keyMappings) {
+    internal SaveResult(IEnumerable<IEntity> entities, Dictionary<EntityKey, EntityKey> keyMappings) {
       _savedEntities = new SafeList<IEntity>(entities);
       _keyMappings = new SafeDictionary<EntityKey,EntityKey>(keyMappings);
     }
@@ -37,7 +36,7 @@ namespace Breeze.Sharp {
     private SafeList<IEntity> _savedEntities;
     private SafeDictionary<EntityKey, EntityKey> _keyMappings;
 
-    public static SaveResult Empty = new SaveResult(Enumerable.Empty<IEntity>(), new ConcurrentDictionary<EntityKey, EntityKey>() );
+    public static SaveResult Empty = new SaveResult(Enumerable.Empty<IEntity>(), new Dictionary<EntityKey, EntityKey>() );
     
   }
 

@@ -6,9 +6,9 @@ using System.Linq;
 namespace Breeze.Sharp {
 
   /// <summary>
-  /// For public use only.
+  /// For internal use only.
   /// </summary>
-  public class PropertyCollection : KeyedCollection<String, StructuralProperty> {
+  internal class PropertyCollection : KeyedCollection<String, StructuralProperty> {
     protected override String GetKeyForItem(StructuralProperty item) {
       return item.Name;
     }
@@ -34,12 +34,12 @@ namespace Breeze.Sharp {
       this._validators = new ValidatorCollection(prop.Validators);
     }
 
-    public StructuralType ParentType { get; set; }
-    public abstract Type ClrType { get; set; }
-    public String Name { get; set; }
-    public String NameOnServer { get; set; }
-    public bool IsScalar { get; set; }
-    public bool IsInherited { get; set; }
+    public StructuralType ParentType { get; internal set; }
+    public abstract Type ClrType { get; internal set; }
+    public String Name { get; internal set; }
+    public String NameOnServer { get; internal set; }
+    public bool IsScalar { get; internal set; }
+    public bool IsInherited { get; internal set; }
 
     public bool IsUnmapped {
       get { return _isUnmapped; }
@@ -64,20 +64,20 @@ namespace Breeze.Sharp {
       get { return ParentType.MetadataStore; }
     }
 
-    public void Check(Object v1, Object v2, String name) {
+    internal void Check(Object v1, Object v2, String name) {
       if (v1 == null && v2 == null) return;
       if (Object.Equals(v1, v2)) return;
       var msg = "Metadata mismatch - values do not match between server and client for " + FormatName() + " Metadata property: " + name;
       MetadataStore.AddMessage(msg, MessageType.Error, true);
     }
 
-    public String FormatName() {
+    internal String FormatName() {
       var typeLabel = this.ParentType.IsEntityType ? "EntityType" : "ComplexType";
       var propLabel = this.IsDataProperty ? "DataProperty" : "NavigationProperty";
       return String.Format("{0}: '{1}' on the {2}: '{3}'", propLabel, this.Name, typeLabel, this.ParentType.Name);
     }
 
-    public void UpdateClientServerNames() {
+    internal void UpdateClientServerNames() {
       var nc = MetadataStore.NamingConvention;
       if (!String.IsNullOrEmpty(Name)) {
         NameOnServer = nc.TestPropertyName(Name, ParentType, true);
@@ -90,13 +90,13 @@ namespace Breeze.Sharp {
     public String DisplayName {
       get { return this.Name; }
     }
-    public Object Custom { get; set; }
+    public Object Custom { get; internal set; }
 
     public abstract bool IsDataProperty { get;  }
     public abstract bool IsNavigationProperty { get; }
 
     private bool _isUnmapped = false;
-    public ValidatorCollection _validators = new ValidatorCollection();
+    internal ValidatorCollection _validators = new ValidatorCollection();
 
   }
 

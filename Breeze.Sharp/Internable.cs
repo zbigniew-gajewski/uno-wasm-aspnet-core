@@ -16,7 +16,7 @@ namespace Breeze.Sharp {
       protected set;
     }
 
-    public JNode ToJNode() {
+    internal JNode ToJNode() {
       // This ONLY works because of the immutability convention for all Internables
       if (_jNode == null) {
         _jNode = JNode.FromObject(this, true);
@@ -35,7 +35,7 @@ namespace Breeze.Sharp {
       return this.ToJNode().Equals(other.ToJNode());
     }
 
-    public bool IsInterned {
+    internal bool IsInterned {
       get;
       set;
     }

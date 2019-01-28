@@ -1,16 +1,20 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Breeze.Sharp.Core {
 
   // Dictionary with a ReadOnly property
-  // should be used for public list variable whose contents will need to be exposed 
+  // should be used for internal list variable whose contents will need to be exposed 
   // as a ReadOnlyCollection<T>
-  public class SafeDictionary<K, V> : ConcurrentDictionary<K, V> {
+  public class SafeDictionary<K, V> : Dictionary<K, V> {
     public SafeDictionary() : base() { 
     }
-    public SafeDictionary(ConcurrentDictionary<K, V> map) : base(map) {
+    public SafeDictionary(Dictionary<K, V> map) : base(map) {
     }
 
     public ReadOnlyDictionary<K,V> ReadOnlyDictionary {

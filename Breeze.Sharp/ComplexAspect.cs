@@ -2,10 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-//using System.Diagnostics;
+using System.Diagnostics;
 using System.Linq;
-//using System.Text;
-//using System.Threading.Tasks;
+using System.Text;
+using System.Threading.Tasks;
 
 using Breeze.Sharp.Core;
 
@@ -21,7 +21,7 @@ namespace Breeze.Sharp {
 
     #region Ctors
 
-    public ComplexAspect(IComplexObject co)
+    internal ComplexAspect(IComplexObject co)
       : base(co) {
       ComplexObject = co;
       co.ComplexAspect = this;
@@ -35,7 +35,7 @@ namespace Breeze.Sharp {
     // Note that this method creates a child and updates its refs to the parent but does
     // NOT update the parent. This is deliberate because instances of OriginalVersions should not be stored
     // in the parent objects refs whereas CurrentVersions should.
-    public static IComplexObject Create(IStructuralObject parent, DataProperty parentProperty) {
+    internal static IComplexObject Create(IStructuralObject parent, DataProperty parentProperty) {
       var co = (IComplexObject)Activator.CreateInstance(parentProperty.ClrType);
 
       var aspect = co.ComplexAspect;
@@ -56,7 +56,7 @@ namespace Breeze.Sharp {
       get {
         return _complexType;
       }
-      set {
+      internal set {
         _complexType = value;
       }
     }
@@ -67,7 +67,7 @@ namespace Breeze.Sharp {
     /// </summary>
     public IComplexObject ComplexObject {
       get { return _complexObject; }
-      set { _complexObject = value; }
+      internal set { _complexObject = value; }
     }
 
     /// <summary>
@@ -75,7 +75,7 @@ namespace Breeze.Sharp {
     /// </summary>
     public IStructuralObject Parent {
       get { return _parent; }
-      set { _parent = value; }
+      internal set { _parent = value; }
     }
 
     /// <summary>
@@ -83,7 +83,7 @@ namespace Breeze.Sharp {
     /// </summary>
     public DataProperty ParentProperty {
       get { return _parentProperty; }
-      set { _parentProperty = value; }
+      internal set { _parentProperty = value; }
     }
 
     /// <summary>
@@ -138,7 +138,7 @@ namespace Breeze.Sharp {
         if (ParentEntity == null) return EntityVersion.Current;
         return ParentEntity.EntityAspect.EntityVersion;
       }
-      set {
+      internal set {
         if (ParentEntity == null) return;
         ParentEntity.EntityAspect.EntityVersion = value;
       }
@@ -173,7 +173,7 @@ namespace Breeze.Sharp {
 
     #endregion
 
-    #region public and protected
+    #region internal and protected
 
     protected override ValidationError ValidateCore(Validator vr, ValidationContext vc) {
       var ve = vr.Validate(vc);
@@ -193,15 +193,15 @@ namespace Breeze.Sharp {
       return ve;
     }
 
-    public bool IsDetached {
+    internal bool IsDetached {
       get { return ParentEntity == null || ParentEntity.EntityAspect.IsDetached; }
     }
 
-    public bool IsAttached {
+    internal bool IsAttached {
       get { return ParentEntity != null && ParentEntity.EntityAspect.IsAttached; }
     }
 
-    public void AbsorbCurrentValues(ComplexAspect sourceAspect) {
+    internal void AbsorbCurrentValues(ComplexAspect sourceAspect) {
 
       this.ComplexType.DataProperties.ForEach(p => {
         var sourceValue = sourceAspect.GetValue(p);
@@ -228,7 +228,7 @@ namespace Breeze.Sharp {
 
     #region Get/Set Value
 
-    public void InitializeDefaultValues() {
+    internal void InitializeDefaultValues() {
 
       ComplexType.DataProperties.ForEach(dp => {
         try {
@@ -238,7 +238,7 @@ namespace Breeze.Sharp {
             SetDpValue(dp, dp.DefaultValue);
           }
         } catch (Exception e) {
-          // Debug.WriteLine("Exception caught during initialization of {0}.{1}: {2}", this.ComplexObject.GetType().Name, dp.Name, e.Message);
+          Debug.WriteLine("Exception caught during initialization of {0}.{1}: {2}", this.ComplexObject.GetType().Name, dp.Name, e.Message);
         }
       });
     }
@@ -261,7 +261,7 @@ namespace Breeze.Sharp {
     }
 
 
-    public override void SetDpValue(DataProperty property, object newValue) {
+    protected internal override void SetDpValue(DataProperty property, object newValue) {
       if (EntityAspect == null) {
         var oldValue = GetValue(property);
         if (Object.Equals(oldValue, newValue)) return;
@@ -319,7 +319,7 @@ namespace Breeze.Sharp {
 
     }
 
-    public IComplexObject GetOriginalVersion() {
+    internal IComplexObject GetOriginalVersion() {
       var originalClone = Create(this.Parent, this.ParentProperty);
       var cloneAspect = originalClone.ComplexAspect;
 
@@ -330,12 +330,12 @@ namespace Breeze.Sharp {
       return originalClone;
     }
 
-    public override String GetPropertyPath(String propName) {
+    internal override String GetPropertyPath(String propName) {
       if (Parent == null) return null;
       return PropertyPathPrefix + propName;
     }
 
-    public String PropertyPathPrefix {
+    internal String PropertyPathPrefix {
       get {
         if (_propertyPathPrefix == null) {
           var name = this.ParentProperty.Name;

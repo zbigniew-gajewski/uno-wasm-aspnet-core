@@ -1,13 +1,12 @@
 ﻿
 using System;
 using System.Collections;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-//using System.ComponentModel;
+using System.ComponentModel;
 using System.Linq;
-//using System.Text;
-//using System.Threading.Tasks;
+using System.Text;
+using System.Threading.Tasks;
 
 using Breeze.Sharp.Core;
 
@@ -15,7 +14,7 @@ namespace Breeze.Sharp {
 
   #region EntityGroup
   
-  public class EntityGroup : IGrouping<Type, EntityAspect>  {
+  internal class EntityGroup : IGrouping<Type, EntityAspect>  {
 
     #region ctors
 
@@ -28,7 +27,7 @@ namespace Breeze.Sharp {
     /// </summary>
     /// <param name="clrEntityType"></param>
     /// <returns></returns>
-    public static EntityGroup Create(Type clrEntityType, EntityManager em) {
+    internal static EntityGroup Create(Type clrEntityType, EntityManager em) {
       var entityGroup = new EntityGroup(clrEntityType);
       entityGroup.Initialize(em);
       return entityGroup;
@@ -36,7 +35,7 @@ namespace Breeze.Sharp {
 
     private void Initialize(EntityManager em) {
       _entityAspects = new EntityCollection();
-      _entityKeyMap = new ConcurrentDictionary<EntityKey, EntityAspect>();
+      _entityKeyMap = new Dictionary<EntityKey, EntityAspect>();
       EntityManager = em;
       EntityType = em.MetadataStore.GetEntityType(ClrType);
       // insure that any added table can watch for change events
@@ -58,7 +57,7 @@ namespace Breeze.Sharp {
     /// </summary>
     public EntityType EntityType {
       get;
-      set; 
+      internal set; 
     }
 
     /// <summary>
@@ -66,7 +65,7 @@ namespace Breeze.Sharp {
     /// </summary>
     public EntityManager EntityManager {
       get;
-      set;
+      internal set;
     }
 
     /// <summary>
@@ -125,7 +124,7 @@ namespace Breeze.Sharp {
       }
     }
 
-    public IEnumerable<EntityAspect> EntityAspects {
+    internal IEnumerable<EntityAspect> EntityAspects {
       get {
         return SelfAndSubtypeGroups
             .SelectMany(f => f.LocalEntityAspects);
@@ -133,7 +132,7 @@ namespace Breeze.Sharp {
     }
 
 
-    public IEnumerable<EntityAspect> LocalEntityAspects {
+    internal IEnumerable<EntityAspect> LocalEntityAspects {
       get { return _entityAspects; }
     }
 
@@ -141,7 +140,7 @@ namespace Breeze.Sharp {
 
     #region Misc public methods
 
-    public void Clear() {
+    internal void Clear() {
       // do not call detach on each entityAspect - very slow and not needed 
       // all we really need to do is set each _entityaspect.EntityState to detached
       _entityAspects.ForEach(ea => ea.DetachOnClear());
@@ -200,10 +199,10 @@ namespace Breeze.Sharp {
 
     #endregion
 
-    #region public props/methods 
+    #region Internal props/methods 
 
 
-    public EntityAspect FindEntityAspect(EntityKey entityKey, bool includeDeleted) {
+    internal EntityAspect FindEntityAspect(EntityKey entityKey, bool includeDeleted) {
       EntityAspect result;
       // this can occur when we are trying to find say EntityKey(Order, 3)
       // in a collection of InternationalOrder keys
@@ -221,7 +220,7 @@ namespace Breeze.Sharp {
       }
     }
 
-    public EntityAspect AttachEntityAspect(EntityAspect entityAspect, EntityState entityState) {
+    internal EntityAspect AttachEntityAspect(EntityAspect entityAspect, EntityState entityState) {
       entityAspect.EntityGroup = this;
       AddToKeyMap(entityAspect);
       _entityAspects.Add(entityAspect);
@@ -229,19 +228,17 @@ namespace Breeze.Sharp {
       return entityAspect;
     }
 
-    public void DetachEntityAspect(EntityAspect aspect) {
+    internal void DetachEntityAspect(EntityAspect aspect) {
       _entityAspects.Remove(aspect);
       RemoveFromKeyMap(aspect);
     }
 
-    public void ReplaceKey(EntityAspect entityAspect, EntityKey oldKey, EntityKey newKey)
-    {
-            EntityAspect res;
-      _entityKeyMap.TryRemove(oldKey, out res);  // it may not exist if this object was just Imported or Queried.
-      _entityKeyMap.TryAdd(newKey, entityAspect);
+    internal void ReplaceKey(EntityAspect entityAspect, EntityKey oldKey, EntityKey newKey) {
+      _entityKeyMap.Remove(oldKey);  // it may not exist if this object was just Imported or Queried.
+      _entityKeyMap.Add(newKey, entityAspect);
     }
 
-    public void UpdateFkVal(DataProperty fkProp, Object oldValue, Object newValue) {
+    internal void UpdateFkVal(DataProperty fkProp, Object oldValue, Object newValue) {
       var fkPropName = fkProp.Name;
       _entityAspects.ForEach(ea => {
         if (Equals(ea.GetValue(fkPropName), oldValue)) {
@@ -250,7 +247,7 @@ namespace Breeze.Sharp {
       });
     }
 
-    public bool KeyMapContains(EntityKey key) {
+    internal bool KeyMapContains(EntityKey key) {
       EntityAspect val;
       return _entityKeyMap.TryGetValue(key, out val);
     }
@@ -260,16 +257,14 @@ namespace Breeze.Sharp {
 
     private void AddToKeyMap(EntityAspect aspect) {
       try {
-        _entityKeyMap.TryAdd(aspect.EntityKey, aspect);
+        _entityKeyMap.Add(aspect.EntityKey, aspect);
       } catch (ArgumentException) {
         throw new InvalidOperationException("An entity with this key: " + aspect.EntityKey.ToString() + " already exists in this EntityManager");
       }
     }
 
-    private void RemoveFromKeyMap(EntityAspect aspect)
-    {
-        EntityAspect res;
-        _entityKeyMap.TryRemove(aspect.EntityKey, out res);
+    private void RemoveFromKeyMap(EntityAspect aspect) {
+      _entityKeyMap.Remove(aspect.EntityKey);
     }
 
    
@@ -299,7 +294,7 @@ namespace Breeze.Sharp {
     // this member will only exist on EntityCache's sent from the server to the client
     // it should always be null on persistent client side entity sets
     private EntityCollection _entityAspects;
-    private ConcurrentDictionary<EntityKey, EntityAspect> _entityKeyMap;
+    private Dictionary<EntityKey, EntityAspect> _entityKeyMap;
     private SafeList<EntityGroup> _selfAndSubtypeGroups;
 
 
@@ -311,20 +306,20 @@ namespace Breeze.Sharp {
 
   #region EntityGroupCollection and EntityCollection
 
-  public class EntityGroupCollection : MapCollection<Type, EntityGroup> {
+  internal class EntityGroupCollection : MapCollection<Type, EntityGroup> {
     protected override Type GetKeyForItem(EntityGroup item) {
       return item.ClrType;
     }
   }
 
-  public class EntityCollection : IEnumerable<EntityAspect> {
+  internal class EntityCollection : IEnumerable<EntityAspect> {
 
-    public EntityCollection() {
+    internal EntityCollection() {
       _innerList = new List<EntityAspect>();
       _emptyIndexes = new List<int>();
     }
 
-    public void Add(EntityAspect aspect) {
+    internal void Add(EntityAspect aspect) {
       var indexCount = _emptyIndexes.Count;
       if (indexCount == 0) {
         var index = _innerList.Count;
@@ -338,7 +333,7 @@ namespace Breeze.Sharp {
       }
     }
 
-    public void Remove(EntityAspect aspect) {
+    internal void Remove(EntityAspect aspect) {
       var index = aspect.IndexInEntityGroup;
       if (aspect != _innerList[index]) {
         throw new Exception("Error in EntityCollection removall logic");
@@ -348,7 +343,7 @@ namespace Breeze.Sharp {
       _emptyIndexes.Add(index);
     }
 
-    public void Clear() {
+    internal void Clear() {
       this.ForEach(r => r.IndexInEntityGroup = -1);
       _innerList.Clear();
       _emptyIndexes.Clear();

@@ -1,52 +1,50 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 using Breeze.Sharp.Core;
-using ConcurrentCollections;
 
 namespace Breeze.Sharp {
 
-  public class UnattachedChildrenMap {
+  internal class UnattachedChildrenMap {
 
     public UnattachedChildrenMap() {
-      _map = new ConcurrentDictionary<EntityKey, ConcurrentHashSet<NavChildren>>();
+      _map = new Dictionary<EntityKey, List<NavChildren>>();
     }
 
-    public class NavChildren {
+    internal class NavChildren {
       public NavigationProperty NavigationProperty;
-      public ConcurrentHashSet<IEntity> Children;
+      public HashSet<IEntity> Children;
     }
 
-    public ConcurrentHashSet<NavChildren> GetNavChildrenList(EntityKey entityKey, bool createIfNotFound) {
-            ConcurrentHashSet<NavChildren> navChildrenList = null;
+    public List<NavChildren> GetNavChildrenList(EntityKey entityKey, bool createIfNotFound) {
+      List<NavChildren> navChildrenList = null;
 
       if (_map.TryGetValue(entityKey, out navChildrenList)) {
         return navChildrenList;
       } else {
         if (createIfNotFound) {
-          navChildrenList = new ConcurrentHashSet<NavChildren>();
-          _map.TryAdd(entityKey, navChildrenList);
+          navChildrenList = new List<NavChildren>();
+          _map.Add(entityKey, navChildrenList);
         }
       }
       return navChildrenList;
     }
 
-    public ConcurrentHashSet<IEntity> GetNavChildren(EntityKey entityKey, NavigationProperty navProp, bool createIfNotFound) {
-            ConcurrentHashSet<NavChildren> navChildrenList = GetNavChildrenList(entityKey, createIfNotFound);
+    public HashSet<IEntity> GetNavChildren(EntityKey entityKey, NavigationProperty navProp, bool createIfNotFound) {
+      List<NavChildren> navChildrenList = GetNavChildrenList(entityKey, createIfNotFound);
       if (navChildrenList == null) return null;
       
       var navChildren = navChildrenList.FirstOrDefault(uc => uc.NavigationProperty == navProp);
       if (navChildren == null && createIfNotFound) {
-        navChildren = new NavChildren() {NavigationProperty = navProp, Children = new ConcurrentHashSet<IEntity>() };
+        navChildren = new NavChildren() {NavigationProperty = navProp, Children = new HashSet<IEntity>() };
         navChildrenList.Add(navChildren);
       }
 
       var children = navChildren.Children;
-      children.Where(entity => entity.EntityAspect.EntityState.IsDetached()).ToList().ForEach(entity => children.TryRemove(entity));
+      children.RemoveWhere( entity => entity.EntityAspect.EntityState.IsDetached());
 
       return children;
     }
@@ -62,15 +60,14 @@ namespace Breeze.Sharp {
     public void RemoveChildren(EntityKey parentEntityKey, NavigationProperty navProp) {
       var navChildrenList = GetNavChildrenList(parentEntityKey, false);
       if (navChildrenList == null) return;
-      var ix = navChildrenList.FirstOrDefault(nc => nc.NavigationProperty == navProp);
-      if (ix != null) return;
-      navChildrenList.TryRemove(ix);
+      var ix = navChildrenList.IndexOf(nc => nc.NavigationProperty == navProp);
+      if (ix != -1) return;
+      navChildrenList.RemoveAt(ix);
       if (navChildrenList.Count == 0) {
-                ConcurrentHashSet<NavChildren> res;
-        _map.TryRemove(parentEntityKey, out res);
+        _map.Remove(parentEntityKey);
       }
     }
 
-    private ConcurrentDictionary<EntityKey, ConcurrentHashSet<NavChildren>> _map;
+    private Dictionary<EntityKey, List<NavChildren>> _map;
   }
 }

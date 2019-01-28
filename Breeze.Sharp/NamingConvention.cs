@@ -6,8 +6,6 @@ using System.Collections.Generic;
 using System.Linq;
 
 using Newtonsoft.Json;
-using ConcurrentCollections;
-using System.Collections.Concurrent;
 
 namespace Breeze.Sharp {
 
@@ -20,11 +18,11 @@ namespace Breeze.Sharp {
 
     public static String Suffix = "NamingConvention";
 
-    public static ConcurrentHashSet<NamingConvention> __namingConventions = new ConcurrentHashSet<NamingConvention>();
+    public static List<NamingConvention> __namingConventions = new List<NamingConvention>();
 
     public NamingConvention() {
       Name = UtilFns.TypeToSerializationName(this.GetType(), Suffix);
-      _clientServerNamespaceMap = new ConcurrentDictionary<string, string>();
+      _clientServerNamespaceMap = new Dictionary<string, string>();
     }
 
     /// <summary>
@@ -36,7 +34,7 @@ namespace Breeze.Sharp {
       
       String clientNs;
       if (_serverClientNamespaceMap == null) {
-        _serverClientNamespaceMap = new ConcurrentDictionary<string, string>(_clientServerNamespaceMap.ToDictionary(kvp => kvp.Value, kvp => kvp.Key));
+        _serverClientNamespaceMap = _clientServerNamespaceMap.ToDictionary(kvp => kvp.Value, kvp => kvp.Key);
       }
       if (_serverClientNamespaceMap.TryGetValue(serverNameInfo.Namespace, out clientNs)) {
         return new TypeNameInfo(serverNameInfo.ShortName, clientNs);
@@ -82,7 +80,7 @@ namespace Breeze.Sharp {
 
     public NamingConvention WithClientServerNamespaceMapping(IDictionary<String, String> clientServerNamespaceMap) {
       var clone = Clone();
-      clone._clientServerNamespaceMap = new ConcurrentDictionary<string, string>(clientServerNamespaceMap);
+      clone._clientServerNamespaceMap = new Dictionary<string, string>(clientServerNamespaceMap);
       _serverClientNamespaceMap = null;
       return clone;
     }
@@ -108,8 +106,8 @@ namespace Breeze.Sharp {
     }
 
     [JsonProperty("ClientServerNamespaceMap")]
-    private ConcurrentDictionary<String, String> _clientServerNamespaceMap = new ConcurrentDictionary<string, string>();
-    private ConcurrentDictionary<String, String> _serverClientNamespaceMap;
+    private Dictionary<String, String> _clientServerNamespaceMap = new Dictionary<string, string>();
+    private Dictionary<String, String> _serverClientNamespaceMap;
 
 
     /// <summary>

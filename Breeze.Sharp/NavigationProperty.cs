@@ -2,15 +2,15 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-// using System.Diagnostics;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Breeze.Sharp {
 
   /// <summary>
-  /// For public use only.
+  /// For internal use only.
   /// </summary>
-  public class NavigationPropertyCollection : MapCollection<String, NavigationProperty> {
+  internal class NavigationPropertyCollection : MapCollection<String, NavigationProperty> {
     protected override String GetKeyForItem(NavigationProperty item) {
       return item.Name;
     }
@@ -22,15 +22,15 @@ namespace Breeze.Sharp {
   /// Instances of the NavigationProperty class are constructed automatically during Metadata retrieval. 
   /// However it is also possible to construct them directly via the constructor.
   /// </summary>
-  // buggerDisplay("{Name} - {ParentType.Name}")]
+  [DebuggerDisplay("{Name} - {ParentType.Name}")]
   public class NavigationProperty : StructuralProperty, IJsonSerializable {
     // TODO: what about IsNullable on a scalar navigation property
 
-    public NavigationProperty(String name) : base(name) {
+    internal NavigationProperty(String name) : base(name) {
       
     }
 
-    public NavigationProperty(NavigationProperty np) 
+    internal NavigationProperty(NavigationProperty np) 
       : base( np) {
       
       this.EntityType = np.EntityType;
@@ -42,7 +42,7 @@ namespace Breeze.Sharp {
       
     }
 
-    public void UpdateFromJNode(JNode jNode, bool isFromServer) {
+    internal void UpdateFromJNode(JNode jNode, bool isFromServer) {
       var etName = MetadataStore.GetStructuralTypeNameFromJNode(jNode, "entityTypeName", isFromServer);
       Check(EntityType.Name, etName, "EntityTypeName");
       IsScalar = jNode.Get<bool>("isScalar", true);
@@ -69,27 +69,27 @@ namespace Breeze.Sharp {
     /// <summary>
     /// The EntityType returned by this property.
     /// </summary>
-    public EntityType EntityType { get; set; }
+    public EntityType EntityType { get; internal set; }
 
     /// <summary>
     /// The CLR type, possibly enumerable, returned by this property.
     /// </summary>
     public override Type ClrType {
       get { return EntityType.ClrType; }
-      set {  throw new NotSupportedException("Cannot set the ClrType on a NavigationProperty directly - set the EntityType"); }
+      internal set {  throw new NotSupportedException("Cannot set the ClrType on a NavigationProperty directly - set the EntityType"); }
     }
        
     /// <summary>
     /// The name of the association to which that this property belongs. 
     /// This associationName will be shared with this properties 'Inverse', if it exists.
     /// </summary>
-    public String AssociationName { get; set; }
+    public String AssociationName { get; internal set; }
     
     /// <summary>
     /// The inverse of this NavigationProperty. The NavigationProperty that 
     /// represents a navigation in the opposite direction to this NavigationProperty.
     /// </summary>
-    public NavigationProperty Inverse { get; set; }
+    public NavigationProperty Inverse { get; internal set; }
 
     
     /// <summary>
@@ -145,22 +145,22 @@ namespace Breeze.Sharp {
       }
     }
 
-    public void SetFkNames(IEnumerable<String> fkNames) {
+    internal void SetFkNames(IEnumerable<String> fkNames) {
       _fkNames.AddRange(fkNames);
     }
 
-    public void SetInvFkNames(IEnumerable<String> invFkNames) {
+    internal void SetInvFkNames(IEnumerable<String> invFkNames) {
       _invFkNames.AddRange(invFkNames);
     }
 
 
-    public void AddInvFkName(String invFkName) {
+    internal void AddInvFkName(String invFkName) {
       if (!_fkNames.Contains(invFkName)) {
         _invFkNames.Add(invFkName);
       }
     }
 
-    public void UpdateWithRelatedDataProperty(DataProperty fkProp) {
+    internal void UpdateWithRelatedDataProperty(DataProperty fkProp) {
       _relatedDataProperties.Add(fkProp);
       var fkName = fkProp.Name;
       if (!_fkNames.Contains(fkName)) {

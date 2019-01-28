@@ -1,6 +1,6 @@
 ﻿using Breeze.Sharp.Core;
 using System;
-// using System.Diagnostics;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Breeze.Sharp {
@@ -8,7 +8,7 @@ namespace Breeze.Sharp {
   /// <summary>
   /// A collection of ValidationErrors.
   /// </summary>
-//  [DebuggerDisplay("Count = {Count}")]
+  [DebuggerDisplay("Count = {Count}")]
   public class ValidationErrorCollection : MapCollection<String, ValidationError> {
     public ValidationErrorCollection(EntityAspect entityAspect) {
       EntityAspect = entityAspect;
@@ -60,7 +60,7 @@ namespace Breeze.Sharp {
   /// <summary>
   /// The result of a failed validation operation
   /// </summary>
-//  [DebuggerDisplay("{Validator.Name} Error: {Message}")]
+  [DebuggerDisplay("{Validator.Name} Error: {Message}")]
   public class ValidationError {
 
     public ValidationError(Validator validator, ValidationContext context, String message = null, String key = null) {
@@ -72,7 +72,7 @@ namespace Breeze.Sharp {
     }
 
     public Validator Validator { get; private set; }
-    public ValidationContext Context { get; set; }
+    public ValidationContext Context { get; internal set; }
     public String Message {
       get {
         if (_message == null) {
@@ -92,7 +92,7 @@ namespace Breeze.Sharp {
         _key = value;
       }
     }
-    public bool IsServerError { get; set; }
+    public bool IsServerError { get; internal set; }
 
     // To obtain a key that can be used to remove an item from a validationErrorsCollection
     public static String GetKey(Validator validator, String propertyPath = null) {

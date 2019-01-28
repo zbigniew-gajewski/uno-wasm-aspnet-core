@@ -48,8 +48,8 @@ namespace Breeze.Sharp {
 
     public static QueryOptions Default = new QueryOptions(Breeze.Sharp.FetchStrategy.FromServer, Breeze.Sharp.MergeStrategy.PreserveChanges);
 
-    public FetchStrategy? FetchStrategy { get; set; }
-    public MergeStrategy? MergeStrategy { get; set; }
+    public FetchStrategy? FetchStrategy { get; internal set; }
+    public MergeStrategy? MergeStrategy { get; internal set; }
     
   }
 

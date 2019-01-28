@@ -34,7 +34,7 @@ namespace UnoTest
         {
 
 #if DEBUG
-            ConfigureFilters(LogExtensionPoint.AmbientLoggerFactory);
+          //  ConfigureFilters(LogExtensionPoint.AmbientLoggerFactory);
 #endif
 
             this.InitializeComponent();

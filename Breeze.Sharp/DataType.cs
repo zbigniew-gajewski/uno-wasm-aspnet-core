@@ -1,5 +1,4 @@
-﻿using ConcurrentCollections;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
@@ -46,18 +45,18 @@ namespace Breeze.Sharp {
 
     public static String StringPrefix = "K_";
 
-    public String Name { get; set; }
-    public Type ClrType { get; set; }
-    public Object DefaultValue { get; set; }
+    public String Name { get; internal set; }
+    public Type ClrType { get; internal set; }
+    public Object DefaultValue { get; internal set; }
     
     public virtual Object Parse(Object val) {
       if (val == null) return null;
       return Convert.ChangeType(val, ClrType);
     }
-    public Func<Object, String> FmtOData { get; set; }
-    public Func<Object> GetNextTempValue { get; set; }
-    public DataTypeInfo DataTypeInfo { get; set; }
-    public static ConcurrentHashSet<DataType> All = new ConcurrentHashSet<DataType>();
+    public Func<Object, String> FmtOData { get; internal set; }
+    public Func<Object> GetNextTempValue { get; internal set; }
+    public DataTypeInfo DataTypeInfo { get; internal set; }
+    public static List<DataType> All = new List<DataType>();
 
     public static DataType String = new DataType(typeof(String)) {
       DefaultValue = "",

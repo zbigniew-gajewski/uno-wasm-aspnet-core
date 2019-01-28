@@ -1,8 +1,8 @@
 ﻿using Breeze.Sharp.Core;
 using System;
 using System.Collections;
-// using System.Collections.Generic;
-// using System.Diagnostics;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Breeze.Sharp {
@@ -36,7 +36,7 @@ namespace Breeze.Sharp {
       InitializeValues(values, true);
     }
 
-    public EntityKey(JNode jn, MetadataStore metadataStore) {
+    internal EntityKey(JNode jn, MetadataStore metadataStore) {
       var etName = jn.Get<String>("entityType");
       EntityType = metadataStore.GetEntityType(etName);
       ClrType = EntityType.ClrType;
@@ -45,7 +45,7 @@ namespace Breeze.Sharp {
     }
 
     // should be called internally when we don't need to go thru coercion.
-    public static EntityKey Create(EntityType entityType, params Object[] values) {
+    internal static EntityKey Create(EntityType entityType, params Object[] values) {
       var ek = new EntityKey();
       ek.EntityType = entityType;
       ek.ClrType = entityType.ClrType;
@@ -101,7 +101,7 @@ namespace Breeze.Sharp {
     /// </summary>
     public Object[] Values {
       get;
-      set;
+      internal set;
     }
 
     /// <summary>
@@ -121,7 +121,7 @@ namespace Breeze.Sharp {
       return (EntityQuery<T>) EntityQueryBuilder.BuildQuery(this);
     }
 
-    public bool IsEmpty() {
+    internal bool IsEmpty() {
       return Values == null || Values.Length == 0 || Values.Any(v => v==null) ;
     }
 
@@ -221,7 +221,7 @@ namespace Breeze.Sharp {
 
 
     //// do not need to serialize this.
-    //public EntityKey BasemostEntityKey {
+    //internal EntityKey BasemostEntityKey {
     //  get {
     //    if (_baseMostEntityKey == null) {
     //      _baseMostEntityKey = GetBasemostEntityKey(this);

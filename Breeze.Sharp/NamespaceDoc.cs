@@ -8,6 +8,6 @@ namespace Breeze.Sharp {
   /// Ask questions in our community forum and get answers from support engineers, MVPs, and developers just like you.
   /// If you prefer to use email, please contact us at breeze@ideablade.com.
   /// </summary>
-  public static class NamespaceDoc {
+  internal static class NamespaceDoc {
   }
 }

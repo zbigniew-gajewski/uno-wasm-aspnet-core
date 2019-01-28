@@ -41,5 +41,18 @@
                 EntityAspect.SetValue("LastName", value);
             }
         }
+
+        public string Description                      // "Get milk"
+        {
+            get
+            {
+                return EntityAspect.GetValue<string>("Description");
+            }
+            set
+            {
+                //SetValue(value);
+                EntityAspect.SetValue("Description", value);
+            }
+        }
     }
 }
