@@ -14,8 +14,9 @@
             }
             set
             {
-                //SetValue(value);
+                SetValue(value);
                 EntityAspect.SetValue("Id", value);
+                
             }
         }
 
@@ -28,7 +29,7 @@
             }
             set
             {
-                // SetValue(value);
+                SetValue(value);
                 EntityAspect.SetValue("FirstName", value);
             }
         }
@@ -41,7 +42,7 @@
             }
             set
             {
-                //SetValue(value);
+                SetValue(value);
                 EntityAspect.SetValue("LastName", value);
             }
         }
@@ -54,7 +55,7 @@
             }
             set
             {
-                //SetValue(value);
+                SetValue(value);
                 EntityAspect.SetValue("Description", value);
             }
         }

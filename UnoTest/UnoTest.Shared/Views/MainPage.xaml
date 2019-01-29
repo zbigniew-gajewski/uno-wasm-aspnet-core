@@ -63,9 +63,9 @@
       <ListView.ItemTemplate>
         <DataTemplate>
           <StackPanel Orientation="Horizontal">
-            <TextBlock Text="{Binding FirstName}" />
-            <TextBlock Text="{Binding LastName}" />
-            <TextBlock Text="{Binding Description}" />            
+            <TextBlock Background="Red" Text="{Binding FirstName}" />
+            <TextBlock Background="Yellow" Text="{Binding LastName}" />
+            <TextBlock Background="Orange" Text="{Binding Description}" />            
           </StackPanel>
         </DataTemplate>
       </ListView.ItemTemplate>

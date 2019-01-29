@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
+//using System.ComponentModel;
+using Windows.UI.Xaml.Data;
 using System.Linq;
 using System.Net.Http.Headers;
 using System.Text;
@@ -19,7 +20,7 @@ namespace UnoTest.Shared.ViewModels
 {
 
 #if __WASM__
-    [Bindable(true)]
+    [Bindable]
 #endif
     public class MainPageViewModel : ViewModelBase
     {
@@ -109,12 +110,12 @@ namespace UnoTest.Shared.ViewModels
                 var query = new EntityQuery<Customer>();
                 var customers = await entityManager.ExecuteQuery(query);
 
-                var stringBuilder = new StringBuilder();
-                foreach (var customer in customers)
-                {
-                    stringBuilder.AppendLine($"{customer.FirstName} - {customer.LastName} - {customer.Description} !");
-                }
-                Result = stringBuilder.ToString();
+                //var stringBuilder = new StringBuilder();
+                //foreach (var customer in customers)
+                //{
+                //    stringBuilder.AppendLine($"{customer.FirstName} - {customer.LastName} - {customer.Description} !");
+                //}
+                //Result = stringBuilder.ToString();
                 //Result = result?.FirstOrDefault()?.FirstName;
 
                 foreach (var customer in customers)
@@ -122,6 +123,8 @@ namespace UnoTest.Shared.ViewModels
                     CustomersFromBreeze.Add(customer);
                     RaisePropertyChanged(nameof(CustomersFromBreeze));
                 }
+
+                CustomersFromBreeze = new ObservableCollection<Customer>(customers);
             }
             catch (Exception ex)
             {
