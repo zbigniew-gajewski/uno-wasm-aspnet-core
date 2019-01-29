@@ -10,14 +10,14 @@
   <Grid Background="LightGray" >
 
     <Grid.RowDefinitions>
-      <RowDefinition />
-      <RowDefinition />
-      <RowDefinition />
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto"/>
     </Grid.RowDefinitions>
 
     <Grid.ColumnDefinitions>
-      <ColumnDefinition />
-      <ColumnDefinition />
+      <ColumnDefinition Width="*" />
+      <ColumnDefinition Width="*" />
     </Grid.ColumnDefinitions>
 
     <Button
@@ -58,7 +58,7 @@
        
     <ListView
       Grid.Row="2"
-      Grid.Column="2"
+      Grid.Column="1"
       ItemsSource="{Binding CustomersFromBreeze}">
       <ListView.ItemTemplate>
         <DataTemplate>
