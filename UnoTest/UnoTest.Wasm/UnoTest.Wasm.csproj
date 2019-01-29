@@ -59,6 +59,7 @@
   </PropertyGroup>-->
 
   <ItemGroup>
+		<PackageReference Include="Breeze.Sharp" Version="0.7.0" />
 		<PackageReference Include="ConcurrentHashSet" Version="1.0.2" />
 		<PackageReference Include="Microsoft.Data.Edm" Version="5.8.4" />
 		<PackageReference Include="Microsoft.Data.OData" Version="5.8.4" />
@@ -70,14 +71,10 @@
 		<PackageReference Include="System.ComponentModel.Annotations" Version="4.5.0" />
 		<PackageReference Include="Uno.GalaSoft.MvvmLight" Version="5.4.0-uno.134" />
 		<PackageReference Include="Uno.GalaSoft.MvvmLight.Platform" Version="5.4.0-uno.134" />
-		<PackageReference Include="Uno.UI" Version="1.43.0-dev.717" />
+		<PackageReference Include="Uno.UI" Version="1.43.0-dev.732" />
 		<PackageReference Include="Uno.Wasm.Bootstrap" Version="1.0.0-dev.157" />
     <DotNetCliToolReference Include="Uno.Wasm.Bootstrap.Cli" Version="1.0.0-dev.112" />
 	</ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\Breeze.Sharp\Breeze.Sharp.csproj" />
-  </ItemGroup>
 
 	<Import Project="..\UnoTest.Shared\UnoTest.Shared.projitems" Label="Shared" Condition="Exists('..\UnoTest.Shared\UnoTest.Shared.projitems')" />
 
