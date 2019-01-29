@@ -1,7 +1,7 @@
 ﻿namespace UnoTest.Web.Data
 {
     using Breeze.Sharp;
-    using System.ComponentModel.DataAnnotations;
+   // using System.ComponentModel.DataAnnotations;
 
     public class Customer : BaseEntity
     {

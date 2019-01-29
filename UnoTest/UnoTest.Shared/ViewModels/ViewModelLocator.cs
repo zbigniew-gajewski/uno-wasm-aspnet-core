@@ -4,7 +4,8 @@ using GalaSoft.MvvmLight.Views;
 
 #if __WASM__
 using Microsoft.Practices.ServiceLocation;
-using System.ComponentModel;
+using Windows.UI.Xaml.Data;
+//using System.ComponentModel;
 #else
 using CommonServiceLocator;
 #endif
@@ -12,7 +13,7 @@ using CommonServiceLocator;
 namespace UnoTest.Shared.ViewModels
 {
 #if __WASM__
-    [Bindable(true)]
+    [Bindable]
 #endif
     public class ViewModelLocator
     {

@@ -55,9 +55,10 @@
   <assembly fullname="system.reflection">
     <type fullname="*" />
   </assembly>-->
-  <assembly fullname="System.ComponentModel">
+  
+  <!--<assembly fullname="Windows.UI.XAML.Data">
     <type fullname="*" />
-  </assembly>
+  </assembly>-->
 
   <!--Does not compile-->
   <!--
