@@ -48,12 +48,28 @@
 
     <TextBlock
       Grid.Row="2"
-      Grid.ColumnSpan="2"
+      Grid.ColumnSpan="1"
       HorizontalAlignment="Stretch"
       VerticalAlignment="Stretch"
       Text ="{Binding Result}"
       FontSize="12"
-      Foreground="DarkRed" />
+      Foreground="DarkRed" />    
+    
+       
+    <ListView
+      Grid.Row="2"
+      Grid.Column="2"
+      ItemsSource="{Binding CustomersFromBreeze}">
+      <ListView.ItemTemplate>
+        <DataTemplate>
+          <StackPanel Orientation="Horizontal">
+            <TextBlock Text="{Binding FirstName}" />
+            <TextBlock Text="{Binding LastName}" />
+            <TextBlock Text="{Binding Description}" />            
+          </StackPanel>
+        </DataTemplate>
+      </ListView.ItemTemplate>
+    </ListView>
 
   </Grid>
 

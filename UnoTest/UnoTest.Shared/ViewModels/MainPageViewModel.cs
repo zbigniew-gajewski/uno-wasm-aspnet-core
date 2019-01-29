@@ -23,6 +23,8 @@ namespace UnoTest.Shared.ViewModels
 #endif
     public class MainPageViewModel : ViewModelBase
     {
+
+        private ObservableCollection<Customer> customersFromBreeze = new ObservableCollection<Customer>();
         private string result;
 
         public MainPageViewModel()
@@ -30,7 +32,7 @@ namespace UnoTest.Shared.ViewModels
             GetDataUsingHttpClientCommand = new RelayCommand(OnGetDataUsingHttpClient);
             GetDataUsingBreezeSharpCommand = new RelayCommand(OnGetDataUsingBreezeSharp);
 
-            OnGetDataUsingBreezeSharp();
+            //OnGetDataUsingBreezeSharp();
         }
 
     
@@ -45,6 +47,12 @@ namespace UnoTest.Shared.ViewModels
                 result = value;
                 RaisePropertyChanged(nameof(Result));
             }
+        }
+
+        public ObservableCollection<Customer> CustomersFromBreeze
+        {
+            get => customersFromBreeze;
+            set { customersFromBreeze = value; RaisePropertyChanged(nameof(CustomersFromBreeze)); }
         }
 
         private async void OnGetDataUsingHttpClient()
@@ -83,9 +91,10 @@ namespace UnoTest.Shared.ViewModels
         }
 
         private async void OnGetDataUsingBreezeSharp()
-        {
-            //this.Log().Debug("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
-            //Console.WriteLine("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+        {           
+            // Breeze.Sharp token authentication https://stackoverflow.com/questions/24104452/get-access-token-with-breezesharp
+            // https://stackoverflow.com/questions/21146587/passing-authentication-token-with-breeze-query
+            // Breeze.Sharp examples:  https://github.com/Breeze/breeze.sharp.samples/tree/master/ToDo
 
             try
             {
@@ -100,14 +109,19 @@ namespace UnoTest.Shared.ViewModels
                 var query = new EntityQuery<Customer>();
                 var customers = await entityManager.ExecuteQuery(query);
 
-                var stringBuilder = new StringBuilder();
+                //var stringBuilder = new StringBuilder();
+                //foreach (var customer in customers)
+                //{
+                //    stringBuilder.AppendLine($"{customer.FirstName} - {customer.LastName} - {customer.Description} !");
+                //}
+                //Result = stringBuilder.ToString();
+                //Result = result?.FirstOrDefault()?.FirstName;
+
                 foreach (var customer in customers)
                 {
-                    stringBuilder.AppendLine($"{customer.FirstName} - {customer.LastName} - {customer.Description} !");
+                    CustomersFromBreeze.Add(customer);
+                    RaisePropertyChanged(nameof(CustomersFromBreeze));
                 }
-
-                Result = stringBuilder.ToString();
-                //Result = result?.FirstOrDefault()?.FirstName;
             }
             catch (Exception ex)
             {
@@ -118,139 +132,5 @@ namespace UnoTest.Shared.ViewModels
 
 
 
-
-
-
-
-        ////private int numberOfClicks = 0;
-        ////private string customerName = "Customer Name here!";
-        ////private ObservableCollection<int> numbers = new ObservableCollection<int>();
-        ////private ObservableCollection<string> navigationItems = new ObservableCollection<string>();
-        ////private string selectedNavigationItem;
-
-        ////private EntityManager entityManager;
-        ////private string errorMessage;
-
-        ////public MainPageViewModel()
-        ////{
-        ////    ClickMeButtonCommand = new RelayCommand(OnClickMeButton);
-        ////    NavigationItems.Add("Counter");
-        ////    NavigationItems.Add("Data");
-        ////}
-
-        ////public ICommand GetDataUsingHttpClientCommand { get; }
-        
-
-        ////public ICommand ClickMeButtonCommand { get; } 
-
-        ////public int NumberOfClicks
-        ////{
-        ////    get => numberOfClicks;
-        ////    set
-        ////    {
-        ////        numberOfClicks = value;
-        ////        RaisePropertyChanged(nameof(NumberOfClicks));
-        ////    }
-        ////}
-
-
-        ////public string CustomerName
-        ////{
-        ////    get => customerName;
-        ////    set
-        ////    {
-        ////        customerName = value;
-        ////        RaisePropertyChanged(nameof(CustomerName));
-        ////    }
-        ////}
-
-        ////public string ErrorMessage
-        ////{
-        ////    get => errorMessage;
-        ////    set
-        ////    {
-        ////        errorMessage = value;
-        ////        RaisePropertyChanged(nameof(ErrorMessage));
-        ////    }
-        ////}
-
-        ////public string SelectedNavigationItem
-        ////{
-        ////    get => selectedNavigationItem;
-        ////    set
-        ////    {
-        ////        selectedNavigationItem = value;
-        ////        ErrorMessage = selectedNavigationItem; // temp
-        ////        RaisePropertyChanged(nameof(SelectedNavigationItem));
-        ////    }
-        ////}
-
-
-        ////public ObservableCollection<int> Numbers => numbers;
-        ////public ObservableCollection<string> NavigationItems => navigationItems;
-
-        ////private void OnClickMeButton()
-        ////{
-        ////    NumberOfClicks += 1;
-        ////    Numbers.Add(NumberOfClicks);
-
-
-
-      
-        ////    GetCustomers();
-
-        ////}
-
-        ////private async void GetCustomers()
-        ////{
-
-        ////    #region simple HttpClient
-
-        ////    //var handler = new Uno.UI.Wasm.WasmHttpHandler();
-
-        ////    //var httpClient = new System.Net.Http.HttpClient(handler);
-
-        ////    //// var httpClient = new Windows.Web.HttpClient(handler); for UWP
-
-        ////    //httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        ////    //httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("text/json"));
-
-        ////    //var response = await httpClient.GetAsync("http://localhost:53333/breeze/Customer/Customers");
-
-        ////    //var jsonString = await response.Content.ReadAsStringAsync();
-
-        ////    ////some deserialization here
-        ////    //ErrorMessage = jsonString.ToString();
-
-        ////    #endregion
-
-        ////    #region BreezeSharp
-
-        ////    // Breeze.Sharp token authentication https://stackoverflow.com/questions/24104452/get-access-token-with-breezesharp
-        ////    // https://stackoverflow.com/questions/21146587/passing-authentication-token-with-breeze-query
-        ////    // Breeze.Sharp examples:  https://github.com/Breeze/breeze.sharp.samples/tree/master/ToDo
-
-        ////    try
-        ////    {
-        ////        var serviceAddress = "http://localhost:53333/breeze/Customer/";
-        ////        var assembly = typeof(Customer).Assembly;
-        ////        var rslt = Configuration.Instance.ProbeAssemblies(assembly);
-
-        ////        DataService.DefaultHttpMessageHandler = new Uno.UI.Wasm.WasmHttpHandler();
-
-        ////        entityManager = new EntityManager(serviceAddress);
-
-        ////        var query = new EntityQuery<Customer>();
-        ////        var result = await entityManager.ExecuteQuery(query);
-
-        ////        // CustomerName = result?.FirstOrDefault()?.FirstName;
-        ////    }
-        ////    catch (Exception ex)
-        ////    {
-        ////        ErrorMessage = ex.ToString();
-        ////    }
-
-        ////    #endregion
-        ////}
     }
 }

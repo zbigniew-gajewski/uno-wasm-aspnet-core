@@ -1,5 +1,5 @@
 ﻿<linker>
-   <assembly fullname="Breeze.Sharp">
+  <assembly fullname="Breeze.Sharp">
     <type fullname="*" />
   </assembly>
   <assembly fullname="System.Net.Http">
@@ -15,7 +15,7 @@
     <type fullname="*" />
   </assembly>
 
-  
+
   <!--<assembly fullname="System.Threading">
     <type fullname="*" />
   </assembly>-->
@@ -54,12 +54,13 @@
   </assembly>
   <assembly fullname="system.reflection">
     <type fullname="*" />
-  </assembly>
- <assembly fullname="system.componentmodel">
+  </assembly>-->
+  <assembly fullname="System.ComponentModel">
     <type fullname="*" />
   </assembly>
-  
-  --><!--Does not compile--><!--
+
+  <!--Does not compile-->
+  <!--
   <assembly fullname="System.ComponentModel.DataAnnotations">
     <type fullname="*" />
   </assembly>
@@ -221,7 +222,7 @@
   <assembly fullname="System.Runtime">
     <type fullname="*" />
   </assembly>-->
-  
+
   <assembly fullname="netstandard" />
 
   <assembly fullname="UnoTest.Wasm" />
@@ -231,7 +232,7 @@
   </assembly>
 
   <assembly fullname="System.Core">
-		<!-- This is required by JSon.NET and any expression.Compile caller -->
-		<type fullname="System.Linq.Expressions*" />
-	</assembly>
+    <!-- This is required by JSon.NET and any expression.Compile caller -->
+    <type fullname="System.Linq.Expressions*" />
+  </assembly>
 </linker>
