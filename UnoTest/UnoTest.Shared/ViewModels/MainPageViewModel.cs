@@ -32,8 +32,6 @@ namespace UnoTest.Shared.ViewModels
         {
             GetDataUsingHttpClientCommand = new RelayCommand(OnGetDataUsingHttpClient);
             GetDataUsingBreezeSharpCommand = new RelayCommand(OnGetDataUsingBreezeSharp);
-
-            //OnGetDataUsingBreezeSharp();
         }
 
     
@@ -123,8 +121,6 @@ namespace UnoTest.Shared.ViewModels
                     CustomersFromBreeze.Add(customer);
                     RaisePropertyChanged(nameof(CustomersFromBreeze));
                 }
-
-                CustomersFromBreeze = new ObservableCollection<Customer>(customers);
             }
             catch (Exception ex)
             {
