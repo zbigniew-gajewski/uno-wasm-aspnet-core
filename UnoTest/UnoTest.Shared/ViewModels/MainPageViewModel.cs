@@ -109,12 +109,12 @@ namespace UnoTest.Shared.ViewModels
                 var query = new EntityQuery<Customer>();
                 var customers = await entityManager.ExecuteQuery(query);
 
-                //var stringBuilder = new StringBuilder();
-                //foreach (var customer in customers)
-                //{
-                //    stringBuilder.AppendLine($"{customer.FirstName} - {customer.LastName} - {customer.Description} !");
-                //}
-                //Result = stringBuilder.ToString();
+                var stringBuilder = new StringBuilder();
+                foreach (var customer in customers)
+                {
+                    stringBuilder.AppendLine($"{customer.FirstName} - {customer.LastName} - {customer.Description} !");
+                }
+                Result = stringBuilder.ToString();
                 //Result = result?.FirstOrDefault()?.FirstName;
 
                 foreach (var customer in customers)
