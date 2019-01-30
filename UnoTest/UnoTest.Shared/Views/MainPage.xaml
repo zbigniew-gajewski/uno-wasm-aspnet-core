@@ -10,14 +10,13 @@
   <Grid Background="LightGray" >
 
     <Grid.RowDefinitions>
-      <RowDefinition Height="Auto"/>
       <RowDefinition Height="Auto" />
-      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="*" />
     </Grid.RowDefinitions>
 
     <Grid.ColumnDefinitions>
-      <ColumnDefinition Width="*" />
-      <ColumnDefinition Width="*" />
+      <ColumnDefinition />
+      <ColumnDefinition />
     </Grid.ColumnDefinitions>
 
     <Button
@@ -37,137 +36,38 @@
       Foreground="White"
       Background="Navy"/>
 
+  
     <TextBlock
-      Grid.Row="1"
-      Grid.ColumnSpan="2"
-      HorizontalAlignment="Stretch"
-      Text ="Result:"
-      FontSize="20"
-      Foreground="DarkRed"
-      FontWeight="Bold" />
+      Grid.Row="1"   
+      HorizontalAlignment="Center"
+      VerticalAlignment="Center"
+      Text ="{Binding ResultFromHttpClient}"
+      FontSize="12"
+      Foreground="DarkRed" />
 
     <TextBlock
-      Grid.Row="2"
-      Grid.ColumnSpan="1"
-      HorizontalAlignment="Stretch"
-      VerticalAlignment="Stretch"
-      Text ="{Binding Result}"
+      Grid.Row="1"
+      Grid.Column="1"
+      HorizontalAlignment="Center"
+      VerticalAlignment="Center"
+      Text ="{Binding ResultFromBreeze}"
       FontSize="12"
-      Foreground="DarkRed" />    
-    
-       
-    <ListView
+      Foreground="DarkGreen" />
+
+    <!--<ListView
       Grid.Row="2"
       Grid.Column="1"
-      ItemsSource="{Binding CustomersFromBreeze}">
+      ItemsSource="{Binding CustomersFromBreeze, Mode=TwoWay}">
       <ListView.ItemTemplate>
         <DataTemplate>
           <StackPanel Orientation="Horizontal">
-            <TextBlock Background="Red" Text="{Binding FirstName}" />
-            <TextBlock Background="Yellow" Text="{Binding LastName}" />
-            <TextBlock Background="Orange" Text="{Binding Description}" />            
+            <TextBlock Text="{Binding FirstName}" />
+            <TextBlock Text="{Binding LastName}" />
+            <TextBlock Text="{Binding Description}" />            
           </StackPanel>
         </DataTemplate>
       </ListView.ItemTemplate>
-    </ListView>
+    </ListView>-->
 
   </Grid>
-
-
-
-  <!--<Grid  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-
-    <Grid.ColumnDefinitions>
-      <ColumnDefinition Width="Auto" />
-      <ColumnDefinition />
-    </Grid.ColumnDefinitions>
-
-    <ListView Background="Silver"
-               HorizontalAlignment="Stretch"
-               VerticalAlignment="Stretch"
-               ItemsSource="{Binding NavigationItems}"
-              SelectedItem="{Binding SelectedNavigationItem, Mode=TwoWay}" >
-      <ListView.ItemTemplate>
-        <DataTemplate>
-          <TextBlock Text="{Binding}"
-             Foreground="White"
-             FontSize="15"
-             FontWeight="Bold"
-             Margin="5"/>
-        </DataTemplate>
-      </ListView.ItemTemplate>
-    </ListView>
-
-    <Grid Grid.Column="1">
-      <Grid.RowDefinitions>
-        <RowDefinition />
-        <RowDefinition />
-        <RowDefinition />
-      </Grid.RowDefinitions>
-      <Grid.ColumnDefinitions>
-        <ColumnDefinition />
-        <ColumnDefinition />
-      </Grid.ColumnDefinitions>
-
-      <Grid Background="LightBlue">
-        <Grid.RowDefinitions>
-          <RowDefinition/>
-          <RowDefinition/>
-        </Grid.RowDefinitions>
-        <TextBlock Grid.Row="0" x:Name="TextBlock"
-                   Margin="20"
-                   FontSize="50"
-                   VerticalAlignment="Center"
-                   HorizontalAlignment="Center"
-                   Text="{Binding NumberOfClicks}" />
-
-        <TextBlock Grid.Row="1" x:Name="CustomerNameTextBlock"
-                     Margin="20"
-                     FontSize="50"
-                     VerticalAlignment="Center"
-                     HorizontalAlignment="Center"
-                     Text="{Binding CustomerName}" />
-      </Grid>
-
-      <Button Grid.Row="1"
-              Grid.ColumnSpan="2"
-              FontSize="35"
-              Foreground="White"
-              Background="Green"
-              Content="Click Me !"
-              VerticalAlignment="Center"
-              HorizontalAlignment="Center"
-              Command="{Binding ClickMeButtonCommand}" />
-
-      <ListView Grid.Row="0"
-                Grid.Column="1"
-                Background="Blue"
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Stretch"
-                ItemsSource="{Binding Numbers}">
-        <ListView.ItemTemplate>
-          <DataTemplate>
-            <TextBlock Text="{Binding}"
-                       Foreground="White"
-                       FontSize="20"
-                       FontWeight="Bold" />
-          </DataTemplate>
-        </ListView.ItemTemplate>
-      </ListView>
-
-      <StackPanel Grid.Row="2" Grid.ColumnSpan="2" Orientation="Vertical">
-        <TextBlock HorizontalAlignment="Left"
-                  VerticalAlignment="Top"
-                  Text ="Error Message"
-                  FontSize="13"
-                  Foreground="Red"
-                   FontWeight="Bold"/>
-        <TextBlock HorizontalAlignment="Stretch"
-                    VerticalAlignment="Stretch"
-                    Text ="{Binding ErrorMessage}"
-                    FontSize="11"
-                    Foreground="Red" />
-      </StackPanel>
-    </Grid>
-  </Grid>-->
 </Page>

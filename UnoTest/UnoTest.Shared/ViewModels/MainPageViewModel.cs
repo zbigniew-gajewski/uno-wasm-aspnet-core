@@ -1,20 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Breeze.Sharp;
+using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
+using System;
 using System.Collections.ObjectModel;
-//using System.ComponentModel;
-using Windows.UI.Xaml.Data;
 using System.Linq;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Windows.Input;
-using Breeze.Sharp;
-using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Uno.Extensions;
-using Uno.Logging;
 using UnoTest.Web.Data;
+using Windows.UI.Xaml.Data;
 
 namespace UnoTest.Shared.ViewModels
 {
@@ -25,33 +19,48 @@ namespace UnoTest.Shared.ViewModels
     public class MainPageViewModel : ViewModelBase
     {
 
-        private ObservableCollection<Customer> customersFromBreeze = new ObservableCollection<Customer>();
-        private string result;
+        private ObservableCollection<Customer> customersFromBreeze;
+        private string resultFromHttpClient;
+        private string resultFromBreeze;
 
         public MainPageViewModel()
         {
             GetDataUsingHttpClientCommand = new RelayCommand(OnGetDataUsingHttpClient);
             GetDataUsingBreezeSharpCommand = new RelayCommand(OnGetDataUsingBreezeSharp);
+            customersFromBreeze = new ObservableCollection<Customer>();
         }
-
     
         public ICommand GetDataUsingHttpClientCommand { get; }
         public ICommand GetDataUsingBreezeSharpCommand { get; }
 
-        public string Result
+        public string ResultFromHttpClient
         {
-            get => result;
+            get => resultFromHttpClient;
             set
             {
-                result = value;
-                RaisePropertyChanged(nameof(Result));
+                resultFromHttpClient = value;
+                RaisePropertyChanged(() => ResultFromHttpClient);
+            }
+        }
+
+        public string ResultFromBreeze
+        {
+            get => resultFromBreeze;
+            set
+            {
+                resultFromBreeze = value;
+                RaisePropertyChanged(() => ResultFromBreeze);
             }
         }
 
         public ObservableCollection<Customer> CustomersFromBreeze
         {
             get => customersFromBreeze;
-            set { customersFromBreeze = value; RaisePropertyChanged(nameof(CustomersFromBreeze)); }
+            set
+            {
+                customersFromBreeze = value;
+                RaisePropertyChanged(() => CustomersFromBreeze);
+            }
         }
 
         private async void OnGetDataUsingHttpClient()
@@ -84,7 +93,7 @@ namespace UnoTest.Shared.ViewModels
                 stringBuilder.Append(line + "\n");
             }
 
-            Result = stringBuilder.ToString();
+            ResultFromHttpClient = stringBuilder.ToString();
 
             #endregion
         }
@@ -108,28 +117,28 @@ namespace UnoTest.Shared.ViewModels
                 var query = new EntityQuery<Customer>();
                 var customers = await entityManager.ExecuteQuery(query);
 
-                //var stringBuilder = new StringBuilder();
-                //foreach (var customer in customers)
-                //{
-                //    stringBuilder.AppendLine($"{customer.FirstName} - {customer.LastName} - {customer.Description} !");
-                //}
-                //Result = stringBuilder.ToString();
-                //Result = result?.FirstOrDefault()?.FirstName;
+                var stringBuilder = new StringBuilder();
+                foreach (var customer in customers)
+                {
+                    stringBuilder.AppendLine($"{customer.FirstName} - {customer.LastName} - {customer.Description} !");
+                }
+
+                ResultFromBreeze = stringBuilder.ToString();
+
 
                 //foreach (var customer in customers)
                 //{
-                //    CustomersFromBreeze.Add(customer);
-                //    //RaisePropertyChanged(nameof(CustomersFromBreeze));
+                //    customersFromBreeze.Add(customer);                    
                 //}
-                var id = 0;
-                for (var i = 0; i <= 2; i++)
-                {
-                    CustomersFromBreeze.Add(new Customer { Id = id, FirstName = "First Name", LastName = "Last Name", Description = "Description"  });
-                }
+
+
+                //CustomersFromBreeze = new ObservableCollection<Customer>(customersFromBreeze);
+                //RaisePropertyChanged(nameof(CustomersFromBreeze));
+
             }
             catch (Exception ex)
             {
-                Result = ex.ToString();
+                ResultFromBreeze = ex.ToString();
             }
         }
 
