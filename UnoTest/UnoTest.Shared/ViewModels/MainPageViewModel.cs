@@ -116,10 +116,15 @@ namespace UnoTest.Shared.ViewModels
                 //Result = stringBuilder.ToString();
                 //Result = result?.FirstOrDefault()?.FirstName;
 
-                foreach (var customer in customers)
+                //foreach (var customer in customers)
+                //{
+                //    CustomersFromBreeze.Add(customer);
+                //    //RaisePropertyChanged(nameof(CustomersFromBreeze));
+                //}
+                var id = 0;
+                for (var i = 0; i <= 2; i++)
                 {
-                    CustomersFromBreeze.Add(customer);
-                    RaisePropertyChanged(nameof(CustomersFromBreeze));
+                    CustomersFromBreeze.Add(new Customer { Id = id, FirstName = "First Name", LastName = "Last Name", Description = "Description"  });
                 }
             }
             catch (Exception ex)
