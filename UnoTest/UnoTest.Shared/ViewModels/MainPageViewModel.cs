@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Windows.Input;
+using Uno.Foundation;
 using UnoTest.Web.Data;
 using Windows.UI.Xaml.Data;
 
@@ -22,9 +23,15 @@ namespace UnoTest.Shared.ViewModels
         private ObservableCollection<Customer> customersFromBreeze;
         private string resultFromHttpClient;
         private string resultFromBreeze;
+        private string urlString;
+        private string hostUri;
+        private StringBuilder breezeResultStringBuilder = new StringBuilder();
 
         public MainPageViewModel()
         {
+            UrlString = WebAssemblyRuntime.InvokeJS("window.location.href;");
+
+          
             GetDataUsingHttpClientCommand = new RelayCommand(OnGetDataUsingHttpClient);
             GetDataUsingBreezeSharpCommand = new RelayCommand(OnGetDataUsingBreezeSharp);
             customersFromBreeze = new ObservableCollection<Customer>();
@@ -53,6 +60,16 @@ namespace UnoTest.Shared.ViewModels
             }
         }
 
+        public string UrlString
+        {
+            get => urlString;
+            set
+            {
+                urlString = value;
+                RaisePropertyChanged(() => UrlString);
+            }
+        }
+
         public ObservableCollection<Customer> CustomersFromBreeze
         {
             get => customersFromBreeze;
@@ -76,7 +93,7 @@ namespace UnoTest.Shared.ViewModels
             httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("text/json"));
 
-            var response = await httpClient.GetAsync("http://localhost:53333/breeze/Customer/Customers");
+            var response = await httpClient.GetAsync($@"http://localhost:53333/breeze/Customer/Customers");
 
             var jsonString = await response.Content.ReadAsStringAsync();
 
@@ -106,7 +123,7 @@ namespace UnoTest.Shared.ViewModels
 
             try
             {
-                var serviceAddress = "http://localhost:53333/breeze/Customer/";
+                var serviceAddress =   $@"{UrlString}/breeze/Customer/";
                 var assembly = typeof(Customer).Assembly;
                 var rslt = Configuration.Instance.ProbeAssemblies(assembly);
 
@@ -117,13 +134,12 @@ namespace UnoTest.Shared.ViewModels
                 var query = new EntityQuery<Customer>();
                 var customers = await entityManager.ExecuteQuery(query);
 
-                var stringBuilder = new StringBuilder();
-                foreach (var customer in customers)
+                 foreach (var customer in customers)
                 {
-                    stringBuilder.AppendLine($"{customer.FirstName} - {customer.LastName} - {customer.Description} !");
+                    breezeResultStringBuilder.AppendLine($"{customer.FirstName} - {customer.LastName} - {customer.Description} !");
                 }
 
-                ResultFromBreeze = stringBuilder.ToString();
+                ResultFromBreeze = breezeResultStringBuilder.ToString();
 
 
                 //foreach (var customer in customers)

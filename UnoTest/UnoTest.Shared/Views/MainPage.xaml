@@ -12,6 +12,7 @@
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto" />
       <RowDefinition Height="*" />
+      <RowDefinition Height="Auto" />
     </Grid.RowDefinitions>
 
     <Grid.ColumnDefinitions>
@@ -69,5 +70,11 @@
       </ListView.ItemTemplate>
     </ListView>-->
 
+    <TextBlock
+     Grid.Row="2"
+     Grid.Column="0"
+     Text ="{Binding UrlString}"
+     FontSize="12"
+     Foreground="Black" />
   </Grid>
 </Page>
