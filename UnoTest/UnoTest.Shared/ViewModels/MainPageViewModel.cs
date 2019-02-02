@@ -1,11 +1,13 @@
 ﻿using Breeze.Sharp;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using Microsoft.AspNetCore.SignalR.Client;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Uno.Foundation;
 using UnoTest.Web.Data;
@@ -24,18 +26,48 @@ namespace UnoTest.Shared.ViewModels
         private string resultFromHttpClient;
         private string resultFromBreeze;
         private string urlString;
-        private string hostUri;
+        private string signalRString;
         private StringBuilder breezeResultStringBuilder = new StringBuilder();
-
+        private StringBuilder signalRResultStringBuilder = new StringBuilder();
+     
         public MainPageViewModel()
         {
             UrlString = WebAssemblyRuntime.InvokeJS("window.location.href;");
-
           
             GetDataUsingHttpClientCommand = new RelayCommand(OnGetDataUsingHttpClient);
             GetDataUsingBreezeSharpCommand = new RelayCommand(OnGetDataUsingBreezeSharp);
             customersFromBreeze = new ObservableCollection<Customer>();
+
+            //var connection = new HubConnectionBuilder()
+            //             .WithUrl("http://localhost:53333/ChatHub")
+            //             .Build();
+
+            //connection.Closed += async (error) =>
+            //{
+            //    await Task.Delay(new Random().Next(0, 5) * 1000);
+            //    await connection.StartAsync();
+            //};
+
+            //Task.Run(async () =>
+            //{
+            //    connection.On<string>("ReceiveMessage", (message) =>
+            //    {
+            //        signalRResultStringBuilder.AppendLine(message);
+            //        SignalRString = signalRResultStringBuilder.ToString();
+            //    });
+
+            //    try
+            //    {
+            //        await connection.StartAsync();
+            //    }
+            //    catch { }
+
+            //});
+
+
+
         }
+
     
         public ICommand GetDataUsingHttpClientCommand { get; }
         public ICommand GetDataUsingBreezeSharpCommand { get; }
@@ -57,6 +89,18 @@ namespace UnoTest.Shared.ViewModels
             {
                 resultFromBreeze = value;
                 RaisePropertyChanged(() => ResultFromBreeze);
+            }
+        }
+
+        
+
+        public string SignalRString
+        {
+            get => signalRString;
+            set
+            {
+                signalRString = value;
+                RaisePropertyChanged(() => SignalRString);
             }
         }
 
@@ -134,7 +178,7 @@ namespace UnoTest.Shared.ViewModels
                 var query = new EntityQuery<Customer>();
                 var customers = await entityManager.ExecuteQuery(query);
 
-                 foreach (var customer in customers)
+                foreach (var customer in customers)
                 {
                     breezeResultStringBuilder.AppendLine($"{customer.FirstName} - {customer.LastName} - {customer.Description} !");
                 }
@@ -144,7 +188,7 @@ namespace UnoTest.Shared.ViewModels
 
                 //foreach (var customer in customers)
                 //{
-                //    customersFromBreeze.Add(customer);                    
+                //    CustomersFromBreeze.Add(customer);
                 //}
 
 

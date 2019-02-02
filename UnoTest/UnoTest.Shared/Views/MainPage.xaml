@@ -10,9 +10,10 @@
   <Grid Background="LightGray" >
 
     <Grid.RowDefinitions>
-      <RowDefinition Height="Auto" />
       <RowDefinition Height="*" />
-      <RowDefinition Height="Auto" />
+      <RowDefinition Height="*" />
+      <RowDefinition Height="*" />
+      <RowDefinition Height="*" />
     </Grid.RowDefinitions>
 
     <Grid.ColumnDefinitions>
@@ -21,23 +22,29 @@
     </Grid.ColumnDefinitions>
 
     <Button
+      Grid.Row="0"
+      Grid.Column="0"
       Content="Click to get web data using HttpClient..."
       Command="{Binding GetDataUsingHttpClientCommand}"
+      VerticalContentAlignment="Top"
       HorizontalAlignment="Center"
+      VerticalAlignment="Stretch"
       FontSize="20"
       Foreground="White"
       Background="Navy"/>
 
     <Button
+      Grid.Row="0"
       Grid.Column="1"
       Content="Click to get web data using BreezeSharp..."
       Command="{Binding GetDataUsingBreezeSharpCommand}"
+      VerticalContentAlignment="Top"
       HorizontalAlignment="Center"
+      VerticalAlignment="Stretch"
       FontSize="20"
       Foreground="White"
       Background="Navy"/>
 
-  
     <TextBlock
       Grid.Row="1"   
       HorizontalAlignment="Center"
@@ -45,36 +52,44 @@
       Text ="{Binding ResultFromHttpClient}"
       FontSize="12"
       Foreground="DarkRed" />
-
-    <TextBlock
-      Grid.Row="1"
-      Grid.Column="1"
-      HorizontalAlignment="Center"
-      VerticalAlignment="Center"
-      Text ="{Binding ResultFromBreeze}"
-      FontSize="12"
-      Foreground="DarkGreen" />
+        
+      <TextBlock
+        Grid.Row="1"
+        Grid.Column="1"
+        HorizontalAlignment="Center"
+        VerticalAlignment="Center"
+        Text ="{Binding ResultFromBreeze}"
+        FontSize="12"
+        Foreground="DarkGreen" />
 
     <!--<ListView
-      Grid.Row="2"
-      Grid.Column="1"
-      ItemsSource="{Binding CustomersFromBreeze, Mode=TwoWay}">
-      <ListView.ItemTemplate>
-        <DataTemplate>
-          <StackPanel Orientation="Horizontal">
-            <TextBlock Text="{Binding FirstName}" />
-            <TextBlock Text="{Binding LastName}" />
-            <TextBlock Text="{Binding Description}" />            
-          </StackPanel>
-        </DataTemplate>
-      </ListView.ItemTemplate>
-    </ListView>-->
+        Grid.Row="2"
+        Grid.Column="1"
+        ItemsSource="{Binding CustomersFromBreeze, Mode=TwoWay}">
+        <ListView.ItemTemplate>
+          <DataTemplate>
+            <StackPanel Orientation="Horizontal">
+              <TextBlock Text="{Binding FirstName}" />
+              <TextBlock Text="{Binding LastName}" />
+              <TextBlock Text="{Binding Description}" />            
+            </StackPanel>
+          </DataTemplate>
+        </ListView.ItemTemplate>
+      </ListView>-->
 
     <TextBlock
-     Grid.Row="2"
+       Grid.Row="2"
+       Grid.Column="0"
+       Text ="{Binding SignalRString}"
+       FontSize="12"
+       Foreground="Black" />
+
+    <TextBlock
+     Grid.Row="3"
      Grid.Column="0"
      Text ="{Binding UrlString}"
      FontSize="12"
      Foreground="Black" />
+    
   </Grid>
 </Page>

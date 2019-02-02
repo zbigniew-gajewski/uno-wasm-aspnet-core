@@ -14,6 +14,82 @@
   <assembly fullname="Microsoft.Data.Services.Client">
     <type fullname="*" />
   </assembly>
+  
+  
+  
+  <!-- SignalR -->
+    
+  <!--<assembly fullname="Microsoft.AspNetCore.SignalR.Client">
+    <type fullname="*" />
+  </assembly>
+
+  <assembly fullname="Microsoft.AspNetCore.SignalR.Client.Core">
+    <type fullname="*" />
+  </assembly>
+
+  <assembly fullname="Microsoft.Extensions.Configuration.Abstractions">
+    <type fullname="*" />
+  </assembly>-->
+  
+
+  <!--Exclude-->
+   <!--<assembly fullname="Microsoft.Extensions.Configuration">
+    <type fullname="*" />
+  </assembly>-->
+   <!--Exclude-->
+  <!--<assembly fullname="Microsoft.Extensions.Configuration.Binder">
+    <type fullname="*" />
+  </assembly>-->
+  
+  
+  
+   <!--<assembly fullname="Microsoft.Extensions.DependencyInjection">
+    <type fullname="*" />
+  </assembly>
+  
+   <assembly fullname="Microsoft.AspNetCore.Http.Connections.Client">
+    <type fullname="*" />
+  </assembly>
+  
+    <assembly fullname="Microsoft.Extensions.Logging">
+    <type fullname="*" />
+  </assembly>
+  
+     <assembly fullname="Microsoft.Extensions.Logging.Abstractions">
+    <type fullname="*" />
+  </assembly>
+  
+  <assembly fullname="Microsoft.Extensions.Options">
+    <type fullname="*" />
+  </assembly>
+  
+  <assembly fullname="Microsoft.Extensions.DependencyInjection.Abstractions">
+    <type fullname="*" />
+  </assembly>
+  
+  <assembly fullname="Microsoft.Extensions.Primitives">
+    <type fullname="*" />
+  </assembly>
+  
+   <assembly fullname="Microsoft.AspNetCore.Http.Connections.Common">
+    <type fullname="*" />
+  </assembly>
+  
+  <assembly fullname="Microsoft.AspNetCore.SignalR.Protocols.Json">
+    <type fullname="*" />
+  </assembly>
+  
+  <assembly fullname="Microsoft.AspNetCore.SignalR.Common">
+    <type fullname="*" />
+  </assembly>
+  
+  <assembly fullname="Microsoft.AspNetCore.Http.Features">
+    <type fullname="*" />
+  </assembly>
+  
+   <assembly fullname="Microsoft.AspNetCore.Connections.Abstractions">
+    <type fullname="*" />
+  </assembly>-->
 
 
   <!--<assembly fullname="System.Threading">

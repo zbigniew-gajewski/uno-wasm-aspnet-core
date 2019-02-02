@@ -13,6 +13,7 @@
     using System.IO;
     using UnoTest.Web.Data;
     using UnoTestWeb.Data;
+    using UTT;
 
     public class Startup
     {
@@ -40,8 +41,13 @@
             services.AddCors();
 
             services.AddTransient<UnoTestDbSeeder>();
+                     
 
             var mvcBuilder = services.AddMvc();
+
+            //services.AddSignalR(o => o.EnableDetailedErrors = true);
+            services.AddSignalR();
+            services.AddHostedService<PeriodicServerNotifier>();
 
             #region Breeze
             mvcBuilder.AddJsonOptions(opt =>
@@ -58,6 +64,7 @@
             mvcBuilder.AddMvcOptions(o => { o.Filters.Add(new GlobalExceptionFilter()); });
 
             #endregion
+         
 
             //var connection = @"Data Source=.\SQLEXPRESS;Initial Catalog=UnoTest;Trusted_Connection=True";
             //services.AddDbContext<UnoTestDbContext>(options => options.UseSqlServer(connection));
@@ -112,12 +119,17 @@
             app.UseCors(builder =>
                  builder.WithOrigins("http://localhost:60614"));
 
-
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
+            });
+
+            app.UseSignalR(routes =>
+            {
+                routes.MapHub<ChatHub>("/chathub");
+
             });
 
             if (env.IsDevelopment())
