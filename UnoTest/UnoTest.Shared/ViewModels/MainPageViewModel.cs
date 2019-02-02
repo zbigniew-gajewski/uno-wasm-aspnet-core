@@ -186,14 +186,14 @@ namespace UnoTest.Shared.ViewModels
                 ResultFromBreeze = breezeResultStringBuilder.ToString();
 
 
-                //foreach (var customer in customers)
-                //{
-                //    CustomersFromBreeze.Add(customer);
-                //}
+                foreach (var customer in customers)
+                {
+                    customersFromBreeze.Add(customer);
+                }
 
 
-                //CustomersFromBreeze = new ObservableCollection<Customer>(customersFromBreeze);
-                //RaisePropertyChanged(nameof(CustomersFromBreeze));
+                CustomersFromBreeze = new ObservableCollection<Customer>(customersFromBreeze);
+                RaisePropertyChanged(nameof(CustomersFromBreeze));
 
             }
             catch (Exception ex)

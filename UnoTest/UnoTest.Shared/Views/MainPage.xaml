@@ -46,36 +46,39 @@
       Background="Navy"/>
 
     <TextBlock
-      Grid.Row="1"   
+      Grid.Row="1"
       HorizontalAlignment="Center"
       VerticalAlignment="Center"
       Text ="{Binding ResultFromHttpClient}"
       FontSize="12"
       Foreground="DarkRed" />
-        
-      <TextBlock
+
+    <StackPanel Orientation="Horizontal"
         Grid.Row="1"
         Grid.Column="1"
-        HorizontalAlignment="Center"
+        HorizontalAlignment="Center">
+
+      <TextBlock       
         VerticalAlignment="Center"
         Text ="{Binding ResultFromBreeze}"
         FontSize="12"
         Foreground="DarkGreen" />
 
-    <!--<ListView
-        Grid.Row="2"
-        Grid.Column="1"
-        ItemsSource="{Binding CustomersFromBreeze, Mode=TwoWay}">
+      <!--<ListView
+          ItemsSource="{Binding CustomersFromBreeze}"
+          HorizontalAlignment="Left">
         <ListView.ItemTemplate>
           <DataTemplate>
             <StackPanel Orientation="Horizontal">
-              <TextBlock Text="{Binding FirstName}" />
-              <TextBlock Text="{Binding LastName}" />
-              <TextBlock Text="{Binding Description}" />            
+              <TextBlock Foreground="Red" Text="{Binding FirstName}" />
+              <TextBlock Foreground="Red" Text="{Binding LastName}" />
+              <TextBlock Foreground="Red" Text="{Binding Description}" />
             </StackPanel>
           </DataTemplate>
         </ListView.ItemTemplate>
       </ListView>-->
+
+    </StackPanel>
 
     <TextBlock
        Grid.Row="2"
@@ -90,6 +93,6 @@
      Text ="{Binding UrlString}"
      FontSize="12"
      Foreground="Black" />
-    
+
   </Grid>
 </Page>
