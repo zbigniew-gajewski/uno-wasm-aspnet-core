@@ -188,7 +188,7 @@ namespace UnoTest.Shared.ViewModels
 
                 foreach (var customer in customers)
                 {
-                    customersFromBreeze.Add(customer);
+                    CustomersFromBreeze.Add(customer);                    
                 }
 
 

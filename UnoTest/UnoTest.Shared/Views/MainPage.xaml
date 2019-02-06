@@ -13,7 +13,7 @@
       <RowDefinition Height="Auto" />
       <RowDefinition Height="*" />
       <RowDefinition Height="*" />
-      <RowDefinition Height="*" />
+      <RowDefinition Height="Auto" />
     </Grid.RowDefinitions>
 
     <Grid.ColumnDefinitions>
@@ -58,25 +58,26 @@
         Grid.Column="1"
         HorizontalAlignment="Center">
 
-      <TextBlock       
-        VerticalAlignment="Center"
+      <TextBlock
+       HorizontalAlignment="Center"
+      VerticalAlignment="Center"
         Text ="{Binding ResultFromBreeze}"
         FontSize="12"
         Foreground="DarkGreen" />
 
-      <!--<ListView
-          ItemsSource="{Binding CustomersFromBreeze}"
-          HorizontalAlignment="Left">
+      <ListView
+          Background="Yellow"
+          ItemsSource="{Binding CustomersFromBreeze}">
         <ListView.ItemTemplate>
           <DataTemplate>
             <StackPanel Orientation="Horizontal">
-              <TextBlock Foreground="Red" Text="{Binding FirstName}" />
-              <TextBlock Foreground="Red" Text="{Binding LastName}" />
-              <TextBlock Foreground="Red" Text="{Binding Description}" />
+              <TextBox Background="Red" Text="{Binding FirstName}" Height="20" />
+              <TextBox Background="Red" Text="{Binding LastName}" Height="20" />
+              <TextBox Background="Red" Text="{Binding Description}" />
             </StackPanel>
           </DataTemplate>
         </ListView.ItemTemplate>
-      </ListView>-->
+      </ListView>
 
     </StackPanel>
 
