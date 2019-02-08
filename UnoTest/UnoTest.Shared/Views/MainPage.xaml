@@ -58,9 +58,7 @@
         Grid.Column="1"
         HorizontalAlignment="Center">
 
-      <TextBlock
-       HorizontalAlignment="Center"
-      VerticalAlignment="Center"
+      <TextBlock     
         Text ="{Binding ResultFromBreeze}"
         FontSize="12"
         Foreground="DarkGreen" />
