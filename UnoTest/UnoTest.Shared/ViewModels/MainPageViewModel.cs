@@ -188,12 +188,13 @@ namespace UnoTest.Shared.ViewModels
 
                 foreach (var customer in customers)
                 {
-                    CustomersFromBreeze.Add(customer);                    
+                    CustomersFromBreeze.Add(customer);
+                    RaisePropertyChanged(nameof(CustomersFromBreeze));
                 }
 
 
-                CustomersFromBreeze = new ObservableCollection<Customer>(customersFromBreeze);
-                RaisePropertyChanged(nameof(CustomersFromBreeze));
+                //CustomersFromBreeze = new ObservableCollection<Customer>(customersFromBreeze);
+                //RaisePropertyChanged(nameof(CustomersFromBreeze));
 
             }
             catch (Exception ex)

@@ -63,19 +63,21 @@
         FontSize="12"
         Foreground="DarkGreen" />
 
-      <ListView
+      <!--<ListView
           Background="Yellow"
-          ItemsSource="{Binding CustomersFromBreeze}">
+          ItemsSource="{Binding CustomersFromBreeze}"
+          Height="100"
+          Width="200">
         <ListView.ItemTemplate>
           <DataTemplate>
             <StackPanel Orientation="Horizontal">
-              <TextBox Background="Red" Text="{Binding FirstName}" Height="20" />
-              <TextBox Background="Red" Text="{Binding LastName}" Height="20" />
+              <TextBox Background="Red" Text="{Binding FirstName}" />
+              <TextBox Background="Red" Text="{Binding LastName}" />
               <TextBox Background="Red" Text="{Binding Description}" />
             </StackPanel>
           </DataTemplate>
         </ListView.ItemTemplate>
-      </ListView>
+      </ListView>-->
 
     </StackPanel>
 
