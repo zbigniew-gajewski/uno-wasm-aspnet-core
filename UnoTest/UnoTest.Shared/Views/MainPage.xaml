@@ -10,7 +10,7 @@
   <Grid Background="LightGray" >
 
     <Grid.RowDefinitions>
-      <RowDefinition Height="Auto" />
+      <RowDefinition Height="60" />
       <RowDefinition Height="*" />
       <RowDefinition Height="*" />
       <RowDefinition Height="Auto" />
@@ -56,7 +56,8 @@
     <StackPanel Orientation="Horizontal"
         Grid.Row="1"
         Grid.Column="1"
-        HorizontalAlignment="Center">
+        HorizontalAlignment="Center"
+        VerticalAlignment="Center">
 
       <TextBlock     
         Text ="{Binding ResultFromBreeze}"
