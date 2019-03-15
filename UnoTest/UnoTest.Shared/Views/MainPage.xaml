@@ -10,9 +10,9 @@
   <Grid Background="LightGray" >
 
     <Grid.RowDefinitions>
-      <RowDefinition Height="60" />
+      <RowDefinition Height="Auto" />
       <RowDefinition Height="*" />
-      <RowDefinition Height="*" />
+      <RowDefinition Height="Auto" />
       <RowDefinition Height="Auto" />
     </Grid.RowDefinitions>
 
@@ -57,7 +57,8 @@
         Grid.Row="1"
         Grid.Column="1"
         HorizontalAlignment="Center"
-        VerticalAlignment="Center">
+        VerticalAlignment="Stretch"
+        Background="Yellow">
 
       <TextBlock     
         Text ="{Binding ResultFromBreeze}"
@@ -65,7 +66,7 @@
         Foreground="DarkGreen" />
 
       <!--<ListView
-          Background="Yellow"
+          Background="Orange"
           ItemsSource="{Binding CustomersFromBreeze}"
           Height="100"
           Width="200">
@@ -83,14 +84,14 @@
     </StackPanel>
 
     <TextBlock
-       Grid.Row="2"
+       Grid.Row="1"
        Grid.Column="0"
        Text ="{Binding SignalRString}"
        FontSize="12"
        Foreground="Black" />
 
     <TextBlock
-     Grid.Row="3"
+     Grid.Row="2"
      Grid.Column="0"
      Text ="{Binding UrlString}"
      FontSize="12"
