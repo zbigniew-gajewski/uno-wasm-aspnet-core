@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27703.2026
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28803.156
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "UnoTest.Shared", "UnoTest\UnoTest.Shared\UnoTest.Shared.shproj", "{6279C845-92F8-4333-AB99-3D213163593C}"
 EndProject
@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnoTest.Web", "UnoTest.Web\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnoTest.Web.Data", "UnoTest.Web.Data\UnoTest.Web.Data.csproj", "{D75DFF4B-A15D-4EA7-98B2-DC5716E03DC8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SignalR.App", "SignalR.App\SignalR.App.csproj", "{0F3F9A43-52DE-4E1D-94EF-5DBF225BAE20}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SignalR.App", "SignalR.App\SignalR.App.csproj", "{0F3F9A43-52DE-4E1D-94EF-5DBF225BAE20}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution

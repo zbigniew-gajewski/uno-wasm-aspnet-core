@@ -14,8 +14,10 @@
   <assembly fullname="Microsoft.Data.Services.Client">
     <type fullname="*" />
   </assembly>
-  
-  
+
+  <!--<assembly fullname="Microsoft.ApplicationInsights">
+    <type fullname="*" />
+  </assembly>-->
   
   <!-- SignalR -->
     
