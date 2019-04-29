@@ -68,13 +68,13 @@
 		<!-- Do not use this, it supports threads which are not working with WASM: <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="2.2.0" />-->
      <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="1.1.1" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Filter" Version="1.1.2" />
-		<PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
+		<PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
 		<PackageReference Include="OpenRiaServices.Client" Version="4.5.3" />
 		<PackageReference Include="System.ComponentModel.Annotations" Version="4.5.0" />
 		<PackageReference Include="Uno.GalaSoft.MvvmLight" Version="5.4.0-uno.134" />
 		<PackageReference Include="Uno.GalaSoft.MvvmLight.Platform" Version="5.4.0-uno.134" />
 		<PackageReference Include="Uno.UI" Version="1.45.0-dev.1366" />
-		<PackageReference Include="Uno.Wasm.Bootstrap" Version="1.0.0-dev.263" />
+		<PackageReference Include="Uno.Wasm.Bootstrap" Version="1.0.0-dev.265" />
    
     <DotNetCliToolReference Include="Uno.Wasm.Bootstrap.Cli" Version="1.0.0-dev.112" />
     
