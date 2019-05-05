@@ -60,16 +60,16 @@
         VerticalAlignment="Stretch"
         Background="Yellow">
 
-      <TextBlock     
+      <!--<TextBlock     
         Text ="{Binding ResultFromBreeze}"
         FontSize="12"
-        Foreground="DarkGreen" />
+        Foreground="DarkGreen" />-->
 
-      <!--<ListView
+      <ListView
           Background="Orange"
           ItemsSource="{Binding CustomersFromBreeze}"
-          Height="100"
-          Width="200">
+          Height="300"
+          Width="400">
         <ListView.ItemTemplate>
           <DataTemplate>
             <StackPanel Orientation="Horizontal">
@@ -79,7 +79,7 @@
             </StackPanel>
           </DataTemplate>
         </ListView.ItemTemplate>
-      </ListView>-->
+      </ListView>
 
     </StackPanel>
 
