@@ -73,7 +73,7 @@
 		<PackageReference Include="System.ComponentModel.Annotations" Version="4.5.0" />
 		<PackageReference Include="Uno.GalaSoft.MvvmLight" Version="5.4.0-uno.134" />
 		<PackageReference Include="Uno.GalaSoft.MvvmLight.Platform" Version="5.4.0-uno.134" />
-		<PackageReference Include="Uno.UI" Version="1.46.0-dev.2158" />
+		<PackageReference Include="Uno.UI" Version="1.46.0-dev.2204" />
 		<PackageReference Include="Uno.Wasm.Bootstrap" Version="1.0.0-dev.300" />
    
     <DotNetCliToolReference Include="Uno.Wasm.Bootstrap.Cli" Version="1.0.0-dev.112" />
